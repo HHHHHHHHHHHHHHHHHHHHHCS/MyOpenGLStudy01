@@ -143,7 +143,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
-    <ClCompile Include="OpenGLWindow.cpp" />
+    <ClCompile Include="MainOpenGL.cpp" />
+    <ClCompile Include="_01_HelloWindow.cpp" />
+    <ClCompile Include="_02_HellowTriangle.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="_01_HelloWindow.h" />
+    <ClInclude Include="_02_HelloTriangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

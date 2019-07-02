@@ -18,8 +18,22 @@
     <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGLWindow.cpp">
+    <ClCompile Include="_01_HelloWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MainOpenGL.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_02_HellowTriangle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="_01_HelloWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_02_HelloTriangle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

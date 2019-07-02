@@ -1,12 +1,8 @@
-#include<Windows.h>
-#include <stdio.h>
-#include <glad/glad.h>//GLAD是用来管理OpenGL的函数指针的
-#include <GLFW/glfw3.h>
-#include <iostream>
+#include "_01_HelloWindow.h"
 
 void processInput(GLFWwindow *window);
 
-int main()
+int _01_HelloWindow::DoMain()
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //OpenGL主版本号
