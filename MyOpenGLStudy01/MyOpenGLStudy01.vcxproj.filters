@@ -24,7 +24,10 @@
     <ClCompile Include="MainOpenGL.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="_02_HellowTriangle.cpp">
+    <ClCompile Include="_02_HelloTriangle_Practice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_02_HelloTriangle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -33,6 +36,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_02_HelloTriangle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_02_HelloTriangle_Practice.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

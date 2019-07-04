@@ -1,8 +1,7 @@
 ﻿#pragma once
-
+#include <glad/glad.h>//GLAD是用来管理OpenGL的函数指针的 请确保GLAD头文件的引入在GLFW之前
 #include<Windows.h>
 #include <stdio.h>
-#include <glad/glad.h>//GLAD是用来管理OpenGL的函数指针的
 #include <GLFW/glfw3.h>
 #include <iostream>
 

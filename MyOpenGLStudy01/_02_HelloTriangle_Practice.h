@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include <glad/glad.h>
+#include <glad/glad.h>//GLAD是用来管理OpenGL的函数指针的
 #include <GLFW/glfw3.h>
 #include <string>
 #include <iostream>
 
 
-class _02_HelloTriangle
+class _02_HelloTriangle_Practice
 {
 public:
 	static int DoMain();

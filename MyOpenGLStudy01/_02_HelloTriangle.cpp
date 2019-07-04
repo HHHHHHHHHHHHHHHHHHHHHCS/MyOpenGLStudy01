@@ -1,15 +1,10 @@
 ﻿#include "_02_HelloTriangle.h"
-#include <glad/glad.h>
-#include <string>
-#include <iostream>
-#include <GLFW/glfw3.h>
-#include "_01_HelloWindow.h"
 
 
 int _02_HelloTriangle::DoMain()
 {
-	_01_HelloWindow::InitOpenGL();
-	GLFWwindow* window = _01_HelloWindow::InitWindow();
+	InitOpenGL();
+	GLFWwindow* window = InitWindow();
 
 	if (window == nullptr)
 	{
@@ -29,7 +24,7 @@ int _02_HelloTriangle::DoMain()
 		}
 	)"
 	};
-	glad_glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glad_glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
 	glCompileShader(vertexShader);
 	CheckCompile(vertexShader);
 
@@ -47,7 +42,7 @@ int _02_HelloTriangle::DoMain()
 	};
 	unsigned int fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
 	glCompileShader(fragmentShader);
 	CheckCompile(fragmentShader);
 
@@ -90,7 +85,6 @@ int _02_HelloTriangle::DoMain()
 	};
 
 
-
 	unsigned int VBO;
 	glGenBuffers(1, &VBO); // 1是缓冲ID
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -119,7 +113,7 @@ int _02_HelloTriangle::DoMain()
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); //安全解除GL_ARRAY_BUFFER ,防止不小心修改
@@ -131,7 +125,7 @@ int _02_HelloTriangle::DoMain()
 	//glfwWindowShouldClose函数在我们每次循环的开始前检查一次GLFW是否被要求退出
 	while (!glfwWindowShouldClose(window))
 	{
-		_01_HelloWindow::ProcessInput(window); //按键关闭检测
+		ProcessInput(window); //按键关闭检测
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //调用glClear之后,整个颜色缓冲都会被填充为glClearColor里所设置的颜色
 		glClear(GL_COLOR_BUFFER_BIT); //清空缓冲颜色
@@ -142,7 +136,7 @@ int _02_HelloTriangle::DoMain()
 		//EBO画的时候用
 		//glDrawArrays(GL_TRIANGLES, 0, 6); //画顶点 ,0起始顶点索引 ,需要画的顶点长度
 		//绘制的模式  长度  数据类型  偏移量
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 
 		glfwSwapBuffers(window); //函数会交换颜色缓冲（它是一个储存着GLFW窗口每一个像素颜色值的大缓冲），它在这一迭代中被用来绘制，并且将会作为输出显示在屏幕上。
@@ -171,8 +165,53 @@ bool _02_HelloTriangle::CheckCompile(unsigned int id)
 	//如果编译失败
 	if (!success)
 	{
-		glGetShaderInfoLog(id, 512, NULL, infoLog);
+		glGetShaderInfoLog(id, 512, nullptr, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 	return success;
+}
+
+void _02_HelloTriangle::InitOpenGL()
+{
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //OpenGL主版本号
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6); //OpenGL次版本号
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //使用OpenGL核心模式
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //苹果需要
+#endif
+}
+
+GLFWwindow* _02_HelloTriangle::InitWindow()
+{
+	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
+	if (window == nullptr)
+	{
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return nullptr;
+	}
+	glfwMakeContextCurrent(window);
+
+	//初始化glad ,但是要在窗口初始化之后执行
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return nullptr;
+	}
+
+	return window;
+}
+
+//当用户改变窗口的大小的时候，视口也应该被调整的回调
+void _02_HelloTriangle::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height); //设置窗口的维度
+}
+
+//按下ESC 关闭
+void _02_HelloTriangle::ProcessInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 }

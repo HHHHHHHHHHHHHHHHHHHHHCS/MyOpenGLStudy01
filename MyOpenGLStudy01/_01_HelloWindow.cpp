@@ -4,7 +4,7 @@ int _01_HelloWindow::DoMain()
 {
 	InitOpenGL();
 	GLFWwindow* window = InitWindow();
-	if(window==nullptr)
+	if (window == nullptr)
 	{
 		return -1;
 	}
@@ -26,8 +26,8 @@ void _01_HelloWindow::InitOpenGL()
 
 GLFWwindow* _01_HelloWindow::InitWindow()
 {
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
-	if (window == NULL)
+	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
+	if (window == nullptr)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
