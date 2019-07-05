@@ -1,13 +1,13 @@
 ﻿#pragma once
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <string>
 #include <iostream>
+#include <GLFW/glfw3.h>
 #include "CommonBaseScript.h"
 
-class _02_HelloTriangle
+class _03_HelloShader
 {
 public:
 	static int DoMain();
-	static bool CheckCompile(unsigned int id);
+	static int SupportVertexAttr();
 };

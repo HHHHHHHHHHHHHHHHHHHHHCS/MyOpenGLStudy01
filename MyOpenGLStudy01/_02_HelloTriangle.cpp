@@ -1,10 +1,11 @@
 ﻿#include "_02_HelloTriangle.h"
 
 
+
 int _02_HelloTriangle::DoMain()
 {
-	InitOpenGL();
-	GLFWwindow* window = InitWindow();
+	CommonBaseScript::InitOpenGL();
+	GLFWwindow* window = CommonBaseScript::InitWindow();
 
 	if (window == nullptr)
 	{
@@ -15,7 +16,7 @@ int _02_HelloTriangle::DoMain()
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	const char* vertexShaderSource{
 		R"(
-		#version 330 core
+		#version 460 core
 		layout(location = 0) in vec3 aPos;
 
 		void main()
@@ -31,7 +32,7 @@ int _02_HelloTriangle::DoMain()
 
 	const char* fragmentShaderSource{
 		R"(
-		#version 330 core
+		#version 460 core
 		out vec4 FragColor;
 
 		void main()
@@ -100,7 +101,8 @@ int _02_HelloTriangle::DoMain()
 	//第四个参数 希望数据是否被标准化 如果是 无符号则映射到 0~1    有符号则映射到 -1~1  False为不标准化
 	//第五个参数 到下个顶点的步长  也可以设置为0 让OpenGL 自己决定
 	//第六个参数 数据缓冲 起始的位置  我们这里是0开始
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<const void*>(nullptr));
+	//reinterpret_cast	它可以把一个指针转换成一个整数，也可以把一个整数转换成一个指针
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<void*>(0));
 	glEnableVertexAttribArray(0); //启用顶点属性  默认是禁用的
 
 	//EBO
@@ -125,7 +127,7 @@ int _02_HelloTriangle::DoMain()
 	//glfwWindowShouldClose函数在我们每次循环的开始前检查一次GLFW是否被要求退出
 	while (!glfwWindowShouldClose(window))
 	{
-		ProcessInput(window); //按键关闭检测
+		CommonBaseScript::ProcessInput(window); //按键关闭检测
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //调用glClear之后,整个颜色缓冲都会被填充为glClearColor里所设置的颜色
 		glClear(GL_COLOR_BUFFER_BIT); //清空缓冲颜色
@@ -133,9 +135,9 @@ int _02_HelloTriangle::DoMain()
 		glUseProgram(shaderProgram); //使用这个程序对象
 		glBindVertexArray(VAO); //虽然我们只有一个VAO,不用每次都绑定,但是这样看更加直观
 
-		//EBO画的时候用
-		//glDrawArrays(GL_TRIANGLES, 0, 6); //画顶点 ,0起始顶点索引 ,需要画的顶点长度
-		//绘制的模式  长度  数据类型  偏移量
+		//画顶点 ,0起始顶点索引 ,需要画的顶点长度
+		//glDrawArrays(GL_TRIANGLES, 0, 6); 
+		////EBO画的时候用 绘制的模式  长度  数据类型  偏移量
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 
@@ -169,49 +171,4 @@ bool _02_HelloTriangle::CheckCompile(unsigned int id)
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 	return success;
-}
-
-void _02_HelloTriangle::InitOpenGL()
-{
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //OpenGL主版本号
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6); //OpenGL次版本号
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //使用OpenGL核心模式
-#ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //苹果需要
-#endif
-}
-
-GLFWwindow* _02_HelloTriangle::InitWindow()
-{
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
-	if (window == nullptr)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return nullptr;
-	}
-	glfwMakeContextCurrent(window);
-
-	//初始化glad ,但是要在窗口初始化之后执行
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return nullptr;
-	}
-
-	return window;
-}
-
-//当用户改变窗口的大小的时候，视口也应该被调整的回调
-void _02_HelloTriangle::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height); //设置窗口的维度
-}
-
-//按下ESC 关闭
-void _02_HelloTriangle::ProcessInput(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
 }

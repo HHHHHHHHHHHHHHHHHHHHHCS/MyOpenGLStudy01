@@ -30,6 +30,12 @@
     <ClCompile Include="_02_HelloTriangle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_03_HelloShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonBaseScript.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -39,6 +45,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_02_HelloTriangle_Practice.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_03_HelloShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonBaseScript.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,8 +2,8 @@
 
 int _02_HelloTriangle_Practice::DoMain()
 {
-	InitOpenGL();
-	GLFWwindow* window = InitWindow();
+	CommonBaseScript::InitOpenGL();
+	GLFWwindow* window = CommonBaseScript::InitWindow();
 
 	if (window == nullptr)
 	{
@@ -14,7 +14,7 @@ int _02_HelloTriangle_Practice::DoMain()
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	const char* vertexShaderSource{
 		R"(
-		#version 330 core
+		#version 460 core
 		layout(location = 0) in vec3 aPos;
 
 		void main()
@@ -25,12 +25,12 @@ int _02_HelloTriangle_Practice::DoMain()
 	};
 	glad_glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
 	glCompileShader(vertexShader);
-	CheckCompile(vertexShader);
+	CommonBaseScript::CheckCompile(vertexShader);
 
 
 	const char* fragmentShaderSource0{
 		R"(
-		#version 330 core
+		#version 460 core
 		out vec4 FragColor;
 
 		void main()
@@ -43,18 +43,18 @@ int _02_HelloTriangle_Practice::DoMain()
 	fragmentShader0 = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader0, 1, &fragmentShaderSource0, nullptr);
 	glCompileShader(fragmentShader0);
-	CheckCompile(fragmentShader0);
+	CommonBaseScript::CheckCompile(fragmentShader0);
 
 	unsigned int shaderProgram0;
 	shaderProgram0 = glCreateProgram();
 	glAttachShader(shaderProgram0, vertexShader);
 	glAttachShader(shaderProgram0, fragmentShader0);
 	glLinkProgram(shaderProgram0);
-	CheckCompile(shaderProgram0);
+	CommonBaseScript::CheckCompile(shaderProgram0);
 
 	const char* fragmentShaderSource1{
 	R"(
-		#version 330 core
+		#version 460 core
 		out vec4 FragColor;
 
 		void main()
@@ -67,14 +67,14 @@ int _02_HelloTriangle_Practice::DoMain()
 	fragmentShader1 = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader1, 1, &fragmentShaderSource1, nullptr);
 	glCompileShader(fragmentShader1);
-	CheckCompile(fragmentShader1);
+	CommonBaseScript::CheckCompile(fragmentShader1);
 
 	unsigned int shaderProgram1;
 	shaderProgram1 = glCreateProgram();
 	glAttachShader(shaderProgram1, vertexShader);
 	glAttachShader(shaderProgram1, fragmentShader1);
 	glLinkProgram(shaderProgram1);
-	CheckCompile(shaderProgram1);
+	CommonBaseScript::CheckCompile(shaderProgram1);
 
 	glDeleteShader(vertexShader); 
 	glDeleteShader(fragmentShader0);
@@ -107,14 +107,14 @@ int _02_HelloTriangle_Practice::DoMain()
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices0), vertices0, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<const void*>(nullptr));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<void*>(0));
 	glEnableVertexAttribArray(0);
 
 
 	glBindVertexArray(VAOs[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<const void*>(nullptr));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<void*>(0));
 	glEnableVertexAttribArray(0);
 
 
@@ -125,7 +125,7 @@ int _02_HelloTriangle_Practice::DoMain()
 	//glfwWindowShouldClose函数在我们每次循环的开始前检查一次GLFW是否被要求退出
 	while (!glfwWindowShouldClose(window))
 	{
-		ProcessInput(window); //按键关闭检测
+		CommonBaseScript::ProcessInput(window); //按键关闭检测
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //调用glClear之后,整个颜色缓冲都会被填充为glClearColor里所设置的颜色
 		glClear(GL_COLOR_BUFFER_BIT); //清空缓冲颜色
@@ -151,68 +151,4 @@ int _02_HelloTriangle_Practice::DoMain()
 	glDeleteBuffers(2, VBOs);
 
 	return 0;
-}
-
-/*
- * 检测编译用
- */
-bool _02_HelloTriangle_Practice::CheckCompile(unsigned int id)
-{
-	//检测编译是否成功
-	int success;
-	char infoLog[512];
-	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
-
-	//如果编译失败
-	if (!success)
-	{
-		glGetShaderInfoLog(id, 512, nullptr, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-	return success;
-}
-
-void _02_HelloTriangle_Practice::InitOpenGL()
-{
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //OpenGL主版本号
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6); //OpenGL次版本号
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //使用OpenGL核心模式
-#ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //苹果需要
-#endif
-}
-
-GLFWwindow* _02_HelloTriangle_Practice::InitWindow()
-{
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
-	if (window == nullptr)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return nullptr;
-	}
-	glfwMakeContextCurrent(window);
-
-	//初始化glad ,但是要在窗口初始化之后执行
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return nullptr;
-	}
-
-	return window;
-}
-
-//当用户改变窗口的大小的时候，视口也应该被调整的回调
-void _02_HelloTriangle_Practice::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height); //设置窗口的维度
-}
-
-//按下ESC 关闭
-void _02_HelloTriangle_Practice::ProcessInput(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
 }
