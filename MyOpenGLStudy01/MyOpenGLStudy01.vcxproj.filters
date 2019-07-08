@@ -36,6 +36,15 @@
     <ClCompile Include="CommonBaseScript.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_03_HelloShader_File.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_03_HelloShard_Practice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -53,5 +62,28 @@
     <ClInclude Include="CommonBaseScript.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_03_HelloShader_File.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_03_HelloShard_Practice.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\03_HelloShader_File.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="Shaders\03_HelloWorld_Parctice.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="Shaders\03_HelloShader_File.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="Shaders\03_HelloWorld_Parctice.vs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
