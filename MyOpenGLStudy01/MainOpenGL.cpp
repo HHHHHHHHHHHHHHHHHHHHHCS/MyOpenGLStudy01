@@ -4,8 +4,9 @@
 #include "_03_HelloShader.h"
 #include "_03_HelloShader_File.h"
 #include "_03_HelloShard_Practice.h"
+#include "_04_HelloTextures.h"
 
 int main(int argc, char* argv[])
 {
-	return _03_HelloShard_Practice::DoMain();
+	return _04_HelloTextures::DoMain();
 }

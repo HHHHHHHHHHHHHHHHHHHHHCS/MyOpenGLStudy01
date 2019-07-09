@@ -11,6 +11,7 @@ public:
 	//程序ID
 	unsigned int ID;
 	//构造 读取并且构造着色器
+	Shader(const GLchar* filePath);
 	Shader(const GLchar* vertexPath, const GLchar* fragmentPath);
 	//使用程序
 	void Use() const;
@@ -18,4 +19,6 @@ public:
 	void SetBool(const std::string& name, bool value) const;
 	void SetInt(const std::string& name, int value) const;
 	void SetFloat(const std::string& name, float value) const;
+private:
+	void Init(const GLchar* vertexPath, const GLchar* fragmentPath);
 };

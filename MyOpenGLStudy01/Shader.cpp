@@ -1,6 +1,25 @@
 ﻿#include "Shader.h"
 
+Shader::Shader(const GLchar* fileName)
+{
+	std::string path{"Shaders/"};
+	path.append(fileName);
+
+	std::string vsPath = path + ".vs";
+	std::string fsPath = path + ".fs";
+
+	char szStr[sizeof(vsPath)] = { 0 };
+	strncpy_s(szStr, vsPath.c_str(), sizeof(szStr) - 1); // 强烈建议拷贝出来
+
+	Init(vsPath.c_str(), fsPath.c_str());
+}
+
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
+{
+	Init(vertexPath, fragmentPath);
+}
+
+void Shader::Init(const GLchar* vertexPath, const GLchar* fragmentPath)
 {
 	//1.从文件路径中获取顶点/片段着色器
 	std::string vertexCode, fragmentCode;
@@ -45,7 +64,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 	glCompileShader(vertex);
 	//如果有编译错误则打印
 	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-	if(!success)
+	if (!success)
 	{
 		glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
@@ -100,6 +119,3 @@ void Shader::SetFloat(const std::string& name, float value) const
 {
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
-
-
-

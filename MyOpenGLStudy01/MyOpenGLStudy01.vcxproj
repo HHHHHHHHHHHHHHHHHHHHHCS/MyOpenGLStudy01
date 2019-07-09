@@ -146,6 +146,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="MainOpenGL.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="_04_HelloTextures.cpp" />
     <ClCompile Include="_01_HelloWindow.cpp" />
     <ClCompile Include="_02_HelloTriangle_Practice.cpp" />
     <ClCompile Include="_02_HelloTriangle.cpp" />
@@ -156,18 +157,14 @@
   <ItemGroup>
     <ClInclude Include="CommonBaseScript.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="_01_HelloWindow.h" />
     <ClInclude Include="_02_HelloTriangle.h" />
     <ClInclude Include="_02_HelloTriangle_Practice.h" />
     <ClInclude Include="_03_HelloShader.h" />
     <ClInclude Include="_03_HelloShader_File.h" />
     <ClInclude Include="_03_HelloShard_Practice.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\03_HelloShader_File.fs" />
-    <None Include="Shaders\03_HelloWorld_Parctice.fs" />
-    <None Include="Shaders\03_HelloShader_File.vs" />
-    <None Include="Shaders\03_HelloWorld_Parctice.vs" />
+    <ClInclude Include="_04_HelloTextures.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

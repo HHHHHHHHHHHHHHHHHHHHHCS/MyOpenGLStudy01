@@ -87,7 +87,7 @@ int _02_HelloTriangle::DoMain()
 
 
 	unsigned int VBO;
-	glGenBuffers(1, &VBO); // 1是缓冲ID
+	glGenBuffers(1, &VBO); // 1是缓冲ID , 即有几个数量
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//GL_STATIC_DRAW : 数据不会或几乎不会改变使用.
 	//GL_DYNAMIC_DRAW : 数据会被改变很多时候用,把数据写到高速写入的内存部分.
@@ -115,7 +115,6 @@ int _02_HelloTriangle::DoMain()
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); //安全解除GL_ARRAY_BUFFER ,防止不小心修改

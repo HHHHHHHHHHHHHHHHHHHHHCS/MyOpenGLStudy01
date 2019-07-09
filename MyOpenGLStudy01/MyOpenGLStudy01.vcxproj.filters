@@ -45,6 +45,9 @@
     <ClCompile Include="_03_HelloShard_Practice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_04_HelloTextures.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -71,19 +74,11 @@
     <ClInclude Include="_03_HelloShard_Practice.h">
       <Filter>头文件</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\03_HelloShader_File.fs">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="Shaders\03_HelloWorld_Parctice.fs">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="Shaders\03_HelloShader_File.vs">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="Shaders\03_HelloWorld_Parctice.vs">
-      <Filter>资源文件</Filter>
-    </None>
+    <ClInclude Include="stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_04_HelloTextures.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,4 +13,5 @@ public:
 	static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 	static void ProcessInput(GLFWwindow* window);
 	static bool CheckCompile(unsigned id);
+	static void UsePolygonMode();
 };

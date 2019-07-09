@@ -101,8 +101,8 @@ int _02_HelloTriangle_Practice::DoMain()
 	//VBO 是一组顶点数据
 	//VAO 是VBO的数组
 	unsigned int VAOs[2],VBOs[2];
-	glGenVertexArrays(2, VAOs);
-	glGenBuffers(2, VBOs);
+	glGenVertexArrays(2, VAOs);// 这里有两组数据组就是 2
+	glGenBuffers(2, VBOs);// 这里有两个顶点数据就是 2
 
 	glBindVertexArray(VAOs[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);

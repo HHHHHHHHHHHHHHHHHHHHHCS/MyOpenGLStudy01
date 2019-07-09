@@ -66,3 +66,11 @@ bool CommonBaseScript::CheckCompile(unsigned int id)
 	}
 	return success;
 }
+
+/*
+ * 使用线框模式
+ */
+void CommonBaseScript::UsePolygonMode()
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
