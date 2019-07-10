@@ -1,4 +1,4 @@
-﻿#include "_03_HelloShader.h"
+#include "_03_HelloShader.h"
 
 int _03_HelloShader::DoMain()
 {

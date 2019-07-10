@@ -1,4 +1,4 @@
-﻿#include "Shader.h"
+#include "Shader.h"
 
 Shader::Shader(const GLchar* fileName)
 {

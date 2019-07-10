@@ -1,4 +1,4 @@
-﻿#include "_03_HelloShader_File.h"
+#include "_03_HelloShader_File.h"
 int _03_HelloShader_File::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
