@@ -48,6 +48,12 @@
     <ClCompile Include="_04_HelloTextures.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_04_HelloTextures_Practice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_04_HelloTRS.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -78,6 +84,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_04_HelloTextures.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_04_HelloTextures_Practice.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_04_HelloTRS.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

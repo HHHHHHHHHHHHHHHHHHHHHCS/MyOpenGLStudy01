@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\MyStudyProject\MyOpenGLStudy01\glad-4.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\glm\glm;..\glad-4.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -103,7 +103,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\MyStudyProject\MyOpenGLStudy01\glad-4.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\glm\glm;..\glad-4.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -117,7 +117,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\MyStudyProject\MyOpenGLStudy01\glad-4.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\glm\glm;..\glad-4.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -133,7 +133,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\MyStudyProject\MyOpenGLStudy01\glad-4.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\glm\glm;..\glad-4.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -153,6 +153,8 @@
     <ClCompile Include="_03_HelloShader.cpp" />
     <ClCompile Include="_03_HelloShader_File.cpp" />
     <ClCompile Include="_03_HelloShard_Practice.cpp" />
+    <ClCompile Include="_04_HelloTextures_Practice.cpp" />
+    <ClCompile Include="_04_HelloTRS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonBaseScript.h" />
@@ -165,6 +167,8 @@
     <ClInclude Include="_03_HelloShader_File.h" />
     <ClInclude Include="_03_HelloShard_Practice.h" />
     <ClInclude Include="_04_HelloTextures.h" />
+    <ClInclude Include="_04_HelloTextures_Practice.h" />
+    <ClInclude Include="_04_HelloTRS.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

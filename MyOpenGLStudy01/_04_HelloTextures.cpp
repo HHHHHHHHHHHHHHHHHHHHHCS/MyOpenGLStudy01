@@ -1,9 +1,6 @@
-#include "_04_HelloTextures.h"
-
-
-//使用了这个宏 把stb_image.h 变成 cpp 使用
-#define STB_IMAGE_IMPLEMENTATION
+﻿#include "_04_HelloTextures.h"
 #include "stb_image.h"
+
 
 int _04_HelloTextures::DoMain()
 {
@@ -15,8 +12,9 @@ int _04_HelloTextures::DoMain()
 		return -1;
 	}
 
-	//stbi_set_flip_vertically_on_load(true);这个是翻转读取的图片
+	//这个是翻转读取的图片
 	//因为OPENGL的UV是反着的 要么1-UV.Y  要么翻转图片
+	//stbi_set_flip_vertically_on_load(true);
 
 	unsigned int texture0;
 	glGenTextures(1, &texture0);
@@ -69,8 +67,7 @@ int _04_HelloTextures::DoMain()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
-
-	 data = stbi_load("Images/03.png", &width, &height, &nrChannels, 0);
+	data = stbi_load("Images/02.jpg", &width, &height, &nrChannels, 0);
 
 	if (data)
 	{
@@ -83,7 +80,6 @@ int _04_HelloTextures::DoMain()
 	}
 	//释放图片
 	stbi_image_free(data);
-
 
 
 	float vertices[] = {
@@ -133,6 +129,10 @@ int _04_HelloTextures::DoMain()
 	glUniform1i(glGetUniformLocation(shader.ID, "ourTexture"), 0); // 手动设置
 	shader.SetInt("secondaryTex", 1); // 或者使用着色器类设置
 
+	glActiveTexture(GL_TEXTURE0); // 在绑定纹理之前先激活纹理单元 0~15张图给我们使用
+	glBindTexture(GL_TEXTURE_2D, texture0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -140,12 +140,6 @@ int _04_HelloTextures::DoMain()
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-
-		glActiveTexture(GL_TEXTURE0); // 在绑定纹理之前先激活纹理单元 0~15张图给我们使用
-		glBindTexture(GL_TEXTURE_2D, texture0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture1);
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
