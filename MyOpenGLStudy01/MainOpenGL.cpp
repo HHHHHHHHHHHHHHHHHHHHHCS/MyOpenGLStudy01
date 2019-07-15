@@ -9,7 +9,9 @@
 #include "_03_HelloShard_Practice.h"
 #include "_04_HelloTextures.h"
 #include "_04_HelloTextures_Practice.h"
+#include "_04_HelloTRS.h"
+
 int main(int argc, char* argv[])
 {
-	return _04_HelloTextures_Practice::DoMain();
+	return _04_HelloTRS::DoMain();
 }
