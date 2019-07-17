@@ -155,6 +155,7 @@
     <ClCompile Include="_03_HelloShard_Practice.cpp" />
     <ClCompile Include="_04_HelloTextures_Practice.cpp" />
     <ClCompile Include="_04_HelloTRS.cpp" />
+    <ClCompile Include="_04_HelloTRS_Parctice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonBaseScript.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="_04_HelloTextures.h" />
     <ClInclude Include="_04_HelloTextures_Practice.h" />
     <ClInclude Include="_04_HelloTRS.h" />
+    <ClInclude Include="_04_HelloTRS_Parctice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

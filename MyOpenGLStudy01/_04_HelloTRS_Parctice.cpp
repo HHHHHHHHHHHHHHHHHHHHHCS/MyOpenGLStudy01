@@ -1,8 +1,8 @@
-﻿#include "_04_HelloTRS.h"
+﻿#include "_04_HelloTRS_Parctice.h"
 
 #include "stb_image.h"
 
-int _04_HelloTRS::DoMain()
+int _04_HelloTRS_Parctice::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
 	GLFWwindow* window = CommonBaseScript::InitWindow();
@@ -35,17 +35,8 @@ int _04_HelloTRS::DoMain()
 
 	if (data)
 	{
-		//第一个是 纹理类型 1D  2D  3D
-		//第二个是 当前图片的mipmap层级,可以自动生成,也可以手动修改层级 设置图片
-		//第三个是 颜色类型
-		//第四个是 纹理的宽度
-		//第五个是 纹理的高度
-		//第六个是 总是为0 历史遗留问题
-		//第七个是 图片颜色格式
-		//第八个是 图片单个颜色的数据类型
-		//第九个是 图片的数据
+
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		//自动生成mipmap
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -123,35 +114,17 @@ int _04_HelloTRS::DoMain()
 
 	Shader shader{"04_HelloTRS"};
 
+
+	unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
+
+
 	shader.Use();
 
 
-	//0.9.9版本以上需要手动初始化矩阵  不然会为0
-	//初始化为1的单位矩阵
-	glm::mat4 trans = glm::mat4(1.0f);
-
-	glm::vec4 vec(0.0f, 0.0f, 0.0f, 1.0f);
-
-	trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
-
-	vec = trans * vec;
-
-	std::cout << vec.x << ' ' << vec.y << ' ' << vec.z << std::endl;
-
-	//trans = glm::translate(trans, glm::vec3(-1.0f, -1.0f, 0.0f));
-
-	//角度转化为弧度
-	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-
-	unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
-	//矩阵ID  矩阵数量  主序  参数类型改变
-	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+	shader.SetInt("ourTexture", 1);
+	shader.SetInt("secondaryTex", 1);
 
 
-	//如果就一个贴图则不用设置  要在Shader 激活 之后
-	glUniform1i(glGetUniformLocation(shader.ID, "ourTexture"), 0); // 手动设置
-	shader.SetInt("secondaryTex", 1); // 或者使用着色器类设置
 
 	glActiveTexture(GL_TEXTURE0); // 在绑定纹理之前先激活纹理单元 0~15张图给我们使用
 	glBindTexture(GL_TEXTURE_2D, texture0);
@@ -165,12 +138,18 @@ int _04_HelloTRS::DoMain()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glm::mat4 trans(1);
-		//trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-		trans = glm::rotate(trans, static_cast<float>(glfwGetTime()), glm::vec3(0.0f, 0.0f, 1.0f));
-		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		glm::mat4 trans0 = glm::mat4(1.0f);
+		trans0 = glm::translate(trans0, glm::vec3(0.5, -0.5f, 0.0));
+		trans0 = glm::rotate(trans0, static_cast<float>(glfwGetTime()), glm::vec3(0.0, 0.0, 1.0));
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans0));
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
+		glm::mat4 trans1 = glm::mat4(1.0f);
+		trans1 = glm::translate(trans1, glm::vec3(-0.5, 0.5f, 0.0));
+		float scale = sin(static_cast<float>(glfwGetTime()));
+		trans1 = glm::scale(trans1, glm::vec3(scale, scale, scale));
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, &trans1[0][0]);//传入地址 会根据地址+长度去取得要的值
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
