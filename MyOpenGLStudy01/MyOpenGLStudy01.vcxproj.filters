@@ -51,10 +51,16 @@
     <ClCompile Include="_04_HelloTextures_Practice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="_04_HelloTRS.cpp">
+    <ClCompile Include="_05_HelloTRS.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="_04_HelloTRS_Parctice.cpp">
+    <ClCompile Include="_06_CoordinateSystems.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_06_CoordinateSystems_Practice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_05_HelloTRS_Practice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,10 +98,16 @@
     <ClInclude Include="_04_HelloTextures_Practice.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="_04_HelloTRS.h">
+    <ClInclude Include="_05_HelloTRS.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="_04_HelloTRS_Parctice.h">
+    <ClInclude Include="_06_CoordinateSystems.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_05_HelloTRS_Practice.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_06_CoordinateSystems_Practice.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

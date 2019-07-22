@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="_06_CoordinateSystems_Practice.cpp" />
     <ClCompile Include="CommonBaseScript.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="MainOpenGL.cpp" />
@@ -154,10 +155,12 @@
     <ClCompile Include="_03_HelloShader_File.cpp" />
     <ClCompile Include="_03_HelloShard_Practice.cpp" />
     <ClCompile Include="_04_HelloTextures_Practice.cpp" />
-    <ClCompile Include="_04_HelloTRS.cpp" />
-    <ClCompile Include="_04_HelloTRS_Parctice.cpp" />
+    <ClCompile Include="_05_HelloTRS.cpp" />
+    <ClCompile Include="_05_HelloTRS_Practice.cpp" />
+    <ClCompile Include="_06_CoordinateSystems.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="_06_CoordinateSystems_Practice.h" />
     <ClInclude Include="CommonBaseScript.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
@@ -169,8 +172,9 @@
     <ClInclude Include="_03_HelloShard_Practice.h" />
     <ClInclude Include="_04_HelloTextures.h" />
     <ClInclude Include="_04_HelloTextures_Practice.h" />
-    <ClInclude Include="_04_HelloTRS.h" />
-    <ClInclude Include="_04_HelloTRS_Parctice.h" />
+    <ClInclude Include="_05_HelloTRS.h" />
+    <ClInclude Include="_05_HelloTRS_Practice.h" />
+    <ClInclude Include="_06_CoordinateSystems.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

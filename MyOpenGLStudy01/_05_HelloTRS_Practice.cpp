@@ -1,8 +1,8 @@
-﻿#include "_04_HelloTRS_Parctice.h"
+﻿#include "_05_HelloTRS_Practice.h"
 
 #include "stb_image.h"
 
-int _04_HelloTRS_Parctice::DoMain()
+int _05_HelloTRS_Practice::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
 	GLFWwindow* window = CommonBaseScript::InitWindow();
@@ -112,7 +112,7 @@ int _04_HelloTRS_Parctice::DoMain()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	Shader shader{"04_HelloTRS"};
+	Shader shader{"05_HelloTRS"};
 
 
 	unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");

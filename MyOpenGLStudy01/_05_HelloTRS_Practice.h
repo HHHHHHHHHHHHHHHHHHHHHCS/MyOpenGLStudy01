@@ -8,7 +8,7 @@
 #include "Shader.h"
 #include "CommonBaseScript.h"
 
-class _04_HelloTRS_Parctice
+class _05_HelloTRS_Practice
 {
 public:
 	static int DoMain();

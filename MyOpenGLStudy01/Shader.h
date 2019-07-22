@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <mat4x2.hpp>
 
 class Shader
 {
@@ -19,6 +20,7 @@ public:
 	void SetBool(const std::string& name, bool value) const;
 	void SetInt(const std::string& name, int value) const;
 	void SetFloat(const std::string& name, float value) const;
+	void SetMat4(const std::string& name, glm::mat4 value) const;
 private:
 	void Init(const GLchar* vertexPath, const GLchar* fragmentPath);
 };

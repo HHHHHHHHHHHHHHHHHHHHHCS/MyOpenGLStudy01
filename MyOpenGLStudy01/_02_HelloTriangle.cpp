@@ -136,7 +136,7 @@ int _02_HelloTriangle::DoMain()
 
 		//画顶点 ,0起始顶点索引 ,需要画的顶点长度
 		//glDrawArrays(GL_TRIANGLES, 0, 6); 
-		////EBO画的时候用 绘制的模式  长度  数据类型  偏移量
+		//EBO画的时候用 绘制的模式  长度  数据类型  偏移量
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 

@@ -1,8 +1,8 @@
-﻿#include "_04_HelloTRS.h"
+﻿#include "_05_HelloTRS.h"
 
 #include "stb_image.h"
 
-int _04_HelloTRS::DoMain()
+int _05_HelloTRS::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
 	GLFWwindow* window = CommonBaseScript::InitWindow();
@@ -121,7 +121,7 @@ int _04_HelloTRS::DoMain()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	Shader shader{"04_HelloTRS"};
+	Shader shader{"05_HelloTRS"};
 
 	shader.Use();
 

@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include <gtc/type_ptr.inl>
 
 Shader::Shader(const GLchar* fileName)
 {
@@ -8,7 +9,7 @@ Shader::Shader(const GLchar* fileName)
 	std::string vsPath = path + ".vs";
 	std::string fsPath = path + ".fs";
 
-	char szStr[sizeof(vsPath)] = { 0 };
+	char szStr[sizeof(vsPath)] = {0};
 	strncpy_s(szStr, vsPath.c_str(), sizeof(szStr) - 1); // 强烈建议拷贝出来
 
 	Init(vsPath.c_str(), fsPath.c_str());
@@ -118,4 +119,10 @@ void Shader::SetInt(const std::string& name, int value) const
 void Shader::SetFloat(const std::string& name, float value) const
 {
 	glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+}
+
+void Shader::SetMat4(const std::string& name, glm::mat4 value) const
+{
+	//glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, false, glm::value_ptr(value));
+	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, false, &value[0][0]);
 }

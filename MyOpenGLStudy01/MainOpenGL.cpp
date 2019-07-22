@@ -9,10 +9,12 @@
 #include "_03_HelloShard_Practice.h"
 #include "_04_HelloTextures.h"
 #include "_04_HelloTextures_Practice.h"
-#include "_04_HelloTRS.h"
-#include "_04_HelloTRS_Parctice.h"
+#include "_05_HelloTRS.h"
+#include "_05_HelloTRS_Practice.h"
+#include "_06_CoordinateSystems.h"
+#include "_06_CoordinateSystems_Practice.h"
 
 int main(int argc, char* argv[])
 {
-	return _04_HelloTRS_Parctice::DoMain();
+	return _06_CoordinateSystems_Practice::DoMain();
 }

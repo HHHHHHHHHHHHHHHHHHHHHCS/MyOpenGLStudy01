@@ -17,7 +17,7 @@
 #include "Shader.h"
 #include "CommonBaseScript.h"
 
-class _04_HelloTRS
+class _05_HelloTRS
 {
 public:
 	static int DoMain();

@@ -1,5 +1,7 @@
 ﻿#include "_04_HelloTextures_Practice.h"
 #include "stb_image.h"
+#include <stdlib.h>
+#include <stdlib.h>
 
 
 float _04_HelloTextures_Practice::mixVal = 0.2f;
@@ -151,12 +153,12 @@ int _04_HelloTextures_Practice::DoMain()
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 		{
 			mixVal += 0.01f;
-			mixVal = min(1.0f, mixVal);
+			mixVal = std::min(1.0f, mixVal);
 		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		{
 			mixVal -= 0.01f;
-			mixVal = max(0.0f, mixVal);
+			mixVal = std::max(0.0f, mixVal);
 		}
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
