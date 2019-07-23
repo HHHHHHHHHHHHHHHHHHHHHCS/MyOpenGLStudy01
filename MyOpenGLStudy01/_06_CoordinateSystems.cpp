@@ -1,9 +1,6 @@
 ﻿#include "_06_CoordinateSystems.h"
 #include "stb_image.h"
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-
 int _06_CoordinateSystems::DoMain()
 {
 	CommonBaseScript::InitOpenGL();

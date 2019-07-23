@@ -13,8 +13,9 @@
 #include "_05_HelloTRS_Practice.h"
 #include "_06_CoordinateSystems.h"
 #include "_06_CoordinateSystems_Practice.h"
+#include "_07_Camera.h"
 
 int main(int argc, char* argv[])
 {
-	return _06_CoordinateSystems_Practice::DoMain();
+	return _07_Camera::DoMain();
 }

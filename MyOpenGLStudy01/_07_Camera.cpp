@@ -1,14 +1,11 @@
-﻿#include "_06_CoordinateSystems_Practice.h"
-
+﻿#include "_07_Camera.h"
 #include "stb_image.h"
 
-float _06_CoordinateSystems_Practice::x = 0;
-float _06_CoordinateSystems_Practice::y = 0;
+glm::vec3 _07_Camera::cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 _07_Camera::cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 _07_Camera::cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-float _06_CoordinateSystems_Practice::dov = 45;
-float _06_CoordinateSystems_Practice::aspect = static_cast<float>(SCR_WIDTH) / SCR_HEIGHT;
-
-int _06_CoordinateSystems_Practice::DoMain()
+int _07_Camera::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
 	GLFWwindow* window = CommonBaseScript::InitWindow();
@@ -118,7 +115,7 @@ int _06_CoordinateSystems_Practice::DoMain()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	Shader shader{"06_CoordinateSystems"};
+	Shader shader{ "06_CoordinateSystems" };
 
 	shader.Use();
 
@@ -129,13 +126,17 @@ int _06_CoordinateSystems_Practice::DoMain()
 	model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
 
 	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(x, y, -3.0f));
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(45.0f), static_cast<float>(SCR_WIDTH) / SCR_HEIGHT, 0.1f, 100.0f);
 
 	unsigned int modelLoc = glGetUniformLocation(shader.ID, "model");
 	unsigned int viewLoc = glGetUniformLocation(shader.ID, "view");
 
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	shader.SetMat4("projection", projection);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture0);
@@ -161,52 +162,31 @@ int _06_CoordinateSystems_Practice::DoMain()
 	{
 		CommonBaseScript::ProcessInput(window);
 
-		if (glfwGetKey(window,GLFW_KEY_UP) == GLFW_PRESS)
-		{
-			y += 0.1f;
-		}
-		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		{
-			y -= 0.1f;
-		}
-		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		{
-			x -= 0.1f;
-		}
-		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		{
-			x += 0.1f;
-		}
-
-		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(x, y, -3.0f));
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-
-		if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS)
-		{
-			dov += 0.1f;
-		}
-		if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS)
-		{
-			dov -= 0.1f;
-		}
-		if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
-		{
-			aspect -= 0.1f;
-		}
-		if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS)
-		{
-			aspect += 0.1f;
-		}
-
-
-		const glm::mat4 projection = glm::perspective(glm::radians(dov), aspect, 0.1f, 100.0f);
-		shader.SetMat4("projection", projection);
-
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		//因为开启了深度测试 所以每次渲染前要清除之前的深度
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+		float cameraSpeed = 0.05f;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			cameraPos += cameraSpeed * cameraFront;
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			cameraPos -= cameraSpeed * cameraFront;
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp))*cameraSpeed;
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp))*cameraSpeed;
+
+		/*
+		float radius = 10.0f;
+		float camX = sin(glfwGetTime()) * radius;
+		float camZ = cos(glfwGetTime()) * radius;
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+		shader.SetMat4("view", view);
+		*/
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		shader.SetMat4("view", view);
 
 		glBindVertexArray(VAO);
 
@@ -215,10 +195,6 @@ int _06_CoordinateSystems_Practice::DoMain()
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
-			if (i % 3 == 0)
-			{
-				angle *= glfwGetTime();
-			}
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			shader.SetMat4("model", model);
 
@@ -235,5 +211,4 @@ int _06_CoordinateSystems_Practice::DoMain()
 	glDeleteBuffers(1, &VBO);
 
 
-	return 0;
 }

@@ -158,6 +158,7 @@
     <ClCompile Include="_05_HelloTRS.cpp" />
     <ClCompile Include="_05_HelloTRS_Practice.cpp" />
     <ClCompile Include="_06_CoordinateSystems.cpp" />
+    <ClCompile Include="_07_Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_06_CoordinateSystems_Practice.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="_05_HelloTRS.h" />
     <ClInclude Include="_05_HelloTRS_Practice.h" />
     <ClInclude Include="_06_CoordinateSystems.h" />
+    <ClInclude Include="_07_Camera.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
