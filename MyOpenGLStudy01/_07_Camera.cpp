@@ -5,6 +5,19 @@ glm::vec3 _07_Camera::cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 _07_Camera::cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 _07_Camera::cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+float _07_Camera::deltaTime = 0.0;
+float _07_Camera::lastFrame = 0.0;
+
+float _07_Camera::lastX = SCR_WIDTH / 2;
+float _07_Camera::lastY = SCR_HEIGHT / 2;
+
+float _07_Camera::yaw = 270;
+float _07_Camera::pitch = 0;
+
+float _07_Camera::fov = 45.0f;
+
+bool _07_Camera::isFirst = true;
+
 int _07_Camera::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
@@ -115,7 +128,7 @@ int _07_Camera::DoMain()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	Shader shader{ "06_CoordinateSystems" };
+	Shader shader{"06_CoordinateSystems"};
 
 	shader.Use();
 
@@ -158,6 +171,15 @@ int _07_Camera::DoMain()
 		glm::vec3(-1.3f, 1.0f, -1.5f)
 	};
 
+	//隐藏光标
+	CommonBaseScript::HideCursor(window);
+
+	//鼠标移动事件
+	glfwSetCursorPosCallback(window, MouseCallback);
+	//鼠标滚轮移动事件
+	glfwSetScrollCallback(window, ScrollCallBack);
+
+
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
@@ -167,17 +189,21 @@ int _07_Camera::DoMain()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-		float cameraSpeed = 0.05f;
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			cameraPos += cameraSpeed * cameraFront;
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			cameraPos -= cameraSpeed * cameraFront;
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp))*cameraSpeed;
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp))*cameraSpeed;
+		//这里用欧拉角并不完美 可以用四元数
+		//代表的摄像机的前轴 乘cos(glm::radians(pitch)) 为了统一normalize
+		glm::vec3 front;
+		front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw)); 
+		front.y = sin(glm::radians(pitch));
+		front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+		cameraFront = glm::normalize(front);
 
+
+
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 		/*
+		//这个是环绕镜头
 		float radius = 10.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
@@ -185,8 +211,24 @@ int _07_Camera::DoMain()
 		view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 		shader.SetMat4("view", view);
 		*/
+
+		float cameraSpeed = 2.5f * deltaTime;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			cameraPos += cameraSpeed * cameraFront;
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			cameraPos -= cameraSpeed * cameraFront;
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
+
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		shader.SetMat4("view", view);
+
+		projection = glm::perspective(glm::radians(fov), static_cast<float>(SCR_WIDTH) / SCR_HEIGHT, 0.1f, 100.0f);
+		shader.SetMat4("projection", projection);
+
 
 		glBindVertexArray(VAO);
 
@@ -209,6 +251,40 @@ int _07_Camera::DoMain()
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+}
 
+void _07_Camera::MouseCallback(GLFWwindow* window, double xPos, double yPos)
+{
+	if (isFirst)
+	{
+		lastX = xPos;
+		lastY = yPos;
+		isFirst = false;
+	}
 
+	float xOffset = xPos - lastX;
+	float yOffset = lastY - yPos; //Y坐标是从底部往顶部的
+	lastX = xPos;
+	lastY = yPos;
+
+	float sensitivity = 0.05f;
+	xOffset *= sensitivity;
+	yOffset *= sensitivity;
+
+	yaw += xOffset;
+	pitch += yOffset;
+
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+}
+
+void _07_Camera::ScrollCallBack(GLFWwindow* window, double xOffset, double yOffset)
+{
+	if (fov >= 1.0f && fov <= 45.0f)
+	{
+		fov -= yOffset;
+	}
+	fov = min(45.0f, max(1.0f, fov));
 }

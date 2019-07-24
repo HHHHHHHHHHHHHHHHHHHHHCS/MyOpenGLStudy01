@@ -77,3 +77,11 @@ void CommonBaseScript::UsePolygonMode()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
+
+/*
+ * 隐藏光标
+ */
+void CommonBaseScript::HideCursor(GLFWwindow* window)
+{
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
