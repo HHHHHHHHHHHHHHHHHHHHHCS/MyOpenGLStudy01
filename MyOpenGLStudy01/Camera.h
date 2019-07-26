@@ -24,6 +24,7 @@ const float ZOOM = 45.0f;
 class Camera
 {
 public:
+	static Camera* instance;
 	glm::vec3 position;
 	glm::vec3 front;
 	glm::vec3 up;
@@ -37,14 +38,24 @@ public:
 	float mouseSensitivity;
 	float zoom;
 
+	float deltaTime;
+	float lastFrame;
+
 	Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f)
 	       , float _yaw = YAW, float _pitch = PITCH);
 	Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch);
 
-	glm::mat4 GetViewMatrix() const;
+	static void AddMouseEvent(GLFWwindow* window, bool hideCursor = true);
+	static void MouseCallback(GLFWwindow* window, double xPos, double yPos);
+	static void ScrollCallBack(GLFWwindow* window, double xOffset, double yOffset);
+
+	void DoKeyboardMove(GLFWwindow* window);
 	void ProcessKeyboard(CameraMovement direction, float deltaTime);
 	void ProcessMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch = true);
 	void ProcesMouseScroll(float yOffset);
+	glm::mat4 GetModelMat4() const;
+	glm::mat4 GetViewMat4() const;
+	glm::mat4 GetProjectionMat4() const;
 
 private:
 	void UpdateCameraVectors();
