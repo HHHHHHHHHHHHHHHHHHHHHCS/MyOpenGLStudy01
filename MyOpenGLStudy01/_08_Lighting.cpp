@@ -89,13 +89,15 @@ int _08_Lighting::DoMain()
 		CommonBaseScript::ProcessInput(window);
 		camera.DoKeyboardMove(window);
 
-
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glBindVertexArray(VAO);
 
-		shader.SetMat4("model", camera.GetModelMat4());
+		glm::mat4 model(1.0f);
+		model = glm::translate(model, glm::vec3(0, 0, 0));
+
+		shader.SetMat4("model", model);
 		shader.SetMat4("view", camera.GetViewMat4());
 		shader.SetMat4("projection", camera.GetProjectionMat4());
 

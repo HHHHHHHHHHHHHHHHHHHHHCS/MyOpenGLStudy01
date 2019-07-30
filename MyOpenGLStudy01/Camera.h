@@ -38,10 +38,14 @@ public:
 	float mouseSensitivity;
 	float zoom;
 
+
+	bool isFirst = true;
 	float deltaTime;
 	float lastFrame;
+	double lastXPos;
+	double lastYPos;
 
-	Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f)
+	Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f)
 	       , float _yaw = YAW, float _pitch = PITCH);
 	Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch);
 
@@ -52,8 +56,7 @@ public:
 	void DoKeyboardMove(GLFWwindow* window);
 	void ProcessKeyboard(CameraMovement direction, float deltaTime);
 	void ProcessMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch = true);
-	void ProcesMouseScroll(float yOffset);
-	glm::mat4 GetModelMat4() const;
+	void ProcessMouseScroll(float yOffset);
 	glm::mat4 GetViewMat4() const;
 	glm::mat4 GetProjectionMat4() const;
 

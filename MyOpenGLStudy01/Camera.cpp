@@ -1,5 +1,7 @@
 ﻿#include "Camera.h"
 
+Camera* Camera::instance = nullptr;
+
 Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
 	: front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
 {
@@ -63,7 +65,7 @@ void Camera::MouseCallback(GLFWwindow* window, double xPos, double yPos)
 
 void Camera::ScrollCallBack(GLFWwindow* window, double xOffset, double yOffset)
 {
-	instance->ProcesMouseScroll(yOffset);
+	instance->ProcessMouseScroll(yOffset);
 }
 
 void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
@@ -79,40 +81,40 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
 		position += right * velocity;
 }
 
-void Camera::ProcessMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch)
+void Camera::ProcessMouseMovement(float xPos, float yPos, GLboolean constrainPitch)
 {
-	xOffset *= mouseSensitivity;
-	yOffset *= mouseSensitivity;
+	if(isFirst)
+	{
+		lastXPos = xPos;
+		lastYPos = yPos;
+		isFirst = false;
+	}
+
+	double xOffset = (xPos - lastXPos) * mouseSensitivity;
+	double yOffset = -(yPos - lastYPos) * mouseSensitivity;
+
+	lastXPos = xPos;
+	lastYPos = yPos;
 
 	yaw += xOffset;
 	pitch += yOffset;
 
 	if (constrainPitch)
 	{
-		pitch = min(45.0f, max(1.0f, pitch));
+		pitch = min(45.0f, max(-45.0f, pitch));
 	}
 	UpdateCameraVectors();
 }
 
-void Camera::ProcesMouseScroll(float yOffset)
+void Camera::ProcessMouseScroll(float yOffset)
 {
-	if (zoom >= 1.0f && zoom <= 45.0f)
-	{
-		zoom -= yOffset;
-	}
-	//zoom = min(45.0f, max(1.0f, zoom));
-}
-
-glm::mat4 Camera::GetModelMat4() const
-{
-	glm::mat4 val = glm::mat4(1.0f);
-	val = glm::translate(val, position);
-	return val;
+	zoom -= yOffset;
+	zoom = min(45.0f, max(1.0f, zoom));
 }
 
 glm::mat4 Camera::GetViewMat4() const
 {
-	return glm::lookAt(position, position + front, up);;
+	return glm::lookAt(position, position + front, up);
 }
 
 glm::mat4 Camera::GetProjectionMat4() const
@@ -129,7 +131,10 @@ void Camera::UpdateCameraVectors()
 	_front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 	_front.y = sin(glm::radians(pitch));
 	_front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	front = glm::normalize(front);
+	front = glm::normalize(_front);
 	right = glm::normalize(glm::cross(front, worldUp));
 	up = glm::normalize(glm::cross(right, front));
+	//printf("%f,%f,%f\n", front.x, front.y, front.z);
+	//printf("%f,%f,%f\n", right.x, right.y, right.z);
+	//printf("%f,%f,%f\n", up.x, up.y, up.z);
 }
