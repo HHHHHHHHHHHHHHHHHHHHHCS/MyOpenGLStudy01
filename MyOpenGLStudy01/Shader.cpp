@@ -68,7 +68,7 @@ void Shader::Init(const GLchar* vertexPath, const GLchar* fragmentPath)
 	if (!success)
 	{
 		glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		std::cout << vertexPath << "->ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
 	//片元着色器
@@ -80,7 +80,7 @@ void Shader::Init(const GLchar* vertexPath, const GLchar* fragmentPath)
 	if (!success)
 	{
 		glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+		std::cout << fragmentPath << "->ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
 	//着色器程序
@@ -130,4 +130,9 @@ void Shader::SetMat4(const std::string& name, glm::mat4 value) const
 void Shader::SetVec3(const std::string& name, float v0, float v1, float v2) const
 {
 	glUniform3f(glGetUniformLocation(ID, name.c_str()), v0, v1, v2);
+}
+
+void Shader::SetVec3(const std::string& name, glm::vec3 value) const
+{
+	glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 }

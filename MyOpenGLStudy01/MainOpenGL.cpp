@@ -15,8 +15,9 @@
 #include "_06_CoordinateSystems_Practice.h"
 #include "_07_Camera.h"
 #include "_08_Lighting.h"
+#include "_09_BasicLighting.h"
 
 int main(int argc, char* argv[])
 {
-	return _08_Lighting::DoMain();
+	return _09_BasicLighting::DoMain();
 }

@@ -161,6 +161,7 @@
     <ClCompile Include="_06_CoordinateSystems.cpp" />
     <ClCompile Include="_07_Camera.cpp" />
     <ClCompile Include="_08_Lighting.cpp" />
+    <ClCompile Include="_09_BasicLighting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -181,6 +182,7 @@
     <ClInclude Include="_06_CoordinateSystems.h" />
     <ClInclude Include="_07_Camera.h" />
     <ClInclude Include="_08_Lighting.h" />
+    <ClInclude Include="_09_BasicLighting.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

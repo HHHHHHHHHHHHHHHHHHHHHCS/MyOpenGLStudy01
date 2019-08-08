@@ -22,6 +22,8 @@ public:
 	void SetFloat(const std::string& name, float value) const;
 	void SetMat4(const std::string& name, glm::mat4 value) const;
 	void SetVec3(const std::string& name, float v0, float v1, float v2) const;
+	void SetVec3(const std::string& name, glm::vec3 value) const;
+
 private:
 	void Init(const GLchar* vertexPath, const GLchar* fragmentPath);
 };
