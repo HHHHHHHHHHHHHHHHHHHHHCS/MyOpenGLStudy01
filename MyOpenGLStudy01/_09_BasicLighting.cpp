@@ -94,7 +94,7 @@ int _09_BasicLighting::DoMain()
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
 
-	glm::vec3 lightPos(1.0f, 1.0f, 0.0f);
+	glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
@@ -130,6 +130,22 @@ int _09_BasicLighting::DoMain()
 		cubeShader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		cubeShader.SetMat4("view", camera.GetViewMat4());
 		cubeShader.SetMat4("projection", camera.GetProjectionMat4());
+		cubeShader.SetVec3("viewPos", camera.position);
+
+		glm::vec3 lightColor;
+		lightColor.x = sin(glfwGetTime()*2.0f);
+		lightColor.y = sin(glfwGetTime()*0.7f);
+		lightColor.z = sin(glfwGetTime()*1.3f);
+
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);//降低影响
+		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.5f);//更低的影响
+
+
+
+		cubeShader.SetVec3("material.ambient", ambientColor);
+		cubeShader.SetVec3("material.diffuse", diffuseColor);
+		cubeShader.SetVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		cubeShader.SetFloat("material.shininess", 32.0f);
 		glBindVertexArray(cubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
