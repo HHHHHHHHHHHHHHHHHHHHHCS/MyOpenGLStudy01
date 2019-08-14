@@ -75,6 +75,12 @@
     <ClCompile Include="_09_BasicLighting.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_10_LightingMaps.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageHelper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -132,6 +138,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_09_BasicLighting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_10_LightingMaps.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageHelper.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

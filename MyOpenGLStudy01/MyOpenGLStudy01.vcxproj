@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ImageHelper.cpp" />
     <ClCompile Include="_06_CoordinateSystems_Practice.cpp" />
     <ClCompile Include="CommonBaseScript.cpp" />
     <ClCompile Include="glad.c" />
@@ -162,9 +163,11 @@
     <ClCompile Include="_07_Camera.cpp" />
     <ClCompile Include="_08_Lighting.cpp" />
     <ClCompile Include="_09_BasicLighting.cpp" />
+    <ClCompile Include="_10_LightingMaps.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ImageHelper.h" />
     <ClInclude Include="_06_CoordinateSystems_Practice.h" />
     <ClInclude Include="CommonBaseScript.h" />
     <ClInclude Include="Shader.h" />
@@ -183,6 +186,7 @@
     <ClInclude Include="_07_Camera.h" />
     <ClInclude Include="_08_Lighting.h" />
     <ClInclude Include="_09_BasicLighting.h" />
+    <ClInclude Include="_10_LightingMaps.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

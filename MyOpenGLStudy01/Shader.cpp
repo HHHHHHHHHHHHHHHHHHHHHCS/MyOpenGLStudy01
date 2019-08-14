@@ -79,7 +79,7 @@ void Shader::Init(const GLchar* vertexPath, const GLchar* fragmentPath)
 	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
+		glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
 		std::cout << fragmentPath << "->ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 

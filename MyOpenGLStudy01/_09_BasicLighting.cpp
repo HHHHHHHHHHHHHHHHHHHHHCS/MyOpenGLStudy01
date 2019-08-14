@@ -158,4 +158,7 @@ int _09_BasicLighting::DoMain()
 	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteVertexArrays(1, &cubeVAO);
 	glDeleteBuffers(1, &VBO);
+
+
+	return 0;
 }

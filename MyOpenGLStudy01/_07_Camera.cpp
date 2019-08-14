@@ -251,6 +251,8 @@ int _07_Camera::DoMain()
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+
+	return 0;
 }
 
 void _07_Camera::MouseCallback(GLFWwindow* window, double xPos, double yPos)

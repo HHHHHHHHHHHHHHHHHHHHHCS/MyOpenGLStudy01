@@ -16,8 +16,9 @@
 #include "_07_Camera.h"
 #include "_08_Lighting.h"
 #include "_09_BasicLighting.h"
+#include "_10_LightingMaps.h"
 
 int main(int argc, char* argv[])
 {
-	return _09_BasicLighting::DoMain();
+	return _10_LightingMaps::DoMain();
 }
