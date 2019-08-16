@@ -81,6 +81,9 @@
     <ClCompile Include="ImageHelper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_11_LightCasters.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -144,6 +147,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ImageHelper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_11_LightCasters.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

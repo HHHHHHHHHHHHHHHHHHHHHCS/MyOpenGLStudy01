@@ -164,6 +164,7 @@
     <ClCompile Include="_08_Lighting.cpp" />
     <ClCompile Include="_09_BasicLighting.cpp" />
     <ClCompile Include="_10_LightingMaps.cpp" />
+    <ClCompile Include="_11_LightCasters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="_08_Lighting.h" />
     <ClInclude Include="_09_BasicLighting.h" />
     <ClInclude Include="_10_LightingMaps.h" />
+    <ClInclude Include="_11_LightCasters.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
