@@ -166,6 +166,11 @@ int _11_LightCasters::DoMain()
 		cubeShader.SetVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
 		cubeShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
+		//http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
+		cubeShader.SetFloat("light.constant", 1.0f);
+		cubeShader.SetFloat("light.linear", 0.09f);
+		cubeShader.SetFloat("light.quadratic", 0.032f);
+
 		cubeShader.SetFloat("material.shininess", 32.0f);
 		glBindVertexArray(cubeVAO);
 		for (unsigned int i = 0; i < 10; i++)
