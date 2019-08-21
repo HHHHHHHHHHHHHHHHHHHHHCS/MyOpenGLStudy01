@@ -117,27 +117,41 @@ int _11_LightCasters::DoMain()
 	glBindTexture(GL_TEXTURE_2D, specularMap);
 
 	Shader lampShader{"09_Lighting_Lamp"};
-	Shader cubeShader{"10_LightingMap_Cube"};
+	Shader cubeShader{"11_LightCasters_Cube"};
 
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
 
-	glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
+	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 	lampShader.Use();
-	lampShader.SetMat4("model", lightModel);
+	//lampShader.SetMat4("model", lightModel);//点光球光的时候用
 
 	glm::vec3 cubePos(0.0f, 0.0f, 0.0f);
 	glm::mat4 cubeModel(1.0f);
 	cubeModel = glm::translate(cubeModel, glm::vec3(0, 0, 0));
 	cubeShader.Use();
-	cubeShader.SetMat4("model", cubeModel);
-	cubeShader.SetVec4("light.direction", -0.2f, -1.0f, -0.3f,0.0f);
+	//dir.w   0 定向光  1 点光  2 聚光灯
+	//cubeShader.SetVec4("light.direction", -0.2f, -1.0f, -0.3f,0.0f);//定向光的时候用 
+	//cubeShader.SetVec3("light.position", lightPos); //点光源用
+	//cubeShader.SetVec4("light.direction", 0, 0, 0, 1.0f); //点光源用
+
+	cubeShader.SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+
+
 	cubeShader.SetInt("material.diffuse", 0);
 	cubeShader.SetInt("material.specular", 1);
 
+	cubeShader.SetVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+	cubeShader.SetVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+	cubeShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+	//http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
+	cubeShader.SetFloat("light.constant", 1.0f);
+	cubeShader.SetFloat("light.linear", 0.09f);
+	cubeShader.SetFloat("light.quadratic", 0.032f);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -147,35 +161,35 @@ int _11_LightCasters::DoMain()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//定向光的时候 没有必要绘制灯光
-		//lampShader.Use();
-		//lampShader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		//lampShader.SetMat4("view", camera.GetViewMat4());
-		//lampShader.SetMat4("projection", camera.GetProjectionMat4());
-		//glBindVertexArray(lightVAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		//定向光 聚光灯的时候 没有必要绘制灯光
+		lampShader.Use();
+
+		lampShader.SetVec3("model", camera.position+camera.front);
+		lampShader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		lampShader.SetMat4("view", camera.GetViewMat4());
+		lampShader.SetMat4("projection", camera.GetProjectionMat4());
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
 		cubeShader.Use();
+
+		//聚光灯用
+		cubeShader.SetVec3("light.position", camera.position);
+		//聚光灯用
+		cubeShader.SetVec4("light.direction", camera.front.x, camera.front.y, camera.front.z, 2.0f);
+
 
 		cubeShader.SetMat4("view", camera.GetViewMat4());
 		cubeShader.SetMat4("projection", camera.GetProjectionMat4());
 		cubeShader.SetVec3("viewPos", camera.position);
 
 
-		cubeShader.SetVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-		cubeShader.SetVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
-		cubeShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
-
-		//http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
-		cubeShader.SetFloat("light.constant", 1.0f);
-		cubeShader.SetFloat("light.linear", 0.09f);
-		cubeShader.SetFloat("light.quadratic", 0.032f);
-
 		cubeShader.SetFloat("material.shininess", 32.0f);
 		glBindVertexArray(cubeVAO);
 		for (unsigned int i = 0; i < 10; i++)
 		{
-			glm::mat4 model = glm::mat4{ 1 };
+			glm::mat4 model = glm::mat4{1};
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
