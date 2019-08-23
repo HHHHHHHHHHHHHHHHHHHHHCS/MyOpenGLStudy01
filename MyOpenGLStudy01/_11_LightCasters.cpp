@@ -139,6 +139,8 @@ int _11_LightCasters::DoMain()
 	//cubeShader.SetVec4("light.direction", 0, 0, 0, 1.0f); //点光源用
 
 	cubeShader.SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+	cubeShader.SetFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+
 
 
 	cubeShader.SetInt("material.diffuse", 0);

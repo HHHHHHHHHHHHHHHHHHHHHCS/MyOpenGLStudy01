@@ -11,7 +11,8 @@ struct Light
 {
 	vec3 position;//使用定向光就不需要了
 	vec4 direction;//xyz表示方向 正常w表示是否是定向光
-	float cutOff;//聚光灯的范围
+	float cutOff;//聚光灯内圈范围
+	float outerCutOff;//聚光灯外圈衰减范围
 	
 	vec3 ambient;
 	vec3 diffuse;
@@ -63,14 +64,10 @@ void main()
 	lightDir=normalize(lightDir);
 	
 	if(light.direction.w==2)
-	{//使用环境光 不至于全部黑暗
+	{
 		float theta=dot(lightDir,normalize(-light.direction.xyz));
-		if(theta<=light.cutOff)
-		{
-			result=vec3(light.ambient*vec3(texture(material.diffuse,TexCoords)));
-			fragColor=vec4(result,1.);
-			return;
-		}
+		float epsilon=light.cutOff-light.outerCutOff;
+		attenuation=clamp((theta-light.outerCutOff)/epsilon,0.,1.);
 	}
 	
 	lightDir=normalize(lightDir);
@@ -83,6 +80,7 @@ void main()
 	float spec=pow(max(dot(viewDir,reflectDir),0.),material.shininess);
 	vec3 specular=light.diffuse*spec*texture(material.specular,TexCoords).r;
 	
+	//使用环境光 不至于全部黑暗
 	ambient*=attenuation;
 	diffuse*=attenuation;
 	specular*=attenuation;
