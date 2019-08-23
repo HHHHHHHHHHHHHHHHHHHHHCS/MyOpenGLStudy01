@@ -1,15 +1,10 @@
-﻿#include "_11_LightCasters.h"
-
+﻿#include "_11_LightCasters_Practice.h"
 #include "CommonBaseScript.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "ImageHelper.h"
 
-#define directionLight
-//#define pointLight
-//#define spotlight
-
-int _11_LightCasters::DoMain()
+int _11_LightCasters_Practice::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
 	GLFWwindow* window = CommonBaseScript::InitWindow();
@@ -120,8 +115,8 @@ int _11_LightCasters::DoMain()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, specularMap);
 
-	Shader lampShader{"09_Lighting_Lamp"};
-	Shader cubeShader{"11_LightCasters_Cube"};
+	Shader lampShader{ "09_Lighting_Lamp" };
+	Shader cubeShader{ "11_LightCasters_Practice" };
 
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
@@ -131,6 +126,10 @@ int _11_LightCasters::DoMain()
 	lightModel = glm::translate(lightModel, lightPos);
 	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 	lampShader.Use();
+
+#define directionLight
+	//#define pointLight
+	//#define spotlight
 
 
 #ifdef pointLight
@@ -204,7 +203,7 @@ int _11_LightCasters::DoMain()
 		glBindVertexArray(cubeVAO);
 		for (unsigned int i = 0; i < 10; i++)
 		{
-			glm::mat4 model = glm::mat4{1};
+			glm::mat4 model = glm::mat4{ 1 };
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));

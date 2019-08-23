@@ -1,15 +1,15 @@
-﻿#include "_11_LightCasters.h"
-
+﻿#include "_11_LightCasters_Practice.h"
 #include "CommonBaseScript.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "ImageHelper.h"
 
+
 #define directionLight
 //#define pointLight
 //#define spotlight
 
-int _11_LightCasters::DoMain()
+int _11_LightCasters_Practice::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
 	GLFWwindow* window = CommonBaseScript::InitWindow();
@@ -121,7 +121,7 @@ int _11_LightCasters::DoMain()
 	glBindTexture(GL_TEXTURE_2D, specularMap);
 
 	Shader lampShader{"09_Lighting_Lamp"};
-	Shader cubeShader{"11_LightCasters_Cube"};
+	Shader cubeShader{"11_LightCasters_Practice_Cube"};
 
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
@@ -131,6 +131,8 @@ int _11_LightCasters::DoMain()
 	lightModel = glm::translate(lightModel, lightPos);
 	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 	lampShader.Use();
+
+
 
 
 #ifdef pointLight
