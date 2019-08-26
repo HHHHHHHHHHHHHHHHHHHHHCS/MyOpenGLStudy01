@@ -166,6 +166,7 @@
     <ClCompile Include="_10_LightingMaps.cpp" />
     <ClCompile Include="_11_LightCasters.cpp" />
     <ClCompile Include="_11_LightCasters_Practice.cpp" />
+    <ClCompile Include="_12_MultipleLights.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -191,6 +192,7 @@
     <ClInclude Include="_10_LightingMaps.h" />
     <ClInclude Include="_11_LightCasters.h" />
     <ClInclude Include="_11_LightCasters_Practice.h" />
+    <ClInclude Include="_12_MultipleLights.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
