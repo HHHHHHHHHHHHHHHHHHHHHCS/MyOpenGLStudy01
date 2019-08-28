@@ -176,16 +176,17 @@ int _11_LightCasters::DoMain()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+#ifdef pointLight
 		//定向光 聚光灯的时候 没有必要绘制灯光
 		lampShader.Use();
 
-		lampShader.SetVec3("model", camera.position + camera.front);
+		lampShader.SetVec3("model", lightPos);
 		lampShader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		lampShader.SetMat4("view", camera.GetViewMat4());
 		lampShader.SetMat4("projection", camera.GetProjectionMat4());
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-
+#endif
 
 		cubeShader.Use();
 

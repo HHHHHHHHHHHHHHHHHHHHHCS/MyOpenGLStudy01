@@ -22,5 +22,5 @@
 
 int main(int argc, char* argv[])
 {
-	return _11_LightCasters_Practice::DoMain();
+	return _11_LightCasters::DoMain();
 }

@@ -5,10 +5,6 @@
 #include "Camera.h"
 #include "ImageHelper.h"
 
-#define directionLight
-//#define pointLight
-//#define spotlight
-
 
 int _12_MultipleLights::DoMain()
 {
@@ -20,18 +16,6 @@ int _12_MultipleLights::DoMain()
 		return -1;
 	}
 
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(2.0f, 5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f, 3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f, 2.0f, -2.5f),
-		glm::vec3(1.5f, 0.2f, -1.5f),
-		glm::vec3(-1.3f, 1.0f, -1.5f)
-	};
 
 	float vertices[] = {
 		// positions          // normals           // texture coords
@@ -78,6 +62,25 @@ int _12_MultipleLights::DoMain()
 		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
 	};
 
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(2.0f, 5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f, 3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f, 2.0f, -2.5f),
+		glm::vec3(1.5f, 0.2f, -1.5f),
+		glm::vec3(-1.3f, 1.0f, -1.5f)
+	};
+
+	glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.7f, 0.2f, 2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f, 2.0f, -12.0f),
+		glm::vec3(0.0f, 0.0f, -3.0f)
+	};
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -121,52 +124,45 @@ int _12_MultipleLights::DoMain()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, specularMap);
 
-	Shader lampShader{ "09_Lighting_Lamp" };
-	Shader cubeShader{ "11_LightCasters_Cube" };
+	Shader lampShader{"09_Lighting_Lamp"};
+	Shader cubeShader{"12_MultipleLights_Cube"};
 
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
 
-	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-	glm::mat4 lightModel = glm::mat4(1.0f);
-	lightModel = glm::translate(lightModel, lightPos);
-	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-	lampShader.Use();
-
-
-#ifdef pointLight
-	lampShader.SetMat4("model", lightModel);
-#endif
-
 
 	cubeShader.Use();
+	cubeShader.SetVec3("viewPos", camera.position);
+	cubeShader.SetFloat("material.shininess", 32.0f);
 
-#ifdef directionLight
-	cubeShader.SetVec4("light.direction", -0.2f, -1.0f, -0.3f, 0.0f);
-#endif
+	cubeShader.SetVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	cubeShader.SetVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	cubeShader.SetVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	cubeShader.SetVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-#ifdef pointLight
-	cubeShader.SetVec3("light.position", lightPos);
-	cubeShader.SetVec4("light.direction", 0, 0, 0, 1.0f);
+	std::cout << std::size(pointLightPositions) << std::endl;
 
-	//http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
-	cubeShader.SetFloat("light.constant", 1.0f);
-	cubeShader.SetFloat("light.linear", 0.09f);
-	cubeShader.SetFloat("light.quadratic", 0.032f);
-#endif
+	for (int i = 0; i < std::size(pointLightPositions); i++)
+	{
+		std::string lightPath = "pointLights[" + std::to_string(i) + "]";
+		cubeShader.SetVec3(lightPath + ".position", pointLightPositions[i]);
+		cubeShader.SetVec3(lightPath + ".ambient", 0.05f, 0.05f, 0.05f);
+		cubeShader.SetVec3(lightPath + ".diffuse", 0.8f, 0.8f, 0.8f);
+		cubeShader.SetVec3(lightPath + ".specular", 1.0f, 1.0f, 1.0f);
+		cubeShader.SetFloat(lightPath + ".constant", 1.0f);
+		cubeShader.SetFloat(lightPath + ".linear", 0.09);
+		cubeShader.SetFloat(lightPath + ".quadratic", 0.032);
+	}
 
 
-#ifdef spotlight
-	cubeShader.SetFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-	cubeShader.SetFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
-#endif
-
-	cubeShader.SetInt("material.diffuse", 0);
-	cubeShader.SetInt("material.specular", 1);
-
-	cubeShader.SetVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-	cubeShader.SetVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
-	cubeShader.SetVec3("light.specular", 1.0f, 1.0f, 1.0f);
+	cubeShader.SetVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	cubeShader.SetVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	cubeShader.SetVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	cubeShader.SetFloat("spotLight.constant", 1.0f);
+	cubeShader.SetFloat("spotLight.linear", 0.09);
+	cubeShader.SetFloat("spotLight.quadratic", 0.032);
+	cubeShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	cubeShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
 
 	while (!glfwWindowShouldClose(window))
@@ -177,6 +173,7 @@ int _12_MultipleLights::DoMain()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		//TODO:
 		//定向光 聚光灯的时候 没有必要绘制灯光
 		lampShader.Use();
 
@@ -190,22 +187,18 @@ int _12_MultipleLights::DoMain()
 
 		cubeShader.Use();
 
-#ifdef spotlight
-		cubeShader.SetVec3("light.position", camera.position);
-		cubeShader.SetVec4("light.direction", camera.front.x, camera.front.y, camera.front.z, 2.0f);
-#endif
-
+		cubeShader.SetVec3("spotLight.position", camera.position);
+		cubeShader.SetVec3("spotLight.direction", camera.front);
 
 		cubeShader.SetMat4("view", camera.GetViewMat4());
 		cubeShader.SetMat4("projection", camera.GetProjectionMat4());
 		cubeShader.SetVec3("viewPos", camera.position);
 
 
-		cubeShader.SetFloat("material.shininess", 32.0f);
 		glBindVertexArray(cubeVAO);
 		for (unsigned int i = 0; i < 10; i++)
 		{
-			glm::mat4 model = glm::mat4{ 1 };
+			glm::mat4 model = glm::mat4{1};
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
