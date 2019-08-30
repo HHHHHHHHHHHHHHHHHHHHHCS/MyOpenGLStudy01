@@ -142,6 +142,7 @@ int _07_Camera::DoMain()
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
 	glm::mat4 projection;
+	//glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f); //这个是正交投影
 	projection = glm::perspective(glm::radians(45.0f), static_cast<float>(SCR_WIDTH) / SCR_HEIGHT, 0.1f, 100.0f);
 
 	unsigned int modelLoc = glGetUniformLocation(shader.ID, "model");
