@@ -5,8 +5,8 @@
 #include "Camera.h"
 #include "ImageHelper.h"
 
-#define directionLight
-//#define pointLight
+//#define directionLight
+#define pointLight
 //#define spotlight
 
 int _11_LightCasters::DoMain()

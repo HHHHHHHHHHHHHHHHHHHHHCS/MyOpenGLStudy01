@@ -140,8 +140,6 @@ int _12_MultipleLights::DoMain()
 	cubeShader.SetVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 	cubeShader.SetVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-	std::cout << std::size(pointLightPositions) << std::endl;
-
 	for (int i = 0; i < std::size(pointLightPositions); i++)
 	{
 		std::string lightPath = "pointLights[" + std::to_string(i) + "]";
@@ -173,16 +171,19 @@ int _12_MultipleLights::DoMain()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//TODO:
-		//定向光 聚光灯的时候 没有必要绘制灯光
 		lampShader.Use();
 
-		lampShader.SetVec3("model", camera.position + camera.front);
 		lampShader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		lampShader.SetMat4("view", camera.GetViewMat4());
 		lampShader.SetMat4("projection", camera.GetProjectionMat4());
+
 		glBindVertexArray(lightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (int i = 0; i < std::size(pointLightPositions); i++)
+		{
+			lampShader.SetMat4("model", glm::translate(glm::mat4{1}, pointLightPositions[i]));
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 
 		cubeShader.Use();

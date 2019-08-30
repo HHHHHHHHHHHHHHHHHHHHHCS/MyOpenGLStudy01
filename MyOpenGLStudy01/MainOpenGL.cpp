@@ -19,8 +19,9 @@
 #include "_10_LightingMaps.h"
 #include "_11_LightCasters.h"
 #include "_11_LightCasters_Practice.h"
+#include "_12_MultipleLights.h"
 
 int main(int argc, char* argv[])
 {
-	return _11_LightCasters::DoMain();
+	return _12_MultipleLights::DoMain();
 }

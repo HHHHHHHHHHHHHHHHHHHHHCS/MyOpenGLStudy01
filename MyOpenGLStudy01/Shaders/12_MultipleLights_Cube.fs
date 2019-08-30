@@ -53,8 +53,8 @@ uniform Material material;
 
 uniform DirLight dirLight;
 #define NR_POINT_LIGHTS 4
-uniform PointLight pointLights[NR_POINT_LIGHTS]
-uniform PointLight spotLight
+uniform PointLight pointLights[NR_POINT_LIGHTS];
+uniform SpotLight spotLight;
 
 vec3 CalcBaseLight(vec3 atten,vec3 ambient,vec3 diffuse,vec3 specular);
 vec3 CalcDirLight(DirLight light,vec3 normal,vec3 viewDir);
@@ -64,12 +64,12 @@ vec3 CalcSpotLight(SpotLight light,vec3 normal,vec3 fragPos,vec3 viewDir);
 //useData.x attenuation    useData.y diff    useData.z spec
 vec3 CalcBaseLight(vec3 userData,vec3 ambientColor,vec3 diffuseColor,vec3 specularColor)
 {
-	float atten=useData.x;
+	float atten=userData.x;
 	float diff=userData.y;
 	float spec=userData.z;
-	vec3 diffuseColor=texture(material.diffuse,TexCoords).rgb;
-	vec3 ambient=ambientColor*diffuseColor;
-	vec3 diffuse=diffuseColor*diff*diffuseColor;
+	vec3 diffCol=texture(material.diffuse,TexCoords).rgb;
+	vec3 ambient=ambientColor*diffCol;
+	vec3 diffuse=diffuseColor*diff*diffCol;
 	vec3 specular=specularColor*spec*texture(material.specular,TexCoords).rgb;
 	return(ambient+diffuse+specular)*atten;
 }
@@ -132,7 +132,7 @@ void main()
 		result+=CalcPointLight(pointLights[i],norm,FragPos,viewDir);
 	}
 	//计算聚光灯
-	result+=CalcSpotLight(SpotLight,norm,FragPos,viewDir);
+	result+=CalcSpotLight(spotLight,norm,FragPos,viewDir);
 	
 	fragColor=vec4(result,1.);
 }
