@@ -5,7 +5,6 @@
 #include "Camera.h"
 #include "ImageHelper.h"
 
-
 int _12_MultipleLights::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
@@ -15,7 +14,6 @@ int _12_MultipleLights::DoMain()
 	{
 		return -1;
 	}
-
 
 	float vertices[] = {
 		// positions          // normals           // texture coords

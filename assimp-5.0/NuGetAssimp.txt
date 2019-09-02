@@ -1,0 +1,1 @@
+Install-Package Assimp -Version 3.0.0
