@@ -90,6 +90,12 @@
     <ClCompile Include="_12_MultipleLights.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_13_Mesh.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -162,6 +168,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_12_MultipleLights.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_13_Mesh.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
