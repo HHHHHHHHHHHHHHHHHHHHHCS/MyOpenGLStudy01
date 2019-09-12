@@ -42,11 +42,11 @@ void Mesh::SetupMesh()
 
 	//顶点切线
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, vertSize, reinterpret_cast<void*>offsetof(Vertex, Tangent));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, vertSize, reinterpret_cast<void*>(offsetof(Vertex, Tangent)));
 	
 	//顶点辅助切线
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, vertSize, reinterpret_cast<void*>offsetof(Vertex, Bitangent));
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, vertSize, reinterpret_cast<void*>(offsetof(Vertex, Bitangent)));
 
 	glBindVertexArray(0);
 }
@@ -79,7 +79,7 @@ void Mesh::Draw(Shader shader)
 			number = std::to_string(specularNr++);
 		}
 
-		shader.SetFloat(("material." + name + number).c_str(), i);
+		shader.SetInt(("material." + name + number).c_str(), i);
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
 	//一经配置就将所有内容设置回默认值的良好实践。

@@ -20,8 +20,9 @@
 #include "_11_LightCasters.h"
 #include "_11_LightCasters_Practice.h"
 #include "_12_MultipleLights.h"
+#include "_13_Mesh.h"
 
 int main(int argc, char* argv[])
 {
-	return _12_MultipleLights::DoMain();
+	return _13_Mesh::DoMain();
 }

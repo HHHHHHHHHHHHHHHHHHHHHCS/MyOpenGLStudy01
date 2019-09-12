@@ -1,4 +1,5 @@
 ﻿#include "Model.h"
+#include "ImageHelper.h"
 
 Model::Model(char* path)
 {
@@ -134,9 +135,8 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 		}
 		if(!skip)
 		{
-			//TODO:
 			Texture texture;
-			texture.id = TextureFromFile(str.C_Str(), directory);
+			texture.id = ImageHelper::LoadTexture(directory+"/"+str.C_Str() );
 			texture.type = typeName;
 			texture.path = str;
 			textures.push_back(texture);
