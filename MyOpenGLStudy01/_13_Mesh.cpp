@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "ImageHelper.h"
+#include "Model.h"
 
 int _13_Mesh::DoMain()
 {
@@ -88,12 +89,44 @@ int _13_Mesh::DoMain()
 	//开启深度测试 进行遮挡计算
 	glEnable(GL_DEPTH_TEST);
 
-	Shader lampShader{ "09_Lighting_Lamp" };
+	Model model{"Models/nanosuit/nanosuit.obj"};
+	Shader lampShader{"09_Lighting_Lamp"};
+	Shader nanosuitShader{"13_Mesh_Nanosuit"};
+
 
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
 
+	nanosuitShader.Use();
+	nanosuitShader.SetMat4("model", glm::translate(glm::mat4{1}, glm::vec3{0, 0, 0}));
+	nanosuitShader.SetMat4("projection", camera.GetProjectionMat4());
 
+	nanosuitShader.SetVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	nanosuitShader.SetVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	nanosuitShader.SetVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	nanosuitShader.SetVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+
+	for (int i = 0; i < std::size(pointLightPositions); i++)
+	{
+		std::string lightPath = "pointLights[" + std::to_string(i) + "]";
+		nanosuitShader.SetVec3(lightPath + ".position", pointLightPositions[i]);
+		nanosuitShader.SetVec3(lightPath + ".ambient", 0.05f, 0.05f, 0.05f);
+		nanosuitShader.SetVec3(lightPath + ".diffuse", 0.8f, 0.8f, 0.8f);
+		nanosuitShader.SetVec3(lightPath + ".specular", 1.0f, 1.0f, 1.0f);
+		nanosuitShader.SetFloat(lightPath + ".constant", 1.0f);
+		nanosuitShader.SetFloat(lightPath + ".linear", 0.09);
+		nanosuitShader.SetFloat(lightPath + ".quadratic", 0.032);
+	}
+
+
+	nanosuitShader.SetVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	nanosuitShader.SetVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	nanosuitShader.SetVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	nanosuitShader.SetFloat("spotLight.constant", 1.0f);
+	nanosuitShader.SetFloat("spotLight.linear", 0.09);
+	nanosuitShader.SetFloat("spotLight.quadratic", 0.032);
+	nanosuitShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	nanosuitShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -112,11 +145,14 @@ int _13_Mesh::DoMain()
 		glBindVertexArray(lightVAO);
 		for (int i = 0; i < std::size(pointLightPositions); i++)
 		{
-			lampShader.SetMat4("model", glm::translate(glm::mat4{ 1 }, pointLightPositions[i]));
+			lampShader.SetMat4("model", glm::translate(glm::mat4{1}, pointLightPositions[i]));
 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
+		nanosuitShader.Use();
+		nanosuitShader.SetMat4("view", camera.GetViewMat4());
+		model.Draw(nanosuitShader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -126,7 +162,6 @@ int _13_Mesh::DoMain()
 
 	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteBuffers(1, &VBO);
-
 
 
 	return 0;

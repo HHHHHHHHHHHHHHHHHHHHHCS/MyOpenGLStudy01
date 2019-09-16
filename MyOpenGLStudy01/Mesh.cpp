@@ -68,8 +68,8 @@ void Mesh::Draw(Shader shader)
 	{
 		glActiveTexture(GL_TEXTURE0 + i); //在绑定之前激活相应的纹理
 		//获取纹理的序号(Diffuse_TextureN 的 N )
-		std::string name;
-		std::string number = textures[i].type;
+		std::string name = textures[i].type;
+		std::string number;
 		if (name == "texture_diffuse")
 		{
 			number = std::to_string(diffuseNr++);
@@ -78,15 +78,15 @@ void Mesh::Draw(Shader shader)
 		{
 			number = std::to_string(specularNr++);
 		}
-
 		shader.SetInt(("material." + name + number).c_str(), i);
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
-	//一经配置就将所有内容设置回默认值的良好实践。
-	glActiveTexture(GL_TEXTURE0);
 
 	//绘制网格
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, reinterpret_cast<void*>(0));
+
+	//一经配置就将所有内容设置回默认值的良好实践。
 	glBindVertexArray(0);
+	glActiveTexture(GL_TEXTURE0);
 }
