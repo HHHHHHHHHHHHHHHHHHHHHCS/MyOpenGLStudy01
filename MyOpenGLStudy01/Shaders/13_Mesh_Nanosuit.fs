@@ -70,8 +70,9 @@ vec3 CalcBaseLight(vec3 userData,vec3 ambientColor,vec3 diffuseColor,vec3 specul
 	vec3 diffCol=texture(material.texture_diffuse1,TexCoords).rgb;
 	vec3 ambient=ambientColor*diffCol;
 	vec3 diffuse=diffuseColor*diff*diffCol;
-	vec3 specular=specularColor*spec*texture(material.texture_specular1,TexCoords).rgb;
-	return(ambient+diffuse+specular)*atten;
+	vec3 specular=specularColor*spec*(texture(material.texture_specular1,TexCoords).rgb);
+	
+	return(ambient+diffuse+diffuse)*atten;
 }
 
 vec3 CalcDirLight(DirLight light,vec3 normal,vec3 viewDir)
@@ -94,6 +95,7 @@ vec3 CalcPointLight(PointLight light,vec3 normal,vec3 fragPos,vec3 viewDir)
 	//镜面光颜色
 	vec3 reflectDir=reflect(-lightDir,normal);
 	float spec=pow(max(dot(viewDir,reflectDir),0.),material.shininess);
+	
 	//衰减
 	float distance=length(light.position-fragPos);
 	float attenuation=1./(light.constant+light.linear*distance+light.quadratic*distance*distance);
@@ -113,9 +115,7 @@ vec3 CalcSpotLight(SpotLight light,vec3 normal,vec3 fragPos,vec3 viewDir)
 	float theta=dot(lightDir,normalize(-light.direction.xyz));
 	float epsilon=light.cutOff-light.outerCutOff;
 	float attenuation=clamp((theta-light.outerCutOff)/epsilon,0.,1.);
-	
 	return CalcBaseLight(vec3(attenuation,diff,spec),light.ambient,light.diffuse,light.specular);
-	
 }
 
 void main()
@@ -125,8 +125,8 @@ void main()
 	vec3 viewDir=normalize(viewPos-FragPos);
 	
 	//先计算定向光
-	vec3 result=CalcDirLight(dirLight,norm,viewDir);
-	//TODO:
+	vec3 result=vec3(0,0,0);
+	result+=CalcDirLight(dirLight,norm,viewDir);
 	//计算点光
 	for(int i=0;i<NR_POINT_LIGHTS;i++)
 	{

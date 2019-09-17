@@ -99,7 +99,6 @@ int _13_Mesh::DoMain()
 
 	nanosuitShader.Use();
 	nanosuitShader.SetMat4("model", glm::translate(glm::mat4{1}, glm::vec3{0, 0, 0}));
-	nanosuitShader.SetMat4("projection", camera.GetProjectionMat4());
 
 	nanosuitShader.SetVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
 	nanosuitShader.SetVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
@@ -152,6 +151,12 @@ int _13_Mesh::DoMain()
 
 		nanosuitShader.Use();
 		nanosuitShader.SetMat4("view", camera.GetViewMat4());
+		nanosuitShader.SetMat4("projection", camera.GetProjectionMat4());
+		nanosuitShader.SetVec3("viewPos", camera.position);
+
+		nanosuitShader.SetVec3("spotLight.position", camera.position);
+		nanosuitShader.SetVec3("spotLight.direction", camera.front);
+
 		model.Draw(nanosuitShader);
 
 		glfwSwapBuffers(window);
