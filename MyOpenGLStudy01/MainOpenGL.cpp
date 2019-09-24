@@ -21,8 +21,9 @@
 #include "_11_LightCasters_Practice.h"
 #include "_12_MultipleLights.h"
 #include "_13_Mesh.h"
+#include "_14_DepthTesting.h"
 
 int main(int argc, char* argv[])
 {
-	return _13_Mesh::DoMain();
+	return _14_DepthTesting::DoMain();
 }
