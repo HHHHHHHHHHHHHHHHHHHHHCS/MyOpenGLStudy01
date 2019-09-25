@@ -72,49 +72,50 @@ int _14_DepthTesting::DoMain()
 		 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
 	};
 
+	//Cube
 	unsigned int cubeVAO, cubeVBO;
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &cubeVBO);
 	glBindVertexArray(cubeVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-
-
-	//TODO:
-
-	unsigned int lightVAO;
-	glGenVertexArrays(1, &lightVAO);
-	glBindVertexArray(lightVAO);
-
-	//因为用的还是 一样的顶点数据 所以只用绑定,不用重新填充数据
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(0));
 	glEnableVertexAttribArray(0);
-
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(0));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
 	glBindVertexArray(0);
+	//Plane
+	unsigned int planeVAO,planeVBO;
+	glGenVertexArrays(1, &planeVAO);
+	glGenBuffers(1,&planeVBO);
+	glBindVertexArray(planeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(0));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	glBindVertexArray(0);
+
+	//Load Textures
+	unsigned int cubeTexture = ImageHelper::LoadTexture("marble.jpg");
+	unsigned int floorTexture = ImageHelper::LoadTexture("metal.png");
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, cubeTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, floorTexture);
 
 	//开启深度测试 进行遮挡计算
 	glEnable(GL_DEPTH_TEST);
-
-
-	unsigned int diffuseMap = ImageHelper::LoadTexture("Box_Diffuse.png");
-	unsigned int specularMap = ImageHelper::LoadTexture("Box_Specular.png");
-
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, diffuseMap);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, specularMap);
-
-	Shader cubeShader{ "09_Lighting_Lamp" };
+	//修改深度运算规则 GL_ALWAYS 什么的
+	glDepthFunc(GL_LESS);
 
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
 
-
+	Shader objShader{ "14_DepthTesting_Object" };
+	objShader.Use();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -124,24 +125,31 @@ int _14_DepthTesting::DoMain()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		cubeShader.Use();
+		objShader.Use();
 
-		cubeShader.SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		cubeShader.SetMat4("view", camera.GetViewMat4());
-		cubeShader.SetMat4("projection", camera.GetProjectionMat4());
+		objShader.SetMat4("view", camera.GetViewMat4());
+		objShader.SetMat4("projection", camera.GetProjectionMat4());
 
-
+		objShader.SetInt("texture1", 0);
 		glBindVertexArray(cubeVAO);
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			glm::mat4 model = glm::mat4{ 1 };
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			cubeShader.SetMat4("model", model);
+		glm::mat4 model{ 1 };
+		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		objShader.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		model = glm::mat4{ 1.0f };
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, -1.0f));
+		objShader.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//floor
+		glBindVertexArray(planeVAO);
+		objShader.SetInt("texture1", 1);
+		model = glm::mat4{ 1.0f };
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		glBindVertexArray(0);
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -149,9 +157,11 @@ int _14_DepthTesting::DoMain()
 
 	glfwTerminate();
 
-	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteBuffers(1, &VBO);
+	glDeleteVertexArrays(1, &planeVAO);
+	glDeleteBuffers(1, &cubeVBO);
+	glDeleteBuffers(1, &planeVAO);
+
 
 	return 0;
 }
