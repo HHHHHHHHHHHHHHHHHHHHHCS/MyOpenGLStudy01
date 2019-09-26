@@ -114,7 +114,8 @@ int _14_DepthTesting::DoMain()
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
 
-	Shader objShader{ "14_DepthTesting_Object" };
+	//Shader objShader{ "14_DepthTesting_Object" };
+	Shader objShader{ "14_DepthTesting_Depth" };
 	objShader.Use();
 
 	while (!glfwWindowShouldClose(window))
