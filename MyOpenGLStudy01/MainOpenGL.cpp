@@ -22,8 +22,9 @@
 #include "_12_MultipleLights.h"
 #include "_13_Mesh.h"
 #include "_14_DepthTesting.h"
+#include "_15_StencilTesting.h"
 
 int main(int argc, char* argv[])
 {
-	return _14_DepthTesting::DoMain();
+	return _15_StencilTesting::DoMain();
 }

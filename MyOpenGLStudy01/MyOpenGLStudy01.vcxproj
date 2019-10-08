@@ -171,6 +171,7 @@
     <ClCompile Include="_12_MultipleLights.cpp" />
     <ClCompile Include="_13_Mesh.cpp" />
     <ClCompile Include="_14_DepthTesting.cpp" />
+    <ClCompile Include="_15_StencilTesting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -201,6 +202,7 @@
     <ClInclude Include="_12_MultipleLights.h" />
     <ClInclude Include="_13_Mesh.h" />
     <ClInclude Include="_14_DepthTesting.h" />
+    <ClInclude Include="_15_StencilTesting.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

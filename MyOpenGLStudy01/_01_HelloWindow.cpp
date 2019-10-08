@@ -16,11 +16,11 @@ int _01_HelloWindow::DoMain()
 void _01_HelloWindow::InitOpenGL()
 {
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //OpenGLÖ÷°æ±¾ºÅ
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6); //OpenGL´Î°æ±¾ºÅ
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //Ê¹ÓÃOpenGLºËĞÄÄ£Ê½
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //OpenGLä¸»ç‰ˆæœ¬å·
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6); //OpenGLæ¬¡ç‰ˆæœ¬å·
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //ä½¿ç”¨OpenGLæ ¸å¿ƒæ¨¡å¼
 #ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //Æ»¹ûĞèÒª
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //è‹¹æœæ˜¾ç¤ºéœ€è¦
 #endif
 }
 
@@ -35,7 +35,7 @@ GLFWwindow* _01_HelloWindow::InitWindow()
 	}
 	glfwMakeContextCurrent(window);
 
-	//³õÊ¼»¯glad ,µ«ÊÇÒªÔÚ´°¿Ú³õÊ¼»¯Ö®ºóÖ´ĞĞ
+	//åˆå§‹åŒ–glad ,ä½†æ˜¯è¦åœ¨çª—å£åˆå§‹åŒ–ä¹‹åæ‰§è¡Œ
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -47,28 +47,28 @@ GLFWwindow* _01_HelloWindow::InitWindow()
 
 void _01_HelloWindow::UpdateDraw(GLFWwindow* window)
 {
-	//glfwWindowShouldCloseº¯ÊıÔÚÎÒÃÇÃ¿´ÎÑ­»·µÄ¿ªÊ¼Ç°¼ì²éÒ»´ÎGLFWÊÇ·ñ±»ÒªÇóÍË³ö
+	//glfwWindowShouldCloseå‡½æ•°åœ¨æˆ‘ä»¬æ¯æ¬¡å¾ªç¯çš„å¼€å§‹å‰æ£€æŸ¥ä¸€æ¬¡GLFWæ˜¯å¦è¢«è¦æ±‚é€€å‡º
 	while (!glfwWindowShouldClose(window))
 	{
-		ProcessInput(window); //°´¼ü¹Ø±Õ¼ì²â
+		ProcessInput(window); //æŒ‰é”®å…³é—­æ£€æµ‹
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //µ÷ÓÃglClearÖ®ºó,Õû¸öÑÕÉ«»º³å¶¼»á±»Ìî³äÎªglClearColorÀïËùÉèÖÃµÄÑÕÉ«
-		glClear(GL_COLOR_BUFFER_BIT); //Çå¿Õ»º³åÑÕÉ«
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //è°ƒç”¨glClearä¹‹å,æ•´ä¸ªé¢œè‰²ç¼“å†²éƒ½ä¼šè¢«å¡«å……ä¸ºglClearColoré‡Œæ‰€è®¾ç½®çš„é¢œè‰²
+		glClear(GL_COLOR_BUFFER_BIT); //æ¸…ç©ºç¼“å†²é¢œè‰²
 
-		glfwSwapBuffers(window); //º¯Êı»á½»»»ÑÕÉ«»º³å£¨ËüÊÇÒ»¸ö´¢´æ×ÅGLFW´°¿ÚÃ¿Ò»¸öÏñËØÑÕÉ«ÖµµÄ´ó»º³å£©£¬ËüÔÚÕâÒ»µü´úÖĞ±»ÓÃÀ´»æÖÆ£¬²¢ÇÒ½«»á×÷ÎªÊä³öÏÔÊ¾ÔÚÆÁÄ»ÉÏ¡£
-		glfwPollEvents(); //¼ì²éÓĞÃ»ÓĞ´¥·¢Ê²Ã´ÊÂ¼ş£¨±ÈÈç¼üÅÌÊäÈë¡¢Êó±êÒÆ¶¯µÈ£©¡¢¸üĞÂ´°¿Ú×´Ì¬£¬²¢µ÷ÓÃ¶ÔÓ¦µÄ»Øµ÷º¯Êı£¨¿ÉÒÔÍ¨¹ı»Øµ÷·½·¨ÊÖ¶¯ÉèÖÃ£©
+		glfwSwapBuffers(window); //å‡½æ•°ä¼šäº¤æ¢é¢œè‰²ç¼“å†²ï¼ˆå®ƒæ˜¯ä¸€ä¸ªå‚¨å­˜ç€GLFWçª—å£æ¯ä¸€ä¸ªåƒç´ é¢œè‰²å€¼çš„å¤§ç¼“å†²ï¼‰ï¼Œå®ƒåœ¨è¿™ä¸€è¿­ä»£ä¸­è¢«ç”¨æ¥ç»˜åˆ¶ï¼Œå¹¶ä¸”å°†ä¼šä½œä¸ºè¾“å‡ºæ˜¾ç¤ºåœ¨å±å¹•ä¸Šã€‚
+		glfwPollEvents(); //æ£€æŸ¥æœ‰æ²¡æœ‰è§¦å‘ä»€ä¹ˆäº‹ä»¶ï¼ˆæ¯”å¦‚é”®ç›˜è¾“å…¥ã€é¼ æ ‡ç§»åŠ¨ç­‰ï¼‰ã€æ›´æ–°çª—å£çŠ¶æ€ï¼Œå¹¶è°ƒç”¨å¯¹åº”çš„å›è°ƒå‡½æ•°ï¼ˆå¯ä»¥é€šè¿‡å›è°ƒæ–¹æ³•æ‰‹åŠ¨è®¾ç½®ï¼‰
 	}
 
-	glfwTerminate(); //ÕıÈ·ÊÍ·Å/É¾³ıÖ®Ç°µÄ·ÖÅäµÄËùÓĞ×ÊÔ´
+	glfwTerminate(); //æ­£ç¡®é‡Šæ”¾/åˆ é™¤ä¹‹å‰çš„åˆ†é…çš„æ‰€æœ‰èµ„æº
 }
 
-//µ±ÓÃ»§¸Ä±ä´°¿ÚµÄ´óĞ¡µÄÊ±ºò£¬ÊÓ¿ÚÒ²Ó¦¸Ã±»µ÷ÕûµÄ»Øµ÷
+//å½“ç”¨æˆ·æ”¹å˜çª—å£çš„å¤§å°çš„æ—¶å€™ï¼Œè§†å£ä¹Ÿåº”è¯¥è¢«è°ƒæ•´çš„å›è°ƒ
 void _01_HelloWindow::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-	glViewport(0, 0, width, height); //ÉèÖÃ´°¿ÚµÄÎ¬¶È
+	glViewport(0, 0, width, height); //è®¾ç½®çª—å£çš„ç»´åº¦
 }
 
-//°´ÏÂESC ¹Ø±Õ
+//æŒ‰ä¸‹ESC å…³é—­
 void _01_HelloWindow::ProcessInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
