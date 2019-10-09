@@ -120,9 +120,8 @@ int _15_StencilTesting::DoMain()
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
 
-	Shader objShader{ "14_DepthTesting_Object" };
-	//Shader objShader{"14_DepthTesting_Depth"};
-	objShader.Use();
+	Shader objShader{"14_DepthTesting_Object"};
+	Shader outlineShader{"15_DepthTesting_Outline"};
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -130,10 +129,10 @@ int _15_StencilTesting::DoMain()
 		camera.DoKeyboardMove(window);
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		objShader.Use();
-		glm::mat4 model{ 1 };
+		glm::mat4 model{1};
 
 		objShader.SetMat4("view", camera.GetViewMat4());
 		objShader.SetMat4("projection", camera.GetProjectionMat4());
@@ -143,7 +142,7 @@ int _15_StencilTesting::DoMain()
 		//floor
 		glBindVertexArray(planeVAO);
 		objShader.SetInt("texture1", 1);
-		model = glm::mat4{ 1.0f };
+		model = glm::mat4{1.0f};
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// 1.渲染过程，正常绘制对象，写入模具缓冲区
@@ -152,19 +151,46 @@ int _15_StencilTesting::DoMain()
 		glStencilMask(0xFF);
 		objShader.SetInt("texture1", 0);
 		glBindVertexArray(cubeVAO);
-		model = glm::mat4{ 1.0f };
-		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		model = glm::mat4{1.0f};
+		model = glm::translate(model, glm::vec3(0.5f, 0.5f, -1.0f));
 		objShader.SetMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		model = glm::mat4{1.0f};
-		model = glm::translate(model, glm::vec3(2.0f, 0.0f, -1.0f));
+		model = glm::translate(model, glm::vec3(-0.5f, 0.0f, -1.0f));
 		objShader.SetMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
+		// 第二。渲染过程：现在绘制稍微缩放的对象版本，这一次禁用模具写入。
+		//因为模具缓冲区现在填充了几个1。缓冲区的1部分不会被绘制，所以只绘制
+		//对象的大小差异，使其看起来像边框。
+		// -----------------------------------------------------------------------------------------------------------------------------
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+		glDisable(GL_DEPTH_TEST);
+		outlineShader.Use();
+
+		glm::vec3 scale = glm::vec3(1.1f, 1.1f, 1.1f);
+		outlineShader.SetMat4("view", camera.GetViewMat4());
+		outlineShader.SetMat4("projection", camera.GetProjectionMat4());
+
+		glBindVertexArray(cubeVAO);
+		model = glm::mat4{1.0f};
+		model = glm::translate(model, glm::vec3(0.5f, 0.5f, -1.0f));
+		model = glm::scale(model, scale);
+		outlineShader.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		model = glm::mat4{1.0f};
+		model = glm::translate(model, glm::vec3(-0.5f, 0.0f, -1.0f));
+		model = glm::scale(model, scale);
+		outlineShader.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glBindVertexArray(0);
+		glStencilMask(0xFF);
+		glEnable(GL_DEPTH_TEST);
 
 
 		glfwSwapBuffers(window);
