@@ -117,6 +117,7 @@ int _02_HelloTriangle::DoMain()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); //安全解除GL_ELEMENT_ARRAY_BUFFER ,防止不小心修改
 	glBindBuffer(GL_ARRAY_BUFFER, 0); //安全解除GL_ARRAY_BUFFER ,防止不小心修改
 	glBindVertexArray(0); //安全解除顶点数据 ,防止不小心修改
 
@@ -132,10 +133,13 @@ int _02_HelloTriangle::DoMain()
 		glClear(GL_COLOR_BUFFER_BIT); //清空缓冲颜色
 
 		glUseProgram(shaderProgram); //使用这个程序对象
-		glBindVertexArray(VAO); //虽然我们只有一个VAO,不用每次都绑定,但是这样看更加直观
 
+		glBindVertexArray(VAO); //虽然我们只有一个VAO,不用每次都绑定,但是这样看更加直观 EBO也要用到
 		//画顶点 ,0起始顶点索引 ,需要画的顶点长度
 		//glDrawArrays(GL_TRIANGLES, 0, 6); 
+
+		//EBO用
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		//EBO画的时候用 绘制的模式  长度  数据类型  偏移量
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 

@@ -105,6 +105,9 @@
     <ClCompile Include="_15_StencilTesting.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_16_Blending_Discard.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -192,7 +195,10 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_15_StencilTesting.h">
-      <Filter>源文件</Filter>
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_16_Blending_Discard.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

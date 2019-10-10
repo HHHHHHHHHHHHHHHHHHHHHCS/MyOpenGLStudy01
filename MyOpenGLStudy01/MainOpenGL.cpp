@@ -23,8 +23,9 @@
 #include "_13_Mesh.h"
 #include "_14_DepthTesting.h"
 #include "_15_StencilTesting.h"
+#include "_16_Blending_Discard.h"
 
 int main(int argc, char* argv[])
 {
-	return _15_StencilTesting::DoMain();
+	return _16_Blending_Discard::DoMain();
 }
