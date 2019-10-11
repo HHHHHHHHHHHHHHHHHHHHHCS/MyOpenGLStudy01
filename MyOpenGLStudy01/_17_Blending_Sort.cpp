@@ -1,11 +1,13 @@
-﻿#include "_16_Blending_Discard.h"
+﻿#include "_17_Blending_Sort.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include "CommonBaseScript.h"
+#include "Shader.h"
 #include "ImageHelper.h"
 #include "Camera.h"
 #include <vector>
 
-
-int _16_Blending_Discard::DoMain()
+int _17_Blending_Sort::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
 	GLFWwindow* window = CommonBaseScript::InitWindow();
@@ -71,26 +73,6 @@ int _16_Blending_Discard::DoMain()
 		5.0f, -0.5f, -5.0f, 2.0f, 2.0f
 	};
 
-	float grassVertices[] = {
-		// 位置        // UV (这里是翻转的)
-		0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
-		0.0f, -0.5f, 0.0f, 0.0f, 1.0f,
-		1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
-
-		0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
-		1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.5f, 0.0f, 1.0f, 0.0f
-	};
-
-	std::vector<glm::vec3> grassPos
-	{
-		glm::vec3(-1.5f, 0.0f, -0.48f),
-		glm::vec3(1.5f, 0.0f, 0.51f),
-		glm::vec3(0.0f, 0.0f, 0.7f),
-		glm::vec3(-0.3f, 0.0f, -2.3f),
-		glm::vec3(0.5f, 0.0f, -0.6f)
-	};
-
 	//Cube
 	unsigned int cubeVAO, cubeVBO;
 	glGenVertexArrays(1, &cubeVAO);
@@ -115,31 +97,18 @@ int _16_Blending_Discard::DoMain()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
 	glBindVertexArray(0);
-	//Grass
-	unsigned int grassVAO, grassVBO;
-	glGenVertexArrays(1, &grassVAO);
-	glGenBuffers(1, &grassVBO);
-	glBindVertexArray(grassVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, grassVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(grassVertices), grassVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(0));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-	glBindVertexArray(0);
+
 
 	//Load Textures
 	unsigned int cubeTexture = ImageHelper::LoadTexture("marble.jpg");
 	unsigned int floorTexture = ImageHelper::LoadTexture("metal.png");
-	unsigned int grassTexture = ImageHelper::LoadTexture("grass.png");
 
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, cubeTexture);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, floorTexture);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, grassTexture);
+
 
 	//开启深度测试 进行遮挡计算
 	glEnable(GL_DEPTH_TEST);
@@ -149,8 +118,7 @@ int _16_Blending_Discard::DoMain()
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
 
-	Shader objShader{"14_DepthTesting_Object"};
-	Shader grassShader{"16_Blending_Discard"};
+	Shader objShader{ "14_DepthTesting_Object" };
 
 	objShader.Use();
 
@@ -169,12 +137,12 @@ int _16_Blending_Discard::DoMain()
 
 		objShader.SetInt("texture1", 0);
 		glBindVertexArray(cubeVAO);
-		glm::mat4 model{1};
+		glm::mat4 model{ 1 };
 		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
 		objShader.SetMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		model = glm::mat4{1.0f};
+		model = glm::mat4{ 1.0f };
 		model = glm::translate(model, glm::vec3(2.0f, 0.0f, -1.0f));
 		objShader.SetMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -182,23 +150,9 @@ int _16_Blending_Discard::DoMain()
 		//floor
 		glBindVertexArray(planeVAO);
 		objShader.SetInt("texture1", 1);
-		model = glm::mat4{1.0f};
+		model = glm::mat4{ 1.0f };
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		//grass
-		glBindVertexArray(grassVAO);
-		grassShader.Use();
-		grassShader.SetInt("grassTexture", 2);
-		grassShader.SetMat4("view", camera.GetViewMat4());
-		grassShader.SetMat4("projection", camera.GetProjectionMat4());
-
-		for (unsigned int i = 0; i < grassPos.size(); i++)
-		{
-			model = glm::mat4{ 1 };
-			model = glm::translate(model, grassPos[i]);
-			grassShader.SetMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-		}
 
 		glBindVertexArray(0);
 

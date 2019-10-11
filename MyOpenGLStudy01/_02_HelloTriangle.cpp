@@ -106,6 +106,7 @@ int _02_HelloTriangle::DoMain()
 	glEnableVertexAttribArray(0); //启用顶点属性  默认是禁用的
 
 	//EBO
+	//OPENGL 在这里正逆时针都会画(还没有到背面剔除)
 	unsigned int indices[] = {
 		// 注意索引从0开始! 
 		0, 1, 3, // 第一个三角形

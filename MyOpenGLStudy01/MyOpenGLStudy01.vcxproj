@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="_17_Blending_Sort.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ImageHelper.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -175,6 +176,7 @@
     <ClCompile Include="_16_Blending_Discard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="_17_Blending_Sort.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ImageHelper.h" />
     <ClInclude Include="Mesh.h" />

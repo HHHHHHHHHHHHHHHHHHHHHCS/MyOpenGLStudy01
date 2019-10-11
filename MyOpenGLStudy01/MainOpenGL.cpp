@@ -24,8 +24,9 @@
 #include "_14_DepthTesting.h"
 #include "_15_StencilTesting.h"
 #include "_16_Blending_Discard.h"
+#include "_17_Blending_Sort.h"
 
 int main(int argc, char* argv[])
 {
-	return _16_Blending_Discard::DoMain();
+	return _17_Blending_Sort::DoMain();
 }
