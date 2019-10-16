@@ -27,6 +27,7 @@ GLFWwindow* CommonBaseScript::InitWindow()
 		return nullptr;
 	}
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, FrameBufferSizeCallback);//设置回调函数，改变窗口大小
 
 	//初始化glad ,但是要在窗口初始化之后执行
 	if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))

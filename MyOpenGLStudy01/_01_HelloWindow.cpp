@@ -34,6 +34,7 @@ GLFWwindow* _01_HelloWindow::InitWindow()
 		return nullptr;
 	}
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, FrameBufferSizeCallback);//设置回调函数，改变窗口大小
 
 	//初始化glad ,但是要在窗口初始化之后执行
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -50,6 +51,7 @@ void _01_HelloWindow::UpdateDraw(GLFWwindow* window)
 	//glfwWindowShouldClose函数在我们每次循环的开始前检查一次GLFW是否被要求退出
 	while (!glfwWindowShouldClose(window))
 	{
+
 		ProcessInput(window); //按键关闭检测
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //调用glClear之后,整个颜色缓冲都会被填充为glClearColor里所设置的颜色
