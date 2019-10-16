@@ -25,8 +25,9 @@
 #include "_15_StencilTesting.h"
 #include "_16_Blending_Discard.h"
 #include "_17_Blending_Sort.h"
+#include "_18_FaceCulling.h"
 
 int main(int argc, char* argv[])
 {
-	return _17_Blending_Sort::DoMain();
+	return _18_FaceCulling::DoMain();
 }

@@ -3,12 +3,20 @@
 #include "stb_image.h"
 #include <iostream>
 
-unsigned int ImageHelper::LoadTexture(std::string path,std::string directory)
+unsigned int ImageHelper::LoadTexture_Filp(std::string path, std::string directory)
 {
-	path = directory + path;
 	//这个是翻转读取的图片
 	//因为OPENGL的UV是反着的 要么1-UV.Y  要么翻转图片
-	//stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(true);
+	auto out =  LoadTexture(path, directory);
+	stbi_set_flip_vertically_on_load(false);
+	return out;
+}
+
+
+unsigned int ImageHelper::LoadTexture(std::string path, std::string directory)
+{
+	path = directory + path;
 
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
