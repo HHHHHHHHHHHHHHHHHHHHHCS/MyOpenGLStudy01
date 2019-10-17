@@ -175,6 +175,7 @@
     <ClCompile Include="_15_StencilTesting.cpp" />
     <ClCompile Include="_16_Blending_Discard.cpp" />
     <ClCompile Include="_18_FaceCulling.cpp" />
+    <ClCompile Include="_19_Framebuffers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -209,6 +210,7 @@
     <ClInclude Include="_15_StencilTesting.h" />
     <ClInclude Include="_16_Blending_Discard.h" />
     <ClInclude Include="_18_FaceCulling.h" />
+    <ClInclude Include="_19_Framebuffers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

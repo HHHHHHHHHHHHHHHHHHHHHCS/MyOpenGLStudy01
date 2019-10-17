@@ -114,6 +114,9 @@
     <ClCompile Include="_18_FaceCulling.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_19_Framebuffers.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -210,6 +213,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_18_FaceCulling.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_19_Framebuffers.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
