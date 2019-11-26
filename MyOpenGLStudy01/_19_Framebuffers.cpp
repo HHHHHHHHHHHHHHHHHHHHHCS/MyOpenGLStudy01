@@ -105,6 +105,22 @@ int _19_Framebuffers::DoMain()
 	//最后一个参数 绑定对象的哪个level 的texture
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
 
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	//glBindRenderbuffer 渲染缓冲 通常都是只写的  它们会经常用于深度和模板 可以用glReadPixels 读取
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	//把深度和模版附加帧缓冲
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	//检查是否成功
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete! " << std::endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	const unsigned int cubeTexture = ImageHelper::LoadTexture_Filp("01.jpg");
 
 	glActiveTexture(GL_TEXTURE0);
@@ -152,6 +168,7 @@ int _19_Framebuffers::DoMain()
 
 	glfwTerminate();
 
+	glDeleteFramebuffers(1, &framebuffer);
 
 	return 0;
 }
