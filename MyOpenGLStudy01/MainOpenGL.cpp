@@ -26,8 +26,9 @@
 #include "_16_Blending_Discard.h"
 #include "_17_Blending_Sort.h"
 #include "_18_FaceCulling.h"
+#include "_19_Framebuffers.h"
 
 int main(int argc, char* argv[])
 {
-	return _18_FaceCulling::DoMain();
+	return _19_Framebuffers::DoMain();
 }
