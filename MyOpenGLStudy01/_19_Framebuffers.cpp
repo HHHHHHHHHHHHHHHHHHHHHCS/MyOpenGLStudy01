@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 
+
 int _19_Framebuffers::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
@@ -142,6 +143,9 @@ int _19_Framebuffers::DoMain()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//边界采样默认是repeat 所以会跳边界    所以需要这个方法来clamp
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	//解除图片绑定 防止不小心修改数据
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -168,7 +172,7 @@ int _19_Framebuffers::DoMain()
 	//解除绑定 不然会渲染到错误的帧缓冲上
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	const unsigned int cubeTexture = ImageHelper::LoadTexture_Filp("01.jpg");
+	const unsigned int cubeTexture = ImageHelper::LoadTexture_Filp("02.jpg");
 	const unsigned int floorTexture = ImageHelper::LoadTexture_Filp("marble.jpg");
 
 	glActiveTexture(GL_TEXTURE0);
@@ -192,6 +196,9 @@ int _19_Framebuffers::DoMain()
 
 	//重新设置回0 免得乱改了
 	glActiveTexture(GL_TEXTURE);
+
+	//可以用线框模式检查 是否是面片
+	//CommonBaseScript::UsePolygonMode();
 
 	while (!glfwWindowShouldClose(window))
 	{
