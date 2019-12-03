@@ -8,7 +8,7 @@ unsigned int ImageHelper::LoadTexture_Filp(std::string path, std::string directo
 	//这个是翻转读取的图片
 	//因为OPENGL的UV是反着的 要么1-UV.Y  要么翻转图片
 	stbi_set_flip_vertically_on_load(true);
-	auto out =  LoadTexture(path, directory);
+	auto out = LoadTexture(path, directory);
 	stbi_set_flip_vertically_on_load(false);
 	return out;
 }
@@ -75,4 +75,58 @@ unsigned int ImageHelper::LoadTexture(std::string path, std::string directory)
 	stbi_image_free(data);
 
 	return textureID;
+}
+
+
+unsigned int ImageHelper::LoadCubemap(std::vector<std::string> faces, std::string directory)
+{
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	//	cubemap 六个方向
+	//  GL_TEXTURE_CUBE_MAP_POSITIVE_X	右
+	// 	GL_TEXTURE_CUBE_MAP_NEGATIVE_X	左
+	// 	GL_TEXTURE_CUBE_MAP_POSITIVE_Y	上
+	// 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y	下
+	// 	GL_TEXTURE_CUBE_MAP_POSITIVE_Z	后
+	// 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z	前
+
+	int width, height, nrChannels;
+
+	if (faces.size() != 6)
+	{
+		std::cout << "cubemap  count must be six\n";
+		return 0;
+	}
+
+	for (unsigned int i = 0; i < faces.size(); i++)
+	{
+		unsigned char* data = stbi_load((directory + faces[i]).c_str(), &width, &height, &nrChannels, 0);
+
+		if (data)
+		{
+			//cubemap 六个方向 实际是一个递增的数字  所以可以用for循环
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE,
+			             data);
+		}
+		else
+		{
+			std::cout << "Cubemap texture failed to load at path:" << faces[i] << std::endl;
+		}
+
+		//释放资源
+		stbi_image_free(data);
+
+
+		//cubemap 的缩放   和  重复方式 因为是3D 的 所以是 STR
+		//GL_CLAMP_TO_EDGE 卡到边界
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		return textureID;
+	}
 }

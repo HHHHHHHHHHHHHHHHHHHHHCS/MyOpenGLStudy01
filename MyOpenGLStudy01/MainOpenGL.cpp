@@ -27,8 +27,9 @@
 #include "_17_Blending_Sort.h"
 #include "_18_FaceCulling.h"
 #include "_19_Framebuffers.h"
+#include "_20_Cubemaps.h"
 
 int main(int argc, char* argv[])
 {
-	return _19_Framebuffers::DoMain();
+	return _20_Cubemaps::DoMain();
 }

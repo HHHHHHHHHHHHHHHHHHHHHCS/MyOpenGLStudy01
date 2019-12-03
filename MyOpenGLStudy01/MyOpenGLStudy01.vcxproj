@@ -176,6 +176,7 @@
     <ClCompile Include="_16_Blending_Discard.cpp" />
     <ClCompile Include="_18_FaceCulling.cpp" />
     <ClCompile Include="_19_Framebuffers.cpp" />
+    <ClCompile Include="_20_Cubemaps.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="_16_Blending_Discard.h" />
     <ClInclude Include="_18_FaceCulling.h" />
     <ClInclude Include="_19_Framebuffers.h" />
+    <ClInclude Include="_20_Cubemaps.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

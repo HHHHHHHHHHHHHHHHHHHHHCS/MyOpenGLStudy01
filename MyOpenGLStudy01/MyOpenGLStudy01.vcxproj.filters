@@ -117,6 +117,9 @@
     <ClCompile Include="_19_Framebuffers.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_20_Cubemaps.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -216,6 +219,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_19_Framebuffers.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_20_Cubemaps.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
