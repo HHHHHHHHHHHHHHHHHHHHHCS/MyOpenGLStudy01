@@ -10,5 +10,7 @@ uniform mat4 view;
 void main()
 {
 	TexCoords=aPos;
-	gl_Position=projection*view*vec4(aPos,1.);
+	vec4 pos=projection*view*vec4(aPos,1.);
+	//经过MVP w/w = 1   这里欺骗 z 深度 = 1
+	gl_Position=pos.xyww;
 }
