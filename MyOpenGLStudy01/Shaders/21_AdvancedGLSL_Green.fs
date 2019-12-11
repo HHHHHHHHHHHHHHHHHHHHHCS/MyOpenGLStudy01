@@ -2,12 +2,7 @@
 
 out vec4 FragColor;
 
-in VS_OUT
-{
-	vec2 TexCoords;
-}fs_in;
-
 void main()
 {
-	FragColor=vec4(fs_in.TexCoords.x,.fs_inTexCoords.y,1.,1.);
+	FragColor=vec4(0.,1.,0.,1.);
 }

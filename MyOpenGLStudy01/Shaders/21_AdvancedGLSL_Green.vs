@@ -10,17 +10,12 @@ layout(std140)uniform Matrices
 	mat4 view;
 };
 
-//数据块 需要数据块类型 和 class名字 对应 out in 对应就好了
-out VS_OUT
-{
-	vec2 TexCoords;
-}vs_out;
 
 uniform mat4 model;
 
 void main()
 {
 	gl_Position=projection*view*model*vec4(aPos,1.);
-	gl_PointSize=gl_Position.z;//需要 glEnable(GL_PROGRAM_POINT_SIZE);
-	vs_out.TexCoords=aTexcoords;
+	//单片元点的尺寸
+	gl_PointSize=4;//需要 glEnable(GL_PROGRAM_POINT_SIZE);
 }

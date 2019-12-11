@@ -28,8 +28,9 @@
 #include "_18_FaceCulling.h"
 #include "_19_Framebuffers.h"
 #include "_20_Cubemaps.h"
+#include "_21_AdvancedGLSL.h"
 
 int main(int argc, char* argv[])
 {
-	return _20_Cubemaps::DoMain();
+	return _21_AdvancedGLSL::DoMain();
 }
