@@ -177,6 +177,7 @@
     <ClCompile Include="_18_FaceCulling.cpp" />
     <ClCompile Include="_19_Framebuffers.cpp" />
     <ClCompile Include="_20_Cubemaps.cpp" />
+    <ClCompile Include="_21_AdvancedGLSL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="_18_FaceCulling.h" />
     <ClInclude Include="_19_Framebuffers.h" />
     <ClInclude Include="_20_Cubemaps.h" />
+    <ClInclude Include="_21_AdvancedGLSL.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
