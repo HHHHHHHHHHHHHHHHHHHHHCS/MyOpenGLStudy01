@@ -163,7 +163,29 @@ int _21_AdvancedGLSL::DoMain()
 	// 深度测试
 	glEnable(GL_DEPTH_TEST);
 
-	Shader objShader{"14_DepthTesting_Object"};
+	Shader blueShader{"21_AdvancedGLSL_Blue"};
+	// Shader greenShader{ "21_AdvancedGLSL_Green" };
+	// Shader redShader{ "21_AdvancedGLSL_Red" };
+	// Shader whiteShader{ "21_AdvancedGLSL_White" };
+
+	unsigned int uboVPBlock;
+	glGenBuffers(1, &uboVPBlock);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboVPBlock);
+	//内存分配里面有计算方法
+	//https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/08%20Advanced%20GLSL/
+	//先不填充数据  后面填充
+	glBufferData(GL_UNIFORM_BUFFER, 128, NULL, GL_STATIC_DRAW);//分配128字节的内存 128+128
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	unsigned int VPIndex = glGetUniformBlockIndex(blueShader.ID, "VPMatrices");
+	//VP最后的参数是申请的索引 0
+	glUniformBlockBinding(blueShader.ID, VPIndex, 0);
+
+	//第二个参数是申请的索引
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboVPBlock);
+	//或者 0 起始位置  128 长度 
+	//通过使用glBindBufferRange函数，你可以让多个不同的Uniform块绑定到同一个Uniform缓冲对象上。
+	//glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboVPBlock, 0, 128);
 
 
 	while (!glfwWindowShouldClose(window))
@@ -174,16 +196,19 @@ int _21_AdvancedGLSL::DoMain()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		objShader.Use();
 
-		objShader.SetMat4("view", camera.GetViewMat4());
-		objShader.SetMat4("projection", camera.GetProjectionMat4());
+		glBindBuffer(GL_UNIFORM_BUFFER, uboVPBlock);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &camera.GetViewMat4());
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &camera.GetProjectionMat4());
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		objShader.SetInt("texture1", 0);
+		blueShader.Use();
+
+		blueShader.SetInt("texture1", 0);
 		glBindVertexArray(cubeVAO);
 		glm::mat4 model{1};
 		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-		objShader.SetMat4("model", model);
+		blueShader.SetMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glfwSwapBuffers(window);
