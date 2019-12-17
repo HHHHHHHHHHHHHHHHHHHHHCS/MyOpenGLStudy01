@@ -3,10 +3,10 @@
 layout(location=0)in vec3 aPos;
 
 //三个布局块  Shared  std140  packed
-layout(std140)uniform Matrices
+layout(std140)uniform VPMatrices
 {
-	mat4 projection;
 	mat4 view;
+	mat4 projection;
 };
 
 uniform mat4 model;

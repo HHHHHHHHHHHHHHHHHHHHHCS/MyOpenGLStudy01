@@ -162,11 +162,14 @@ int _21_AdvancedGLSL::DoMain()
 
 	// 深度测试
 	glEnable(GL_DEPTH_TEST);
+	// gl_PointSize用
+	glEnable(GL_PROGRAM_POINT_SIZE);
 
+
+	Shader redShader{ "21_AdvancedGLSL_Red" };
+	Shader greenShader{ "21_AdvancedGLSL_Green" };
 	Shader blueShader{"21_AdvancedGLSL_Blue"};
-	// Shader greenShader{ "21_AdvancedGLSL_Green" };
-	// Shader redShader{ "21_AdvancedGLSL_Red" };
-	// Shader whiteShader{ "21_AdvancedGLSL_White" };
+	Shader whiteShader{ "21_AdvancedGLSL_White" };
 
 	unsigned int uboVPBlock;
 	glGenBuffers(1, &uboVPBlock);
@@ -202,14 +205,35 @@ int _21_AdvancedGLSL::DoMain()
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &camera.GetProjectionMat4());
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		blueShader.Use();
-
-		blueShader.SetInt("texture1", 0);
 		glBindVertexArray(cubeVAO);
-		glm::mat4 model{1};
-		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		glm::mat4 model{ 1 };
+
+		redShader.Use();
+		model = glm::mat4{ 1 };
+		model = glm::translate(model, glm::vec3(1.0f, 1.0f, 1.0f));
+		redShader.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		greenShader.Use();
+		model = glm::mat4{ 1 };
+		model = glm::translate(model, glm::vec3(1.0f, -1.0f, 0.0f));
+		redShader.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		blueShader.Use();
+		model = glm::mat4{1};
+		model = glm::translate(model, glm::vec3(-1.0f, -1.0f, -1.0f));
 		blueShader.SetMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		whiteShader.Use();
+		model = glm::mat4{ 1 };
+		model = glm::translate(model, glm::vec3(-1.0f, 1.0f, 1.0f));
+		whiteShader.SetMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		glBindVertexArray(0);
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

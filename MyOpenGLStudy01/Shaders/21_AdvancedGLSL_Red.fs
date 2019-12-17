@@ -9,5 +9,5 @@ in VS_OUT
 
 void main()
 {
-	FragColor=vec4((fs_in.TexCoords.x+.fs_inTexCoords.y)/2.,0.,0.,1.);
+	FragColor=vec4((fs_in.TexCoords.x+fs_in.TexCoords.y)/2.,0.,0.,1.);
 }
