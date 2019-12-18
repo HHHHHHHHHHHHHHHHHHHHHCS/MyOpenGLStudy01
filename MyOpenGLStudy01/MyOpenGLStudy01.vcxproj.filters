@@ -123,6 +123,9 @@
     <ClCompile Include="_21_AdvancedGLSL.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_22_GeometryShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -228,6 +231,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_21_AdvancedGLSL.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_22_GeometryShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
