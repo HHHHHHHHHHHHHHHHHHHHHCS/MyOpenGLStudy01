@@ -29,8 +29,9 @@
 #include "_19_Framebuffers.h"
 #include "_20_Cubemaps.h"
 #include "_21_AdvancedGLSL.h"
+#include "_22_GeometryShader.h"
 
 int main(int argc, char* argv[])
 {
-	return _21_AdvancedGLSL::DoMain();
+	return _22_GeometryShader::DoMain();
 }

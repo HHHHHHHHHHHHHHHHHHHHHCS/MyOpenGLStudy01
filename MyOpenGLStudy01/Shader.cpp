@@ -11,7 +11,7 @@ bool Shader::CheckCompileErrors(unsigned id, const std::string& path)
 	if (!success)
 	{
 		glGetShaderInfoLog(id, 512, nullptr, infoLog);
-		std::cout << path << "->ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		std::cout << path << "->ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
 	return success;
@@ -25,17 +25,17 @@ Shader::Shader(const GLchar* fileName, bool haveGS)
 
 	std::string vsPath = path + ".vs";
 	std::string fsPath = path + ".fs";
-	const GLchar* geometryPath = nullptr;
+	std::string geometryPath;
 	if (haveGS)
 	{
-		geometryPath = (path + ".gs").c_str();
+		geometryPath = path + ".gs";
 	}
 
 	// char szStr[sizeof(vsPath)] = {0};
 	// strncpy_s(szStr, vsPath.c_str(), sizeof(szStr) - 1); // 强烈建议拷贝出来
 
 
-	Init(vsPath.c_str(), fsPath.c_str(), geometryPath);
+	Init(vsPath.c_str(), fsPath.c_str(), haveGS ? geometryPath.c_str() : nullptr);
 }
 
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geometryPath)
@@ -81,7 +81,7 @@ void Shader::Init(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
 	}
 	catch (std::ifstream::failure e)
 	{
-		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ." << std::endl;
+		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ." << std::endl;
 	}
 	//把string->const char*
 	const char* vShaderCode = vertexCode.c_str();
@@ -118,6 +118,8 @@ void Shader::Init(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
 	ID = glCreateProgram();
 	glAttachShader(ID, vertex);
 	glAttachShader(ID, fragment);
+	if (geometryPath != nullptr)
+		glAttachShader(ID, geometry);
 	glLinkProgram(ID);
 
 	CheckCompileErrors(ID, "Shader");
