@@ -4,6 +4,7 @@
 #include <string>
 #include "stb_image.h"
 #include "ImageHelper.h"
+#include "Model.h"
 
 
 int _22_GeometryShader::DoMain()
@@ -36,13 +37,17 @@ int _22_GeometryShader::DoMain()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(2 * sizeof(float)));
 	glBindVertexArray(0);
 
-
+	Model model{ "Models/nanosuit/nanosuit.obj" };
 
 	Shader pointShader{"22_GeometryShader_Point", true};
+	Shader explodeShader{ "22_GeometryShader_Explode", true };
 
 	Camera camera{};
 	camera.AddMouseEvent(window);
 
+	glEnable(GL_DEPTH_TEST);
+
+	//CommonBaseScript::UsePolygonMode();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -52,9 +57,16 @@ int _22_GeometryShader::DoMain()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		pointShader.Use();
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_POINTS, 0, 4);
+		// pointShader.Use();
+		// glBindVertexArray(VAO);
+		// glDrawArrays(GL_POINTS, 0, 4);
+
+		explodeShader.Use();
+		explodeShader.SetFloat("time", glfwGetTime());
+		explodeShader.SetMat4("view", camera.GetViewMat4());
+		explodeShader.SetMat4("projection", camera.GetProjectionMat4());
+		explodeShader.SetMat4("model", glm::mat4{ 1 });
+		model.Draw(explodeShader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
