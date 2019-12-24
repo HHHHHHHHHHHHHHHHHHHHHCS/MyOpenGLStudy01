@@ -41,6 +41,8 @@ int _22_GeometryShader::DoMain()
 
 	Shader pointShader{"22_GeometryShader_Point", true};
 	Shader explodeShader{ "22_GeometryShader_Explode", true };
+	Shader normalShader{ "22_GeometryShader_Normal", true };
+
 
 	Camera camera{};
 	camera.AddMouseEvent(window);
