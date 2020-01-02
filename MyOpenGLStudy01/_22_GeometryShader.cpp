@@ -37,11 +37,11 @@ int _22_GeometryShader::DoMain()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(2 * sizeof(float)));
 	glBindVertexArray(0);
 
-	Model model{ "Models/nanosuit/nanosuit.obj" };
+	Model model{"Models/nanosuit/nanosuit.obj"};
 
 	Shader pointShader{"22_GeometryShader_Point", true};
-	Shader explodeShader{ "22_GeometryShader_Explode", true };
-	Shader normalShader{ "22_GeometryShader_Normal", true };
+	Shader explodeShader{"22_GeometryShader_Explode", true};
+	Shader normalShader{"22_GeometryShader_Normal", true};
 
 
 	Camera camera{};
@@ -63,19 +63,31 @@ int _22_GeometryShader::DoMain()
 		// glBindVertexArray(VAO);
 		// glDrawArrays(GL_POINTS, 0, 4);
 
+		// explodeShader.Use();
+		// explodeShader.SetFloat("time", glfwGetTime());
+		// explodeShader.SetMat4("view", camera.GetViewMat4());
+		// explodeShader.SetMat4("projection", camera.GetProjectionMat4());
+		// explodeShader.SetMat4("model", glm::mat4{ 1 });
+		// model.Draw(explodeShader);
+
 		explodeShader.Use();
-		explodeShader.SetFloat("time", glfwGetTime());
+		explodeShader.SetFloat("time", -3.14 / 2);
 		explodeShader.SetMat4("view", camera.GetViewMat4());
 		explodeShader.SetMat4("projection", camera.GetProjectionMat4());
-		explodeShader.SetMat4("model", glm::mat4{ 1 });
+		explodeShader.SetMat4("model", glm::mat4{1});
 		model.Draw(explodeShader);
+		normalShader.Use();
+		normalShader.SetMat4("view", camera.GetViewMat4());
+		normalShader.SetMat4("projection", camera.GetProjectionMat4());
+		normalShader.SetMat4("model", glm::mat4{1});
+		model.Draw(normalShader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
 	glDeleteVertexArrays(1, &VAO);
-
+	glDeleteBuffers(1, &VBO);
 	glfwTerminate();
 
 	return 0;
