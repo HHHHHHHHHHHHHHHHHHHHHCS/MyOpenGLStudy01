@@ -81,6 +81,18 @@ int _23_Instancing::DoMain()
 	}
 	*/
 
+	glBindVertexArray(quadVAO);
+	unsigned int instanceVBO;
+	glGenBuffers(1, &instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, &translations[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), reinterpret_cast<void*>(0));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//告诉GPU 哪个index 属性要实例化    每画多少个 实例化数组的index+1
+	glVertexAttribDivisor(2, 1);
+	glBindVertexArray(0);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
@@ -91,6 +103,7 @@ int _23_Instancing::DoMain()
 
 		glBindVertexArray(quadVAO);
 		instancingArrayShader.Use();
+		//instanced 画100个
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100);
 
 
