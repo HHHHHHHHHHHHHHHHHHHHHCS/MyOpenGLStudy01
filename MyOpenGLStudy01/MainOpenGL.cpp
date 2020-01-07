@@ -30,8 +30,9 @@
 #include "_20_Cubemaps.h"
 #include "_21_AdvancedGLSL.h"
 #include "_22_GeometryShader.h"
+#include "_23_Instancing.h"
 
 int main(int argc, char* argv[])
 {
-	return _22_GeometryShader::DoMain();
+	return _23_Instancing::DoMain();
 }
