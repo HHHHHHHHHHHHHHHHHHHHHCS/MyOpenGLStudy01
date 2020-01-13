@@ -101,7 +101,8 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	//处理材质
 	if (mesh->mMaterialIndex >= 0)
 	{
-		// mMaterialIndex mesh 在 场景材质列表 中的索引
+		// mMaterialIndex mesh 在 场景材质列表 中的索引 
+		// 信息存在mtl中
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());

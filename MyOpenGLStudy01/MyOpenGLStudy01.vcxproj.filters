@@ -129,6 +129,9 @@
     <ClCompile Include="_23_Instancing.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_23_Instancing_Practice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -240,6 +243,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_23_Instancing.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_23_Instancing_Practice.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

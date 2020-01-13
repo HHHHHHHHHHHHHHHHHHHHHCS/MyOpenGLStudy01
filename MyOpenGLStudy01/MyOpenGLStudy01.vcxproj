@@ -180,6 +180,7 @@
     <ClCompile Include="_21_AdvancedGLSL.cpp" />
     <ClCompile Include="_22_GeometryShader.cpp" />
     <ClCompile Include="_23_Instancing.cpp" />
+    <ClCompile Include="_23_Instancing_Practice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -219,6 +220,7 @@
     <ClInclude Include="_21_AdvancedGLSL.h" />
     <ClInclude Include="_22_GeometryShader.h" />
     <ClInclude Include="_23_Instancing.h" />
+    <ClInclude Include="_23_Instancing_Practice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
