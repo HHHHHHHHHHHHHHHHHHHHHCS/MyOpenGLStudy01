@@ -6,6 +6,12 @@ Model::Model(std::string path)
 	LoadModel(path);
 }
 
+std::vector<Mesh> Model::GetMeshes() const
+{
+	return meshes;
+}
+
+
 void Model::Draw(Shader shader)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++)

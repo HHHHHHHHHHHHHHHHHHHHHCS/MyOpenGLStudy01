@@ -26,12 +26,12 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
+	/* 渲染数据 */
+	unsigned int VAO, VBO, EBO;
 	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices
 	     , std::vector<Texture> textures);
 	void Draw(Shader shader);
 private:
-	/* 渲染数据 */
-	unsigned int VAO, VBO, EBO;
 	/* 函数 */
 	void SetupMesh();
 };

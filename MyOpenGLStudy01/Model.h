@@ -9,6 +9,7 @@ class Model
 {
 public:
 	Model(std::string path);
+	std::vector<Mesh> GetMeshes() const;
 	void Draw(Shader shader);
 private:
 	std::vector<Mesh> meshes;
