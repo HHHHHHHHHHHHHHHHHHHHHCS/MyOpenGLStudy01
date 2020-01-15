@@ -10,6 +10,8 @@ class Model
 public:
 	Model(std::string path);
 	std::vector<Mesh> GetMeshes() const;
+	std::vector<Texture> GetTextures() const;
+
 	void Draw(Shader shader);
 private:
 	std::vector<Mesh> meshes;

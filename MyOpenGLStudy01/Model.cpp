@@ -11,6 +11,11 @@ std::vector<Mesh> Model::GetMeshes() const
 	return meshes;
 }
 
+std::vector<Texture> Model::GetTextures() const
+{
+	return textures_loaded;
+}
+
 
 void Model::Draw(Shader shader)
 {

@@ -31,8 +31,9 @@
 #include "_21_AdvancedGLSL.h"
 #include "_22_GeometryShader.h"
 #include "_23_Instancing.h"
+#include "_23_Instancing_Practice.h"
 
 int main(int argc, char* argv[])
 {
-	return _23_Instancing::DoMain();
+	return _23_Instancing_Practice::DoMain();
 }

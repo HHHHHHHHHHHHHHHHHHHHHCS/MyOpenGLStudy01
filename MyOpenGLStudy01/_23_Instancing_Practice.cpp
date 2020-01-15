@@ -19,9 +19,10 @@ int _23_Instancing_Practice::DoMain()
 	camera.AddMouseEvent(window);
 
 	Model planet{"Models/PlanetRock/planet.obj"};
-	Model rock{"Models/PlanetRock/rock.obj"};
+	Model asteroid{"Models/PlanetRock/rock.obj"};
 
-	Shader planetRockShader{"23_Instancing_PlanetRock"};
+	Shader planetShader{"23_Instancing_Planet"};
+	Shader asteroidShader{"23_Instancing_Asteroid"};
 
 
 	unsigned int amount = 100000;
@@ -64,7 +65,7 @@ int _23_Instancing_Practice::DoMain()
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
 
-	std::vector<Mesh> meshes = rock.GetMeshes();
+	std::vector<Mesh> meshes = asteroid.GetMeshes();
 
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
@@ -74,11 +75,11 @@ int _23_Instancing_Practice::DoMain()
 		//set attribute pointers for matrix4x4 (4 * vec4)
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4)
-			, reinterpret_cast<void*>(0));
+		                      , reinterpret_cast<void*>(0));
 		glEnableVertexAttribArray(4);
 
 		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4)
-			, reinterpret_cast<void*>(sizeof(glm::vec4)));
+		                      , reinterpret_cast<void*>(sizeof(glm::vec4)));
 
 		glEnableVertexAttribArray(5);
 		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
@@ -96,6 +97,12 @@ int _23_Instancing_Practice::DoMain()
 		glBindVertexArray(0);
 	}
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, asteroid.GetTextures()[0].id);
+
+	asteroidShader.Use();
+	asteroidShader.SetInt("texture_diffuse1", 0);
+
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -107,6 +114,29 @@ int _23_Instancing_Practice::DoMain()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glm::mat4 view = camera.GetViewMat4();
+		glm::mat4 projection = camera.GetProjectionMat4();
+
+		planetShader.Use();
+		planetShader.SetMat4("view", view);
+		planetShader.SetMat4("projection", projection);
+		glm::mat4 model = glm::mat4{1.0f};
+		model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+		planetShader.SetMat4("model", model);
+		planet.Draw(planetShader);
+
+		asteroidShader.Use();
+		asteroidShader.SetMat4("view", view);
+		asteroidShader.SetMat4("projection", projection);
+		for (unsigned int i = 0; i < asteroid.GetMeshes().size(); i++)
+		{
+			glBindVertexArray(asteroid.GetMeshes()[i].VAO);
+			// reinterpret_cast<void*>(0) 是indices 起始偏移
+			glDrawElementsInstanced(GL_TRIANGLES, asteroid.GetMeshes()[i].indices.size(), GL_UNSIGNED_INT,
+			                        reinterpret_cast<void*>(0), amount);
+			glBindVertexArray(0);
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
