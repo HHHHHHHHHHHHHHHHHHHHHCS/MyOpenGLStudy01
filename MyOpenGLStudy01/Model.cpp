@@ -51,7 +51,12 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(ProcessMesh(mesh, scene));
+		Mesh myMesh = ProcessMesh(mesh, scene);
+		meshes.push_back(myMesh);
+		for (Texture texture : myMesh.textures)
+		{
+			textures_loaded.push_back(texture);
+		}
 	}
 
 	//接下来对他的子节点继续重复这一过程

@@ -97,11 +97,12 @@ int _23_Instancing_Practice::DoMain()
 		glBindVertexArray(0);
 	}
 
-	glActiveTexture(GL_TEXTURE0);
+	//因为planet的贴图已经是0了 这里为了避免冲突
+	//所以重新绑定给一个 1
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, asteroid.GetTextures()[0].id);
-
 	asteroidShader.Use();
-	asteroidShader.SetInt("texture_diffuse1", 0);
+	asteroidShader.SetInt("texture_diffuse1", 1);
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -125,6 +126,8 @@ int _23_Instancing_Practice::DoMain()
 		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
 		planetShader.SetMat4("model", model);
 		planet.Draw(planetShader);
+
+
 
 		asteroidShader.Use();
 		asteroidShader.SetMat4("view", view);
