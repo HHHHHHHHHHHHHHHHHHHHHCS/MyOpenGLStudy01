@@ -100,7 +100,7 @@ int _23_Instancing_Practice::DoMain()
 	//因为planet的贴图已经是0了 这里为了避免冲突
 	//所以重新绑定给一个 1
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, asteroid.GetTextures()[0].id);
+	glBindTexture(GL_TEXTURE_2D, asteroid.GetTextures()[0]->id);
 	asteroidShader.Use();
 	asteroidShader.SetInt("texture_diffuse1", 1);
 

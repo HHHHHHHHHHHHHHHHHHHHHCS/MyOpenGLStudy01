@@ -1,6 +1,15 @@
 ﻿#include "Model.h"
 #include "ImageHelper.h"
 
+Model::~Model()
+{
+	for (Texture* texture : textures_loaded)
+	{
+		delete texture;
+		texture = nullptr;
+	}
+}
+
 Model::Model(std::string path)
 {
 	LoadModel(path);
@@ -11,7 +20,7 @@ std::vector<Mesh> Model::GetMeshes() const
 	return meshes;
 }
 
-std::vector<Texture> Model::GetTextures() const
+std::vector<Texture*> Model::GetTextures() const
 {
 	return textures_loaded;
 }
@@ -51,11 +60,11 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		Mesh myMesh = ProcessMesh(mesh, scene);
-		meshes.push_back(myMesh);
-		for (Texture texture : myMesh.textures)
+		Mesh* myMesh = new Mesh(ProcessMesh(mesh, scene));
+		meshes.push_back(*myMesh);
+		for (Texture& texture : (*myMesh).textures)
 		{
-			textures_loaded.push_back(texture);
+			textures_loaded.push_back(&texture);
 		}
 	}
 
@@ -143,9 +152,9 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 			//基本形式为strcmp(str1,str2)，若str1=str2，则返回零；
 			//若str1<str2，则返回负数；若str1>str2，则返回正数
 			auto img = textures_loaded[j];
-			if (std::strcmp(img.path.data, str.C_Str()) == 0)
+			if (std::strcmp(img->path.data, str.C_Str()) == 0)
 			{
-				textures.push_back(img);
+				textures.push_back(*img);
 				skip = true;
 				break;
 			}
