@@ -22,6 +22,7 @@ struct Texture
 class Mesh
 {
 public:
+	~Mesh();
 	/* 网格数据 */
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;

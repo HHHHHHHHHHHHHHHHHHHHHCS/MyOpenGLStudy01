@@ -63,7 +63,8 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
-*.obj
+#model is *.obj
+#*.obj
 *.iobj
 *.pch
 *.pdb

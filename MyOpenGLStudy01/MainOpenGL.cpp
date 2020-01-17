@@ -1,4 +1,6 @@
-﻿#define STB_IMAGE_IMPLEMENTATION
+﻿#include <crtdbg.h>
+
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #include "_01_HelloWindow.h"
@@ -35,5 +37,8 @@
 
 int main(int argc, char* argv[])
 {
-	return _23_Instancing_Practice::DoMain();
+	//_CrtSetBreakAlloc(9338);
+	int ret = _23_Instancing_Practice::DoMain();
+	_CrtDumpMemoryLeaks();
+	return ret;
 }

@@ -3,6 +3,12 @@
 #include <vec2.hpp>
 #include <string>
 
+Mesh::~Mesh()
+{
+
+}
+
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
 {
 	this->vertices = vertices;

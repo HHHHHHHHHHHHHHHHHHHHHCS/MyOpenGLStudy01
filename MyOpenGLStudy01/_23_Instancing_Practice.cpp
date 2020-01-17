@@ -24,7 +24,6 @@ int _23_Instancing_Practice::DoMain()
 	Shader planetShader{"23_Instancing_Planet"};
 	Shader asteroidShader{"23_Instancing_Asteroid"};
 
-
 	unsigned int amount = 100000;
 	glm::mat4* modelMatrices = new glm::mat4[amount];
 	srand(glfwGetTime()); // 初始化随机种子
@@ -104,7 +103,6 @@ int _23_Instancing_Practice::DoMain()
 	asteroidShader.Use();
 	asteroidShader.SetInt("texture_diffuse1", 1);
 
-
 	glEnable(GL_DEPTH_TEST);
 
 	while (!glfwWindowShouldClose(window))
@@ -145,8 +143,8 @@ int _23_Instancing_Practice::DoMain()
 		glfwPollEvents();
 	}
 
-
 	glfwTerminate();
+	delete[] modelMatrices;
 
 	return 0;
 }

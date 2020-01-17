@@ -3,11 +3,7 @@
 
 Model::~Model()
 {
-	for (Texture* texture : textures_loaded)
-	{
-		delete texture;
-		texture = nullptr;
-	}
+
 }
 
 Model::Model(std::string path)
@@ -60,9 +56,8 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		Mesh* myMesh = new Mesh(ProcessMesh(mesh, scene));
-		meshes.push_back(*myMesh);
-		for (Texture& texture : (*myMesh).textures)
+		meshes.push_back(ProcessMesh(mesh, scene));
+		for (Texture& texture : meshes.back().textures)
 		{
 			textures_loaded.push_back(&texture);
 		}
