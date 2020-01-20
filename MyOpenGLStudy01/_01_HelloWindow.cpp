@@ -13,7 +13,7 @@ int _01_HelloWindow::DoMain()
 	return 0;
 }
 
-void _01_HelloWindow::InitOpenGL()
+void _01_HelloWindow::InitOpenGL(bool canResize)
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //OpenGL主版本号
@@ -22,6 +22,7 @@ void _01_HelloWindow::InitOpenGL()
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //苹果显示需要
 #endif
+	glfwWindowHint(GLFW_RESIZABLE, canResize);
 }
 
 GLFWwindow* _01_HelloWindow::InitWindow()

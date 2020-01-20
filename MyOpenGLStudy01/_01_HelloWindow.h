@@ -9,7 +9,7 @@ class _01_HelloWindow
 {
 public:
 	static int DoMain();
-	static void InitOpenGL();
+	static void InitOpenGL(bool canResize = false);
 	static GLFWwindow* InitWindow();
 	static void UpdateDraw(GLFWwindow*);
 	static void FrameBufferSizeCallback(GLFWwindow*, int, int);

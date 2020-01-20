@@ -1,4 +1,5 @@
 ﻿#include "CommonBaseScript.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -6,7 +7,9 @@
 extern const unsigned int SCR_WIDTH = 800;
 extern const unsigned int SCR_HEIGHT = 600;
 
-void CommonBaseScript::InitOpenGL()
+bool CommonBaseScript::keys[1024];
+
+void CommonBaseScript::InitOpenGL(bool canReisze)
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //OpenGL主版本号
@@ -15,6 +18,7 @@ void CommonBaseScript::InitOpenGL()
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //苹果显示需要
 #endif
+	glfwWindowHint(GLFW_RESIZABLE, canReisze);
 }
 
 GLFWwindow* CommonBaseScript::InitWindow()
@@ -50,6 +54,21 @@ void CommonBaseScript::ProcessInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+}
+
+//按键注册事件
+void CommonBaseScript::RegisterKeyEvent(GLFWwindow* window)
+{
+	glfwSetKeyCallback(window, KeyCallback);
+}
+
+//按键执行事件
+void CommonBaseScript::KeyCallback(GLFWwindow* window, int key, int scancode ,int action, int mode)
+{
+	if (action == GLFW_PRESS)
+		keys[key] = true;
+	else if (action == GLFW_RELEASE)
+		keys[key] = false;
 }
 
 /*

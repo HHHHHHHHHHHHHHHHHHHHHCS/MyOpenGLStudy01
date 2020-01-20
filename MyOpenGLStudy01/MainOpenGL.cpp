@@ -34,11 +34,12 @@
 #include "_22_GeometryShader.h"
 #include "_23_Instancing.h"
 #include "_23_Instancing_Practice.h"
+#include "_24_MSAA.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(9338);
-	int ret = _23_Instancing_Practice::DoMain();
+	int ret = _24_MSAA::DoMain();
 	_CrtDumpMemoryLeaks();
 	return ret;
 }
