@@ -135,6 +135,9 @@
     <ClCompile Include="_24_MSAA.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_24_MSAA_MultiFramebuffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -253,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="_24_MSAA.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_24_MSAA_MultiFramebuffer.h">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -77,8 +77,7 @@ int _24_MSAA::DoMain()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), reinterpret_cast<void*>(0));
 	glBindVertexArray(0);
 
-	Shader cubeShader{"14_DepthTesting_Object"};
-	cubeShader.Use();
+	Shader cubeShader{"24_MSAA_Color"};
 
 	Camera camera{};
 	camera.AddMouseEvent(window);
@@ -88,13 +87,16 @@ int _24_MSAA::DoMain()
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
 
+	cubeShader.Use();
+	cubeShader.SetVec4("_Color", glm::vec4(0.0, 1.0, 0.0, 1.0));
+
 
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
 		camera.DoKeyboardMove(window);
 
-		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		cubeShader.Use();

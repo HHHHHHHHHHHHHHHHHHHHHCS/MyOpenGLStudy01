@@ -182,6 +182,7 @@
     <ClCompile Include="_23_Instancing.cpp" />
     <ClCompile Include="_23_Instancing_Practice.cpp" />
     <ClCompile Include="_24_MSAA.cpp" />
+    <ClCompile Include="_24_MSAA_MultiFramebuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="_23_Instancing.h" />
     <ClInclude Include="_23_Instancing_Practice.h" />
     <ClInclude Include="_24_MSAA.h" />
+    <ClInclude Include="_24_MSAA_MultiFramebuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
