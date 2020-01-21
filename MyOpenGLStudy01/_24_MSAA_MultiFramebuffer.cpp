@@ -181,6 +181,10 @@ int _24_MSAA_MultiFramebuffer::DoMain()
 		//前者表示“使用纹理中坐标最接近的一个像素的颜色作为需要绘制的像素颜色”，
 		//后者表示“使用纹理中坐标最接近的若干个颜色，通过加权平均算法得到需要绘制的像素颜色”。
 		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		//也可以用这个自定义融合
+		//uniform sampler2DMS screenTextureMS;
+		//vec4 colorSample = texelFetch(screenTextureMS, TexCoords, 3);  // 第4个子样本
+
 
 		//切换到输出屏幕上的帧
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
