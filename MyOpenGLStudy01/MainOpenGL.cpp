@@ -40,7 +40,7 @@
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(9338);
-	int ret = _24_MSAA_MultiFramebuffer::DoMain();
-	_CrtDumpMemoryLeaks();
+	int ret = _12_MultipleLights::DoMain();
+	//_CrtDumpMemoryLeaks();
 	return ret;
 }

@@ -11,7 +11,11 @@ bool CommonBaseScript::keys[1024];
 
 void CommonBaseScript::InitOpenGL(bool canReisze)
 {
-	glfwInit();
+	int ret = glfwInit();
+	if(!ret)
+	{
+		std::cout << "Failed to glfwInit.\n";
+	}
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //OpenGL主版本号
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6); //OpenGL次版本号
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //使用OpenGL核心模式
