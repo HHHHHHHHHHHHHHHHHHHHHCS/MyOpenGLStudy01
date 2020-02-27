@@ -36,11 +36,12 @@
 #include "_23_Instancing_Practice.h"
 #include "_24_MSAA.h"
 #include "_24_MSAA_MultiFramebuffer.h"
+#include "_25_BlinnPhong.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(9338);
-	int ret = _12_MultipleLights::DoMain();
+	int ret = _25_BlinnPhong::DoMain();
 	//_CrtDumpMemoryLeaks();
 	return ret;
 }
