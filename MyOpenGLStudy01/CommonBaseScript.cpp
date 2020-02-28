@@ -12,7 +12,7 @@ bool CommonBaseScript::keys[1024];
 void CommonBaseScript::InitOpenGL(bool canReisze)
 {
 	int ret = glfwInit();
-	if(!ret)
+	if (!ret)
 	{
 		std::cout << "Failed to glfwInit.\n";
 	}
@@ -35,7 +35,7 @@ GLFWwindow* CommonBaseScript::InitWindow()
 		return nullptr;
 	}
 	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, FrameBufferSizeCallback);//设置回调函数，改变窗口大小
+	glfwSetFramebufferSizeCallback(window, FrameBufferSizeCallback); //设置回调函数，改变窗口大小
 
 	//初始化glad ,把OpenGL的函数指针导入给GLAD ,但是要在窗口初始化之后执行
 	if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
@@ -67,12 +67,15 @@ void CommonBaseScript::RegisterKeyEvent(GLFWwindow* window)
 }
 
 //按键执行事件
-void CommonBaseScript::KeyCallback(GLFWwindow* window, int key, int scancode ,int action, int mode)
+void CommonBaseScript::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
-	if (action == GLFW_PRESS)
-		keys[key] = true;
-	else if (action == GLFW_RELEASE)
-		keys[key] = false;
+	if (key > 0 && key < size_t(keys))
+	{
+		if (action == GLFW_PRESS)
+			keys[key] = true;
+		else if (action == GLFW_RELEASE)
+			keys[key] = false;
+	}
 }
 
 /*

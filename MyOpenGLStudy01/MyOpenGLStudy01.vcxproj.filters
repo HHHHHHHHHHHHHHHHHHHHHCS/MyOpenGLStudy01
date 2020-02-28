@@ -141,6 +141,9 @@
     <ClCompile Include="_25_BlinnPhong.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_26_GammaCorrection.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -264,6 +267,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_25_BlinnPhong.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_26_GammaCorrection.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

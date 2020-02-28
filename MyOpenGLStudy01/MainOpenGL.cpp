@@ -37,11 +37,12 @@
 #include "_24_MSAA.h"
 #include "_24_MSAA_MultiFramebuffer.h"
 #include "_25_BlinnPhong.h"
+#include "_26_GammaCorrection.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(9338);
-	int ret = _25_BlinnPhong::DoMain();
-	//_CrtDumpMemoryLeaks();
+	int ret = _26_GammaCorrection::DoMain();
+	_CrtDumpMemoryLeaks();
 	return ret;
 }

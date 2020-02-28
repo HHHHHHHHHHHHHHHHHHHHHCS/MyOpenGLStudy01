@@ -60,6 +60,7 @@ int _25_BlinnPhong::DoMain()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+
 	Camera camera = Camera();
 	camera.AddMouseEvent(window);
 	CommonBaseScript::RegisterKeyEvent(window);
@@ -71,6 +72,7 @@ int _25_BlinnPhong::DoMain()
 
 	bool blinn = true;
 	bool lastPress = false;
+	std::cout << (blinn ? "blinn phong" : "phong") << '\n';
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -81,6 +83,7 @@ int _25_BlinnPhong::DoMain()
 		if (lastPress && !CommonBaseScript::keys[GLFW_KEY_B])
 		{
 			blinn = !blinn;
+			std::cout << (blinn ? "blinn phong" : "phong") << '\n';
 		}
 		lastPress = CommonBaseScript::keys[GLFW_KEY_B];
 

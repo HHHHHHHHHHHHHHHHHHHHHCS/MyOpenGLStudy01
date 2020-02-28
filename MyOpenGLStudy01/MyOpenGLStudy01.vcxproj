@@ -184,6 +184,7 @@
     <ClCompile Include="_24_MSAA.cpp" />
     <ClCompile Include="_24_MSAA_MultiFramebuffer.cpp" />
     <ClCompile Include="_25_BlinnPhong.cpp" />
+    <ClCompile Include="_26_GammaCorrection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -227,6 +228,7 @@
     <ClInclude Include="_24_MSAA.h" />
     <ClInclude Include="_24_MSAA_MultiFramebuffer.h" />
     <ClInclude Include="_25_BlinnPhong.h" />
+    <ClInclude Include="_26_GammaCorrection.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
