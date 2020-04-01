@@ -64,10 +64,9 @@ int _03_HelloShader_File::DoMain()
 		glfwPollEvents();
 	}
 
-	glfwTerminate(); //正确释放/删除之前的分配的所有资源
-
-
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+
+	glfwTerminate(); //正确释放/删除之前的分配的所有资源
 }
 

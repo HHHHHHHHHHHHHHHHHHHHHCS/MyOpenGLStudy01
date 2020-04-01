@@ -141,6 +141,7 @@ int _02_HelloTriangle::DoMain()
 
 		//EBO用
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		//glDrawElements 走 indices
 		//EBO画的时候用 绘制的模式  长度  数据类型  偏移量
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
@@ -149,11 +150,11 @@ int _02_HelloTriangle::DoMain()
 		glfwPollEvents(); //检查有没有触发什么事件（比如键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数（可以通过回调方法手动设置）
 	}
 
-	glfwTerminate(); //正确释放/删除之前的分配的所有资源
-
-
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+
+	glfwTerminate(); //正确释放/删除之前的分配的所有资源
+
 
 	return 0;
 }

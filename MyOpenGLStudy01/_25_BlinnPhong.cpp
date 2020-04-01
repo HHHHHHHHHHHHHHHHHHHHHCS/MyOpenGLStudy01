@@ -109,11 +109,13 @@ int _25_BlinnPhong::DoMain()
 		glfwPollEvents();
 	}
 
-	glfwTerminate();
-
 	glDeleteVertexArrays(1, &planeVAO);
 	glDeleteBuffers(1, &planeVBO);
 	glDeleteTextures(1, &floorTexture);
+
+	glfwTerminate();
+
+
 
 	return 0;
 }

@@ -163,10 +163,12 @@ int _13_Mesh::DoMain()
 		glfwPollEvents();
 	}
 
-	glfwTerminate();
-
 	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteBuffers(1, &VBO);
+
+	glfwTerminate();
+
+
 
 
 	return 0;

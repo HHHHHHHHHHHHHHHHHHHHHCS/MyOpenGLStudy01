@@ -229,11 +229,10 @@ int _06_CoordinateSystems_Practice::DoMain()
 		glfwPollEvents();
 	}
 
-	glfwTerminate();
-
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 
+	glfwTerminate();
 
 	return 0;
 }

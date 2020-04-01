@@ -129,12 +129,13 @@ int _26_GammaCorrection::DoMain()
 		glfwPollEvents();
 	}
 
-	glfwTerminate();
-
 	glDeleteVertexArrays(1, &planeVAO);
 	glDeleteBuffers(1, &planeVBO);
 	glDeleteTextures(1, &gammaFloorTexture);
 	glDeleteTextures(1, &gammaFloorTexture);
+
+	glfwTerminate();
+
 
 	return 0;
 }

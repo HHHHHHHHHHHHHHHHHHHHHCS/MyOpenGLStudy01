@@ -180,10 +180,10 @@ int _06_CoordinateSystems::DoMain()
 		glfwPollEvents();
 	}
 
-	glfwTerminate();
-
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+
+	glfwTerminate();
 
 
 	return 0;

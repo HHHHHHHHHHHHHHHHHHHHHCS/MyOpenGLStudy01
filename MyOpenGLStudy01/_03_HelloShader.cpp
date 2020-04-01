@@ -120,17 +120,17 @@ int _03_HelloShader::DoMain()
 		//glUniform3f glUniform4i glUniformi 
 
 		glBindVertexArray(VAO); //虽然我们只有一个VAO,不用每次都绑定,但是这样看更加直观
+		//glDrawArrays 直接走顶点  数组顺序
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	glfwTerminate(); //正确释放/删除之前的分配的所有资源
-
-
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+
+	glfwTerminate(); //正确释放/删除之前的分配的所有资源
 }
 
 /*

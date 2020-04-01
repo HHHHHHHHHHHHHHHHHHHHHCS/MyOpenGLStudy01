@@ -207,12 +207,14 @@ int _16_Blending_Discard::DoMain()
 		glfwPollEvents();
 	}
 
-	glfwTerminate();
-
 	glDeleteVertexArrays(1, &cubeVAO);
 	glDeleteVertexArrays(1, &planeVAO);
 	glDeleteBuffers(1, &cubeVBO);
 	glDeleteBuffers(1, &planeVAO);
+
+	glfwTerminate();
+
+
 
 
 	return 0;

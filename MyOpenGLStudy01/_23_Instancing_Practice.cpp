@@ -75,8 +75,8 @@ int _23_Instancing_Practice::DoMain()
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4)
 		                      , reinterpret_cast<void*>(0));
-		glEnableVertexAttribArray(4);
 
+		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4)
 		                      , reinterpret_cast<void*>(sizeof(glm::vec4)));
 
@@ -133,6 +133,7 @@ int _23_Instancing_Practice::DoMain()
 		for (unsigned int i = 0; i < asteroid.GetMeshes().size(); i++)
 		{
 			glBindVertexArray(asteroid.GetMeshes()[i].VAO);
+			//glDrawElementsInstanced 走indices
 			// reinterpret_cast<void*>(0) 是indices 起始偏移
 			glDrawElementsInstanced(GL_TRIANGLES, asteroid.GetMeshes()[i].indices.size(), GL_UNSIGNED_INT,
 			                        reinterpret_cast<void*>(0), amount);

@@ -218,11 +218,11 @@ int _11_LightCasters::DoMain()
 		glfwPollEvents();
 	}
 
-	glfwTerminate();
-
 	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteVertexArrays(1, &cubeVAO);
 	glDeleteBuffers(1, &VBO);
+
+	glfwTerminate();
 
 	return 0;
 }

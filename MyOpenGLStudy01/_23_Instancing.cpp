@@ -103,6 +103,7 @@ int _23_Instancing::DoMain()
 
 		glBindVertexArray(quadVAO);
 		instancingArrayShader.Use();
+		//glDrawArraysInstanced 直接走顶点在数组中的顺序
 		//instanced 画100个
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100);
 
@@ -113,6 +114,7 @@ int _23_Instancing::DoMain()
 
 	glDeleteVertexArrays(1, &quadVAO);
 	glDeleteBuffers(1, &quadVBO);
+
 	glfwTerminate();
 
 	return 0;
