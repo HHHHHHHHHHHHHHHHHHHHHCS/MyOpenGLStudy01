@@ -21,7 +21,7 @@ float ShadowCalculation(vec4 FragPosLightSpace)
 	vec3 projCoords=FragPosLightSpace.xyz/FragPosLightSpace.w;
 	// transform to [0,1] range
 	projCoords=projCoords*.5+.5;
-	float closestDepth=texture(shadowMap,projCoords.xy).r;
+	float closestDepth=texture(shadowMap,projCoords.xy).r+.01;//0.01用做阴影bias
 	float currentDepth=projCoords.z;
 	float shadow=currentDepth>closestDepth?1.:0.;
 	return shadow;
@@ -36,7 +36,7 @@ void main()
 	vec3 ambient=.3*color;
 	//diffuse
 	vec3 lightDir=lightPos;//normalize(lightPos);
-	float diff=max(dot(lightDir,normal),0.);
+	float diffuse=max(dot(lightDir,normal),0.);
 	//spec
 	float spec=0.;
 	vec3 viewDir=normalize(viewPos-fs_in.FragPos);
