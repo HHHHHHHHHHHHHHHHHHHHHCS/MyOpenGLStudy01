@@ -187,6 +187,7 @@
     <ClCompile Include="_26_GammaCorrection.cpp" />
     <ClCompile Include="_27_ShadowMapping_Base.cpp" />
     <ClCompile Include="_27_ShadowMapping_Debug.cpp" />
+    <ClCompile Include="_27_ShadowMapping_Soft.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -233,6 +234,7 @@
     <ClInclude Include="_26_GammaCorrection.h" />
     <ClInclude Include="_27_ShadowMapping_Base.h" />
     <ClInclude Include="_27_ShadowMapping_Debug.h" />
+    <ClInclude Include="_27_ShadowMapping_Soft.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

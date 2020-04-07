@@ -19,13 +19,36 @@ float ShadowCalculation(vec4 FragPosLightSpace)
 {
 	// perform perspective divide
 	vec3 projCoords=FragPosLightSpace.xyz/FragPosLightSpace.w;
+	//if outside far_plane that shadow is 0.0
+	if(projCoords.z>1.)
+	{
+		return 0.;
+	}
 	// transform to [0,1] range
 	projCoords=projCoords*.5+.5;
-	//0.01用做阴影bias
-	//因为图片分辨率限制 很多相近点都采样一个像素点
-	float closestDepth=texture(shadowMap,projCoords.xy).r+.01;
+	float closestDepth=texture(shadowMap,projCoords.xy).r;
 	float currentDepth=projCoords.z;
-	float shadow=currentDepth>closestDepth?1.:0.;
+	//calculate bias
+	vec3 normal=normalize(fs_in.Normal);
+	vec3 lightDir=lightPos;//normalize(lightPos);
+	//dot(normal,lightDir)解决坡度过大出现的 阴影失真(Shadow Acne)
+	float bias=max(.05*(1.-dot(normal,lightDir)),.005);
+	//check in shadow
+	//float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	//PCF
+	float shadow=0.;
+	vec2 texelSize=1./textureSize(shadowMap,0);
+	for(int x=-1;x<=1;++x)
+	{
+		for(int y=-1;y<=1;++y)
+		{
+			float pcfDepth=texture(shadowMap,projCoords.xy+vec2(x,y)*texelSize).r;
+			shadow+=currentDepth-bias>pcfDepth?1.:0.;
+		}
+	}
+	
+	shadow/=9.;
+	
 	return shadow;
 }
 

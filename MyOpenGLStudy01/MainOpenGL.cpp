@@ -40,11 +40,12 @@
  #include "_26_GammaCorrection.h"
  #include "_27_ShadowMapping_Debug.h"
  #include "_27_ShadowMapping_Base.h"
+#include "_27_ShadowMapping_Soft.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _27_ShadowMapping_Base::DoMain();
+	int ret = _27_ShadowMapping_Soft::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
