@@ -47,8 +47,8 @@ int _27_ShadowMapping_Soft::DoMain()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 	//glDrawBuffer glReadBuffer 告诉opengl不要画颜色
 	//只要深度 提高效率
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
+	glDrawBuffer(GL_NONE);//比如双缓存指定画哪个缓存
+	glReadBuffer(GL_NONE);//读取哪个颜色缓存
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
