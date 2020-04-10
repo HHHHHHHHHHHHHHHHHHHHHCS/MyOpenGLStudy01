@@ -153,6 +153,9 @@
     <ClCompile Include="_27_ShadowMapping_Soft.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_28_PointShadow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -288,6 +291,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_27_ShadowMapping_Soft.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_28_PointShadow.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
