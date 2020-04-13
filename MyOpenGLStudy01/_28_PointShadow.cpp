@@ -52,7 +52,7 @@ int _28_PointShadow::DoMain()
 	//ShaderConfigure
 	//-----------------------------
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE); //启动面剔除 默认是北面被剔除
+	glEnable(GL_CULL_FACE); //启动面剔除 默认是背面被剔除
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, woodTexture);
@@ -67,10 +67,48 @@ int _28_PointShadow::DoMain()
 
 	glm::vec3 lightPos{0.0f, 0.0f, 0.0f};
 
-	while(!glfwWindowShouldClose(window))
+	float near_plane = 1.0f;
+	float far_plane = 25.0f;
+	glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f)
+	                                        , static_cast<float>(SHADOW_WIDTH) / SHADOW_HEIGHT
+	                                        , near_plane, far_plane);
+
+	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
 		camera.DoKeyboardMove(window);
+
+		lightPos.z = sin(glfwGetTime() * 0.5) * 3.0;
+
+		//clear canvs
+		//--------------------
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//0.create depth cubemap transformation matrices
+		//----------------------------------
+		//每个都按顺序注视着立方体贴图的的一个方向：右、左、上、下、近、远：
+		//--这里的up虽然很奇怪 但是无所谓
+		std::vector<glm::mat4> shadowTransforms;
+		shadowTransforms.push_back(shadowProj
+			* glm::lookAt(lightPos, lightPos + glm::vec3(1.0f, 0.0f, 0.0f)
+			              , glm::vec3(0.0f, -1.0f, 0.0f)));
+		shadowTransforms.push_back(shadowProj
+			* glm::lookAt(lightPos, lightPos + glm::vec3(-1.0f, 0.0f, 0.0f)
+			              , glm::vec3(0.0f, -1.0f, 0.0f)));
+		shadowTransforms.push_back(shadowProj
+			* glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 1.0f, 0.0f)
+			              , glm::vec3(0.0f, 0.0f, 1.0f)));
+		shadowTransforms.push_back(shadowProj
+			* glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, -1.0f, 0.0f)
+			              , glm::vec3(0.0f, 0.0f, -1.0f)));
+		shadowTransforms.push_back(shadowProj
+			* glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 0.0f, 1.0f)
+			              , glm::vec3(0.0f, -1.0f, 0.0f)));
+		shadowTransforms.push_back(shadowProj
+			* glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 0.0f, -1.0f)
+			              , glm::vec3(0.0f, -1.0f, 0.0f)));
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

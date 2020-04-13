@@ -41,11 +41,12 @@
  #include "_27_ShadowMapping_Debug.h"
  #include "_27_ShadowMapping_Base.h"
 #include "_27_ShadowMapping_Soft.h"
+#include "_28_PointShadow.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _27_ShadowMapping_Soft::DoMain();
+	int ret = _28_PointShadow::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
