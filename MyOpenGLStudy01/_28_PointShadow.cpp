@@ -4,6 +4,9 @@
 #include "ImageHelper.h"
 #include "Camera.h"
 
+unsigned int _28_PointShadow::cubeVAO = 0;
+
+
 int _28_PointShadow::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
@@ -61,10 +64,6 @@ int _28_PointShadow::DoMain()
 	glActiveTexture(0);
 
 
-	pointShadowsShader.Use();
-	pointShadowsShader.SetInt("diffuseTexture", 0);
-	pointShadowsShader.SetInt("depthMap", 1);
-
 	glm::vec3 lightPos{0.0f, 0.0f, 0.0f};
 
 	float near_plane = 1.0f;
@@ -73,10 +72,31 @@ int _28_PointShadow::DoMain()
 	                                        , static_cast<float>(SHADOW_WIDTH) / SHADOW_HEIGHT
 	                                        , near_plane, far_plane);
 
+	pointShadowsShader.Use();
+	pointShadowsShader.SetInt("diffuseTexture", 0);
+	pointShadowsShader.SetInt("depthMap", 1);
+	pointShadowsShader.SetVec3("lightPos", lightPos);
+	pointShadowsShader.SetFloat("far_plane", far_plane);
+
+	depthShader.Use();
+	depthShader.SetFloat("far_plane", far_plane);
+	depthShader.SetVec3("lightPos", lightPos);
+
+	bool showShader = true;
+	bool lastPress = false;
+	std::cout << (showShader ? "Show Shader" : "Close Shadow") << '\n';
+
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
 		camera.DoKeyboardMove(window);
+
+		if (lastPress && !CommonBaseScript::keys[GLFW_KEY_SPACE])
+		{
+			showShader = !showShader;
+			std::cout << (showShader ? "Show Shader" : "Close Shadow") << '\n';
+		}
+		lastPress = CommonBaseScript::keys[GLFW_KEY_SPACE];
 
 		lightPos.z = sin(glfwGetTime() * 0.5) * 3.0;
 
@@ -109,12 +129,153 @@ int _28_PointShadow::DoMain()
 			* glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 0.0f, -1.0f)
 			              , glm::vec3(0.0f, -1.0f, 0.0f)));
 
+		//1.render scene to depth cubemap
+		//-------------------------
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO); //切换到ShadowMap
+		glClear(GL_DEPTH_BUFFER_BIT);
+		depthShader.Use();
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			depthShader.SetMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+		}
+		RenderScene(depthShader);
+
+		//2.render scene as normal
+		//----------------------------
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0); //切换为默认的RT
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		pointShadowsShader.Use();
+		glm::mat4 proj = camera.GetProjectionMat4();
+		glm::mat4 view = camera.GetViewMat4();
+		pointShadowsShader.SetMat4("projection", proj);
+		pointShadowsShader.SetMat4("view", view);
+		pointShadowsShader.SetVec3("viewPos", camera.position);
+		pointShadowsShader.SetInt("shadows", true); //todo:off/on
+		RenderScene(depthShader);
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
+	glDeleteVertexArrays(1, &cubeVAO);
+
 	glfwTerminate();
 
 	return 0;
+}
+
+void _28_PointShadow::RenderScene(Shader shader)
+{
+	//room
+	glm::mat4 model = glm::mat4{1.0f};
+	model = glm::scale(model, glm::vec3{5.0f});
+	shader.SetMat4("model", model);
+	glDisable(GL_CULL_FACE);//因为我们在一个大盒子里面所以先禁用
+	shader.SetInt("reverse_normals", 1);//因为我们在盒子里面normal需要反着的
+	RenderCube();
+	shader.SetInt("reverse_normals", 0);
+	glEnable(GL_CULL_FACE);
+
+	//cubes
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(4.0f, -3.5f, 0.0));
+	model = glm::scale(model, glm::vec3(0.5f));
+	shader.SetMat4("model", model);
+	RenderCube();
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(2.0f, 3.0f, 1.0));
+	model = glm::scale(model, glm::vec3(0.75f));
+	shader.SetMat4("model", model);
+	RenderCube();
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(-3.0f, -1.0f, 0.0));
+	model = glm::scale(model, glm::vec3(0.5f));
+	shader.SetMat4("model", model);
+	RenderCube();
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(-1.5f, 1.0f, 1.5));
+	model = glm::scale(model, glm::vec3(0.5f));
+	shader.SetMat4("model", model);
+	RenderCube();
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(-1.5f, 2.0f, -3.0));
+	model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+	model = glm::scale(model, glm::vec3(0.75f));
+	shader.SetMat4("model", model);
+	RenderCube();
+}
+
+void _28_PointShadow::BindCubeVAO()
+{
+	float vertices[] = {
+		// back face
+		-1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+		1.0f, 1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // top-right
+		1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
+		1.0f, 1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // top-right
+		-1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+		-1.0f, 1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, // top-left
+		// front face
+		-1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom-left
+		1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // bottom-right
+		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
+		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
+		-1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // top-left
+		-1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom-left
+		// left face
+		-1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
+		-1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-left
+		-1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
+		-1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
+		-1.0f, -1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom-right
+		-1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
+		// right face
+		1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-left
+		1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
+		1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-right         
+		1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
+		1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-left
+		1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom-left     
+		// bottom face
+		-1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
+		1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, // top-left
+		1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-left
+		1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-left
+		-1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-right
+		-1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
+		// top face
+		-1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top-left
+		1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
+		1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // top-right     
+		1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
+		-1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top-left
+		-1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f // bottom-left        
+	};
+
+	glGenVertexArrays(1, &cubeVAO);
+	unsigned int cubeVBO;
+	glGenBuffers(1, &cubeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBindVertexArray(cubeVAO);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(0));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	glDeleteBuffers(1, &cubeVBO); //这时候VBO已经写入VAO了 可以删除VBO了
+	//delete[] vertices;//末尾自动删除不用手动调用
+}
+
+void _28_PointShadow::RenderCube()
+{
+	glBindVertexArray(cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
 }

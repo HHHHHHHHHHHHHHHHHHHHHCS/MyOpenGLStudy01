@@ -83,7 +83,7 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
 
 void Camera::ProcessMouseMovement(float xPos, float yPos, GLboolean constrainPitch)
 {
-	if(isFirst)
+	if (isFirst)
 	{
 		lastXPos = xPos;
 		lastYPos = yPos;
@@ -122,6 +122,10 @@ glm::mat4 Camera::GetProjectionMat4() const
 	return glm::perspective(glm::radians(zoom), static_cast<float>(SCR_WIDTH) / SCR_HEIGHT, 0.1f, 1000.0f);
 }
 
+glm::mat4 Camera::GetViewProjection() const
+{
+	return GetProjectionMat4() * GetViewMat4();
+}
 
 void Camera::UpdateCameraVectors()
 {

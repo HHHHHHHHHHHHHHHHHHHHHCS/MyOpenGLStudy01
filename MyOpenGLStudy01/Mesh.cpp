@@ -5,7 +5,8 @@
 
 Mesh::~Mesh()
 {
-
+	glDeleteBuffers(1,&VBO);
+	glDeleteVertexArrays(1, &VAO);
 }
 
 

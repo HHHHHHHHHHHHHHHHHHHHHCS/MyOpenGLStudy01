@@ -155,6 +155,8 @@ void _27_ShadowMapping_Debug::BindPlaneVAO()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	glDeleteBuffers(1, &planeVBO);//这时候VBO已经写入VAO了 可以删除VBO了
 }
 
 void _27_ShadowMapping_Debug::BindCubeVAO()
@@ -218,6 +220,8 @@ void _27_ShadowMapping_Debug::BindCubeVAO()
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	glDeleteBuffers(1, &cubeVBO);//这时候VBO已经写入VAO了 可以删除VBO了
 }
 
 void _27_ShadowMapping_Debug::BindQuadVAO()
@@ -242,6 +246,8 @@ void _27_ShadowMapping_Debug::BindQuadVAO()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	glDeleteBuffers(1, &quadVBO);//这时候VBO已经写入VAO了 可以删除VBO了
 }
 
 

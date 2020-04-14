@@ -146,6 +146,9 @@ int _27_ShadowMapping_Soft::DoMain()
 	glDeleteVertexArrays(1, &planeVAO);
 	glDeleteVertexArrays(1, &cubeVAO);
 	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteShader(simpleDepthShader.ID);
+	glDeleteShader(debugDepthQuadShader.ID);
+	glDeleteShader(shadowBaseSoftShader.ID);
 
 	glfwTerminate();
 
@@ -181,6 +184,8 @@ void _27_ShadowMapping_Soft::BindPlaneVAO()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	glDeleteBuffers(1, &planeVBO);//这时候VBO已经写入VAO了 可以删除VBO了
 }
 
 void _27_ShadowMapping_Soft::BindCubeVAO()
@@ -244,6 +249,9 @@ void _27_ShadowMapping_Soft::BindCubeVAO()
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	glDeleteBuffers(1,&cubeVBO);//这时候VBO已经写入VAO了 可以删除VBO了
+	//delete[] vertices;//自动销毁的不用手动调用
 }
 
 void _27_ShadowMapping_Soft::BindQuadVAO()
@@ -268,6 +276,8 @@ void _27_ShadowMapping_Soft::BindQuadVAO()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	glDeleteBuffers(1, &quadVBO);//这时候VBO已经写入VAO了 可以删除VBO了
 }
 
 

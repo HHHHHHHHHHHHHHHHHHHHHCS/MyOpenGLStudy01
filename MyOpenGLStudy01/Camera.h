@@ -59,6 +59,7 @@ public:
 	void ProcessMouseScroll(float yOffset);
 	glm::mat4 GetViewMat4() const;
 	glm::mat4 GetProjectionMat4() const;
+	glm::mat4 GetViewProjection() const;
 
 private:
 	void UpdateCameraVectors();
