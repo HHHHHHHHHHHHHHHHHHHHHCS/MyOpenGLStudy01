@@ -48,6 +48,8 @@ int _28_PointShadow::DoMain()
 	//-----------------------------
 	unsigned int woodTexture = ImageHelper::LoadTexture("wood.png");
 
+	//Camera
+	//-----------------------------
 	Camera camera{};
 	Camera::AddMouseEvent(window);
 	CommonBaseScript::RegisterKeyEvent(window);
@@ -160,6 +162,8 @@ int _28_PointShadow::DoMain()
 		glfwPollEvents();
 	}
 
+	glDeleteShader(pointShadowsShader.ID);
+	glDeleteShader(depthShader.ID);
 	glDeleteVertexArrays(1, &cubeVAO);
 
 	glfwTerminate();
@@ -173,8 +177,8 @@ void _28_PointShadow::RenderScene(Shader shader)
 	glm::mat4 model = glm::mat4{1.0f};
 	model = glm::scale(model, glm::vec3{5.0f});
 	shader.SetMat4("model", model);
-	glDisable(GL_CULL_FACE);//因为我们在一个大盒子里面所以先禁用
-	shader.SetInt("reverse_normals", 1);//因为我们在盒子里面normal需要反着的
+	glDisable(GL_CULL_FACE); //因为我们在一个大盒子里面所以先禁用
+	shader.SetInt("reverse_normals", 1); //因为我们在盒子里面normal需要反着的
 	RenderCube();
 	shader.SetInt("reverse_normals", 0);
 	glEnable(GL_CULL_FACE);
