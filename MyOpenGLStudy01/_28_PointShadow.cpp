@@ -6,7 +6,6 @@
 
 unsigned int _28_PointShadow::cubeVAO = 0;
 
-
 int _28_PointShadow::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
@@ -16,6 +15,8 @@ int _28_PointShadow::DoMain()
 	{
 		return -1;
 	}
+
+	BindCubeVAO();
 
 	//Configure Depth Map FBO
 	//-----------------------------
@@ -41,8 +42,8 @@ int _28_PointShadow::DoMain()
 
 	//Shader
 	//-----------------------------
-	Shader pointShadowsShader{"", ""};
-	Shader depthShader{"", "", ""};
+	Shader pointShadowsShader{"28_PointShadows"};
+	Shader pointDepthShader{"28_PointShadows_Depth", true};
 
 	//Textures
 	//-----------------------------
@@ -77,12 +78,10 @@ int _28_PointShadow::DoMain()
 	pointShadowsShader.Use();
 	pointShadowsShader.SetInt("diffuseTexture", 0);
 	pointShadowsShader.SetInt("depthMap", 1);
-	pointShadowsShader.SetVec3("lightPos", lightPos);
 	pointShadowsShader.SetFloat("far_plane", far_plane);
 
-	depthShader.Use();
-	depthShader.SetFloat("far_plane", far_plane);
-	depthShader.SetVec3("lightPos", lightPos);
+	pointDepthShader.Use();
+	pointDepthShader.SetFloat("far_plane", far_plane);
 
 	bool showShader = true;
 	bool lastPress = false;
@@ -101,6 +100,7 @@ int _28_PointShadow::DoMain()
 		lastPress = CommonBaseScript::keys[GLFW_KEY_SPACE];
 
 		lightPos.z = sin(glfwGetTime() * 0.5) * 3.0;
+
 
 		//clear canvs
 		//--------------------
@@ -136,13 +136,14 @@ int _28_PointShadow::DoMain()
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO); //切换到ShadowMap
 		glClear(GL_DEPTH_BUFFER_BIT);
-		depthShader.Use();
+		pointDepthShader.Use();
+		pointDepthShader.SetVec3("lightPos", lightPos);
 		for (unsigned int i = 0; i < 6; ++i)
 		{
-			depthShader.SetMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+			pointDepthShader.SetMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
 		}
-		RenderScene(depthShader);
-
+		RenderScene(pointDepthShader);
+		
 		//2.render scene as normal
 		//----------------------------
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
@@ -154,8 +155,9 @@ int _28_PointShadow::DoMain()
 		pointShadowsShader.SetMat4("projection", proj);
 		pointShadowsShader.SetMat4("view", view);
 		pointShadowsShader.SetVec3("viewPos", camera.position);
-		pointShadowsShader.SetInt("shadows", true); //todo:off/on
-		RenderScene(depthShader);
+		pointShadowsShader.SetInt("shadows", showShader);
+		pointShadowsShader.SetVec3("lightPos", lightPos);
+		RenderScene(pointShadowsShader);
 
 
 		glfwSwapBuffers(window);
@@ -163,7 +165,7 @@ int _28_PointShadow::DoMain()
 	}
 
 	glDeleteShader(pointShadowsShader.ID);
-	glDeleteShader(depthShader.ID);
+	glDeleteShader(pointDepthShader.ID);
 	glDeleteVertexArrays(1, &cubeVAO);
 
 	glfwTerminate();
@@ -262,6 +264,7 @@ void _28_PointShadow::BindCubeVAO()
 	glGenVertexArrays(1, &cubeVAO);
 	unsigned int cubeVBO;
 	glGenBuffers(1, &cubeVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	glBindVertexArray(cubeVAO);
 	glEnableVertexAttribArray(0);
