@@ -17,7 +17,37 @@ uniform vec3 viewPos;
 uniform float far_plane;
 uniform bool shadows;
 
-float ShadowCalculation(vec3 fragPos)
+float PCFShadowCalculation(vec3 fragPos)
+{
+	vec3 fragToLight=fragPos-lightPos;
+	float currentDepth=length(fragToLight);
+	
+	float shadow=0.;
+	float bias=.05;
+	float samples=4.;
+	float offset=.1;
+	for(float x=-offset;x<offset;x+=(2*offset)/samples)
+	{
+		for(float y=-offset;y<offset;y+=(2*offset)/samples)
+		{
+			for(float z=-offset;z<offset;z+=(2*offset)/(samples))
+			{
+				float closestDepth=texture(depthMap,fragToLight+vec3(x,y,z)).r;
+				closestDepth*=far_plane;
+				if(currentDepth-bias>closestDepth)
+				{
+					shadow+=1.;
+				}
+			}
+		}
+	}
+	
+	shadow/=samples*samples*samples;
+	
+	return shadow;
+}
+
+float SampleShadowCalculation(vec3 fragPos)
 {
 	vec3 fragToLight=fragPos-lightPos;
 	float closestDepth=texture(depthMap,fragToLight).r;
@@ -48,9 +78,9 @@ void main()
 	spec=pow(max(dot(normal,halfwayDir),0.),64.);
 	vec3 specular=spec*lightColor;
 	//calculate shadow
-	float shadow=shadows?ShadowCalculation(fs_in.FragPos):0.;
+	float shadow=shadows?SampleShadowCalculation(fs_in.FragPos):0.;
 	vec3 lighting=(ambient+(1.-shadow)*(diffuse+specular))*color;
-
+	
 	FragColor=vec4(lighting,1.);
-
+	
 }

@@ -90,7 +90,10 @@ int _28_PointShadow::DoMain()
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
+		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
+		if(CommonBaseScript::clickKeys[GLFW_KEY_1])
+		std::cout << CommonBaseScript::clickKeys[GLFW_KEY_1] << '\n';
 
 		if (lastPress && !CommonBaseScript::keys[GLFW_KEY_SPACE])
 		{
@@ -143,7 +146,7 @@ int _28_PointShadow::DoMain()
 			pointDepthShader.SetMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
 		}
 		RenderScene(pointDepthShader);
-		
+
 		//2.render scene as normal
 		//----------------------------
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);

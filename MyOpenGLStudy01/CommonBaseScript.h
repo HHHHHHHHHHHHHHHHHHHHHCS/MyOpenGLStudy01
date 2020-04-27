@@ -17,15 +17,18 @@ extern const unsigned int SCR_HEIGHT;
 class CommonBaseScript
 {
 public:
+	static bool clickKeys[];
 	static bool keys[];
 	static void InitOpenGL(bool canResize = false);
 	static GLFWwindow* InitWindow();
 	static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 	static void ProcessInput(GLFWwindow* window);
+	static void ProcessKeyClick();
 	static void RegisterKeyEvent(GLFWwindow* window);
 	static bool CheckCompile(unsigned id);
 	static void UsePolygonMode();
 	static void HideCursor(GLFWwindow* window);
 private:
+	static bool lastKeys[];
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 };

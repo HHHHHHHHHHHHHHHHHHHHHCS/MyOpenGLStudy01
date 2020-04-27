@@ -7,7 +7,9 @@
 extern const unsigned int SCR_WIDTH = 800;
 extern const unsigned int SCR_HEIGHT = 600;
 
-bool CommonBaseScript::keys[1024];
+bool CommonBaseScript::lastKeys[GLFW_KEY_LAST + 1];
+bool CommonBaseScript::clickKeys[GLFW_KEY_LAST + 1];
+bool CommonBaseScript::keys[GLFW_KEY_LAST + 1];
 
 void CommonBaseScript::InitOpenGL(bool canReisze)
 {
@@ -60,6 +62,22 @@ void CommonBaseScript::ProcessInput(GLFWwindow* window)
 		glfwSetWindowShouldClose(window, true);
 }
 
+void CommonBaseScript::ProcessKeyClick()
+{
+	for (int i = GLFW_KEY_SPACE; i <= GLFW_KEY_LAST; ++i)
+	{
+		if(lastKeys[i] && !keys[i])
+		{
+			clickKeys[i] = true;
+		}
+		else
+		{
+			clickKeys[i] = false;
+		}
+		lastKeys[i] = keys[i];
+	}
+}
+
 //按键注册事件
 void CommonBaseScript::RegisterKeyEvent(GLFWwindow* window)
 {
@@ -72,9 +90,13 @@ void CommonBaseScript::KeyCallback(GLFWwindow* window, int key, int scancode, in
 	if (key > 0 && key < size_t(keys))
 	{
 		if (action == GLFW_PRESS)
+		{
 			keys[key] = true;
+		}
 		else if (action == GLFW_RELEASE)
+		{
 			keys[key] = false;
+		}
 	}
 }
 
