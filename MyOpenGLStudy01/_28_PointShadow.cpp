@@ -84,25 +84,44 @@ int _28_PointShadow::DoMain()
 	pointDepthShader.SetFloat("far_plane", far_plane);
 
 	bool showShader = true;
-	bool lastPress = false;
 	std::cout << (showShader ? "Show Shader" : "Close Shadow") << '\n';
+
+	int shadowsType = 1;
+	std::cout << (shadowsType == 1 ? "Sample Sampler" : (shadowsType == 2 ? "PCF Sampler" : "Grid Sampler")) <<
+		'\n';
+
 
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
 		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
-		if(CommonBaseScript::clickKeys[GLFW_KEY_1])
-		std::cout << CommonBaseScript::clickKeys[GLFW_KEY_1] << '\n';
+		if (CommonBaseScript::clickKeys[GLFW_KEY_1])
+		{
+			shadowsType = 1;
+			std::cout << "Sample Sampler" << '\n';
+		}
 
-		if (lastPress && !CommonBaseScript::keys[GLFW_KEY_SPACE])
+		if (CommonBaseScript::clickKeys[GLFW_KEY_2])
+		{
+			shadowsType = 2;
+			std::cout << "PCF Sampler" << '\n';
+		}
+
+		if (CommonBaseScript::clickKeys[GLFW_KEY_3])
+		{
+			shadowsType = 3;
+			std::cout << "Grid Sampler" << '\n';
+		}
+
+		if (CommonBaseScript::clickKeys[GLFW_KEY_SPACE])
 		{
 			showShader = !showShader;
 			std::cout << (showShader ? "Show Shader" : "Close Shadow") << '\n';
 		}
-		lastPress = CommonBaseScript::keys[GLFW_KEY_SPACE];
 
-		lightPos.z = sin(glfwGetTime() * 0.5) * 3.0;
+
+		//lightPos.z = sin(glfwGetTime() * 0.5) * 3.0;
 
 
 		//clear canvs
@@ -158,7 +177,8 @@ int _28_PointShadow::DoMain()
 		pointShadowsShader.SetMat4("projection", proj);
 		pointShadowsShader.SetMat4("view", view);
 		pointShadowsShader.SetVec3("viewPos", camera.position);
-		pointShadowsShader.SetInt("shadows", showShader);
+		pointShadowsShader.SetInt("showShadows", showShader);
+		pointShadowsShader.SetInt("shadowsType", shadowsType);
 		pointShadowsShader.SetVec3("lightPos", lightPos);
 		RenderScene(pointShadowsShader);
 

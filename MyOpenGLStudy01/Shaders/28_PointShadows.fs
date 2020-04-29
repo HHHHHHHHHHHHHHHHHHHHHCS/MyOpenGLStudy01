@@ -15,7 +15,46 @@ uniform vec3 lightPos;
 uniform vec3 viewPos;
 
 uniform float far_plane;
-uniform bool shadows;
+uniform bool showShadows;
+uniform int shadowsType;
+
+// cube 的 八个角 和 12 条棱的中点
+vec3 gridSamplingDisk[20]=vec3[]
+(
+	vec3(1,1,1),vec3(1,-1,1),vec3(-1,-1,1),vec3(-1,1,1),
+	vec3(1,1,-1),vec3(1,-1,-1),vec3(-1,-1,-1),vec3(-1,1,-1),
+	vec3(1,1,0),vec3(1,-1,0),vec3(-1,-1,0),vec3(-1,1,0),
+	vec3(1,0,1),vec3(-1,0,1),vec3(1,0,-1),vec3(-1,0,-1),
+	vec3(0,1,1),vec3(0,-1,1),vec3(0,-1,-1),vec3(0,1,-1)
+);
+
+float GridShadowCalculation(vec3 fragPos)
+{
+	vec3 fragToLight=fragPos-lightPos;
+	float currentDepth=length(fragToLight);
+	
+	float shadow=0.;
+	float bias=.15;
+	int samples=20;
+	
+	//越近采样跨度越小 越精细
+	float diskRadius=(1.+(currentDepth/far_plane))/25.;
+	
+	for(int i=0;i<samples;++i)
+	{
+		float closestDepth=texture(depthMap,fragToLight+gridSamplingDisk[i]*diskRadius).r;
+		closestDepth*=far_plane;
+		if(currentDepth-bias>closestDepth)
+		shadow+=1.;
+	}
+	
+	shadow/=float(samples);
+	
+	//if debug use
+	//FragColor = vec4(vec3(closestDepth/far_plane), 1.0)
+	
+	return shadow;
+}
 
 float PCFShadowCalculation(vec3 fragPos)
 {
@@ -23,26 +62,24 @@ float PCFShadowCalculation(vec3 fragPos)
 	float currentDepth=length(fragToLight);
 	
 	float shadow=0.;
-	float bias=.05;
-	float samples=4.;
-	float offset=.1;
-	for(float x=-offset;x<offset;x+=(2*offset)/samples)
+	float bias=.15;
+	float samples=2.;
+	float offset=.04;
+	for(float x=-offset;x<=offset;x+=(2*offset)/samples)
 	{
-		for(float y=-offset;y<offset;y+=(2*offset)/samples)
+		for(float y=-offset;y<=offset;y+=(2*offset)/samples)
 		{
-			for(float z=-offset;z<offset;z+=(2*offset)/(samples))
+			for(float z=-offset;z<=offset;z+=(2*offset)/(samples))
 			{
-				float closestDepth=texture(depthMap,fragToLight+vec3(x,y,z)).r;
+				float closestDepth=texture(depthMap, fragToLight+vec3(x,y,z)).r;
 				closestDepth*=far_plane;
 				if(currentDepth-bias>closestDepth)
-				{
-					shadow+=1.;
-				}
+				shadow+=1.;
 			}
 		}
 	}
 	
-	shadow/=samples*samples*samples;
+	shadow/=(samples+1)*(samples+1)*(samples+1);
 	
 	return shadow;
 }
@@ -78,9 +115,24 @@ void main()
 	spec=pow(max(dot(normal,halfwayDir),0.),64.);
 	vec3 specular=spec*lightColor;
 	//calculate shadow
-	float shadow=shadows?SampleShadowCalculation(fs_in.FragPos):0.;
+	float shadow=0;
+	if(showShadows)
+	{
+		if(shadowsType==1)
+		{
+			shadow=SampleShadowCalculation(fs_in.FragPos);
+		}
+		else if(shadowsType==2)
+		{
+			shadow=PCFShadowCalculation(fs_in.FragPos);
+		}
+		else// if(shadowsType==3)
+		{
+			shadow=GridShadowCalculation(fs_in.FragPos);
+		}
+	}
+	
 	vec3 lighting=(ambient+(1.-shadow)*(diffuse+specular))*color;
 	
 	FragColor=vec4(lighting,1.);
-	
 }
