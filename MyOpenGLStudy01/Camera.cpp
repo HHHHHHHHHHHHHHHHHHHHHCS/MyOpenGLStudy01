@@ -119,7 +119,7 @@ glm::mat4 Camera::GetViewMat4() const
 
 glm::mat4 Camera::GetProjectionMat4() const
 {
-	return glm::perspective(glm::radians(zoom), static_cast<float>(SCR_WIDTH) / SCR_HEIGHT, 0.1f, 1000.0f);
+	return glm::perspective(glm::radians(zoom), static_cast<float>(SCR_WIDTH) / SCR_HEIGHT, ZNEAR, ZFAR);
 }
 
 glm::mat4 Camera::GetViewProjection() const

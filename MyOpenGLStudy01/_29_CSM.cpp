@@ -1,13 +1,13 @@
-﻿#include "_27_ShadowMapping_Soft.h"
+﻿#include "_29_CSM.h"
 #include "CommonBaseScript.h"
 #include "Camera.h"
 #include "ImageHelper.h"
 
-unsigned int _27_ShadowMapping_Soft::planeVAO = 0;
-unsigned int _27_ShadowMapping_Soft::cubeVAO = 0;
-unsigned int _27_ShadowMapping_Soft::quadVAO = 0;
+unsigned int _29_CSM::planeVAO = 0;
+unsigned int _29_CSM::cubeVAO = 0;
+unsigned int _29_CSM::quadVAO = 0;
 
-int _27_ShadowMapping_Soft::DoMain()
+int _29_CSM::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
 	GLFWwindow* window = CommonBaseScript::InitWindow();
@@ -17,18 +17,14 @@ int _27_ShadowMapping_Soft::DoMain()
 		return -1;
 	}
 
-	BindPlaneVAO();
-	BindCubeVAO();
-	BindQuadVAO();
-
-
 	//Frame
-	//---------------------
+	//-------------
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
 
 	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	GLuint depthMap;
+
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT
@@ -37,90 +33,73 @@ int _27_ShadowMapping_Soft::DoMain()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	//设置边框颜色
+
 	GLfloat borderColor[] = {1.0, 1.0, 1.0, 1.0};
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-	//glDrawBuffer glReadBuffer 告诉opengl不要画颜色
-	//只要深度 提高效率
-	glDrawBuffer(GL_NONE);//比如双缓存指定画哪个缓存
-	glReadBuffer(GL_NONE);//读取哪个颜色缓存
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	//Camera
+	//-----------------
+	Camera camera{};
+	Camera::AddMouseEvent(window);
+	CommonBaseScript::RegisterKeyEvent(window);
 
-	//shader
+	//LightSpaceMatrix
+	GLfloat near_plane = 0.1f, far_plane = 1000.0f, orthoSize = 1000.0f;;
+	float csmSetting[]{0.01f, 0.09f, 0.3f, 0.6f};
+	glm::vec3 lightPos = glm::vec3(-2.5f, 5.0f, -2.5f);
+	glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f, 0.0f, 0.0f)
+		, glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+	//load textures
+	//--------------
+	unsigned int woodTexture = ImageHelper::LoadTexture("wood.png");
+
+	//Shader
 	//------------------------
 	Shader simpleDepthShader{"27_SimpleDepthShader"};
 	Shader debugDepthQuadShader{"27_DebugDepthQuad"};
 	Shader shadowBaseSoftShader{"27_ShadowBase_Soft"};
 
-	// load textures
-	// -------------
-	unsigned int woodTexture = ImageHelper::LoadTexture("wood.png");
-
-	//lightSpaceMatrix
-	//------------------------
-	GLfloat near_plane = 1.0f, far_plane = 10.0f;
-	glm::vec3 lightPos = glm::vec3(-2.5f, 5.0f, -2.5f);
-	//left right bottom top near far
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-	//从eye看向center,up用于向上的向量cross用
-	glm::mat4 lightView = glm::lookAt(lightPos
-	                                  , glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	//把投影矩阵放到light位置
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-
-	//camera
-	//------------------------
-	Camera camera = Camera();
-	camera.AddMouseEvent(window);
-	CommonBaseScript::RegisterKeyEvent(window);
-
-
 	glEnable(GL_DEPTH_TEST);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, woodTexture);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glActiveTexture(0);
+	int halfWidth = SCR_WIDTH / 2.0;
+	int halfHeight = SCR_HEIGHT / 2.0;
 
-	debugDepthQuadShader.Use();
-	debugDepthQuadShader.SetInt("depthMap", 1);
-	debugDepthQuadShader.SetFloat("near_plane", near_plane);
-	debugDepthQuadShader.SetFloat("far_plane", far_plane);
 
-	simpleDepthShader.Use();
-	simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-	shadowBaseSoftShader.Use();
-	shadowBaseSoftShader.SetInt("diffuseTexture", 0);
-	shadowBaseSoftShader.SetInt("shadowMap", 1);
-	shadowBaseSoftShader.SetVec3("lightPos", glm::normalize(lightPos));
-	shadowBaseSoftShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
-
+	glm::perspective(glm::radians(camera.zoom), static_cast<float>(SCR_WIDTH) / SCR_HEIGHT, 0.1f, 1000.0f);
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
 		camera.DoKeyboardMove(window);
 
-		//1.渲染阴影的深度图
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		//剔除正面  为了解决阴影悬浮问题
-		//但是只有剔除物体的正面才有意义。
-		glCullFace(GL_FRONT);
 		simpleDepthShader.Use();
-		// simpleDepthShader.SetMat4("lightSpaceMatrixLocation", lightSpaceMatrix);
+
+		glViewport(1, 1, halfWidth - 1, halfHeight - 1);
+		float oSize = orthoSize * csmSetting[0];
+		glm::mat4 lightProjection0 = glm::ortho(-oSize, oSize, -oSize, oSize, near_plane, far_plane * csmSetting[0]);
+		glm::mat4 lightSpaceMatrix0 = lightProjection0 * lightView;
 		RenderScene(simpleDepthShader);
-		glCullFace(GL_BACK);
+
+		glViewport(halfWidth + 1, 1, halfWidth - 1, halfHeight - 1);
+		RenderScene(simpleDepthShader);
+
+		glViewport(1, halfHeight + 1, halfWidth - 1, halfHeight - 1);
+		RenderScene(simpleDepthShader);
+
+		glViewport(halfWidth + 1, halfHeight + 1, halfWidth - 1, halfHeight - 1);
+		RenderScene(simpleDepthShader);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		//2.渲染场景的物体
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shadowBaseSoftShader.Use();
@@ -129,33 +108,16 @@ int _27_ShadowMapping_Soft::DoMain()
 		shadowBaseSoftShader.SetVec3("viewPos", camera.position);
 		RenderScene(shadowBaseSoftShader);
 
-		//用于debug光的深度图
-		/*
-		debugDepthQuadShader.Use();
-		glBindVertexArray(quadVAO);
-		//GL_TRIANGLE_STRIP是将顶点传递给opengl渲染管道线（pipeline）
-		//进行进一步处理的方式（创建几何图形）
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-		*/
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
-	glDeleteVertexArrays(1, &planeVAO);
-	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteVertexArrays(1, &quadVAO);
-	glDeleteShader(simpleDepthShader.ID);
-	glDeleteShader(debugDepthQuadShader.ID);
-	glDeleteShader(shadowBaseSoftShader.ID);
 
 	glfwTerminate();
 
 	return 0;
 }
 
-void _27_ShadowMapping_Soft::BindPlaneVAO()
+void _29_CSM::BindPlaneVAO()
 {
 	//plane
 	//---------------------
@@ -185,10 +147,10 @@ void _27_ShadowMapping_Soft::BindPlaneVAO()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	glDeleteBuffers(1, &planeVBO);//这时候VBO已经写入VAO了 可以删除VBO了
+	glDeleteBuffers(1, &planeVBO); //这时候VBO已经写入VAO了 可以删除VBO了
 }
 
-void _27_ShadowMapping_Soft::BindCubeVAO()
+void _29_CSM::BindCubeVAO()
 {
 	float vertices[] = {
 		// back face
@@ -250,11 +212,11 @@ void _27_ShadowMapping_Soft::BindCubeVAO()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	glDeleteBuffers(1,&cubeVBO);//这时候VBO已经写入VAO了 可以删除VBO了
+	glDeleteBuffers(1, &cubeVBO); //这时候VBO已经写入VAO了 可以删除VBO了
 	//delete[] vertices;//自动销毁的不用手动调用
 }
 
-void _27_ShadowMapping_Soft::BindQuadVAO()
+void _29_CSM::BindQuadVAO()
 {
 	float quadVertices[] =
 	{
@@ -277,11 +239,10 @@ void _27_ShadowMapping_Soft::BindQuadVAO()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	glDeleteBuffers(1, &quadVBO);//这时候VBO已经写入VAO了 可以删除VBO了
+	glDeleteBuffers(1, &quadVBO); //这时候VBO已经写入VAO了 可以删除VBO了
 }
 
-
-void _27_ShadowMapping_Soft::RenderScene(const Shader& shader)
+void _29_CSM::RenderScene(const Shader& shader)
 {
 	// floor
 	glm::mat4 model = glm::mat4(1.0f);
@@ -309,7 +270,7 @@ void _27_ShadowMapping_Soft::RenderScene(const Shader& shader)
 	RenderCube();
 }
 
-void _27_ShadowMapping_Soft::RenderCube()
+void _29_CSM::RenderCube()
 {
 	glBindVertexArray(cubeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
