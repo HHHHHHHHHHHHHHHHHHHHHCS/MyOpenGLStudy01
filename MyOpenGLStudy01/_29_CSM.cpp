@@ -17,6 +17,10 @@ int _29_CSM::DoMain()
 		return -1;
 	}
 
+	BindPlaneVAO();
+	BindCubeVAO();
+	BindQuadVAO();
+
 	//Frame
 	//-------------
 	GLuint depthMapFBO;
@@ -50,11 +54,28 @@ int _29_CSM::DoMain()
 	CommonBaseScript::RegisterKeyEvent(window);
 
 	//LightSpaceMatrix
-	GLfloat near_plane = 0.1f, far_plane = 1000.0f, orthoSize = 1000.0f;;
-	float csmSetting[]{0.01f, 0.09f, 0.3f, 0.6f};
-	glm::vec3 lightPos = glm::vec3(-2.5f, 5.0f, -2.5f);
+	GLfloat near_plane = 0.1f, far_plane = 1000.0f, orthoSize = 1000.0f;
+	float csmOrth[]{5, 10, 20, 40};
+	float csmDistances[]{5, 10, 20, 40};
+	glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, -5.0f);
 	glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f, 0.0f, 0.0f)
-		, glm::vec3(0.0f, 1.0f, 0.0f));
+	                                  , glm::vec3(0.0f, 1.0f, 0.0f));
+
+	float oSize = csmOrth[0];
+	glm::mat4 lightProjection0 = glm::ortho(-oSize, oSize, -oSize, oSize, near_plane, csmDistances[0]);
+	glm::mat4 lightSpaceMatrix0 = lightProjection0 * lightView;
+
+	oSize = csmOrth[1];
+	glm::mat4 lightProjection1 = glm::ortho(-oSize, oSize, -oSize, oSize, near_plane, csmDistances[1]);
+	glm::mat4 lightSpaceMatrix1 = lightProjection1 * lightView;
+
+	oSize = csmOrth[2];
+	glm::mat4 lightProjection2 = glm::ortho(-oSize, oSize, -oSize, oSize, near_plane, csmDistances[2]);
+	glm::mat4 lightSpaceMatrix2 = lightProjection2 * lightView;
+
+	oSize = csmOrth[3];
+	glm::mat4 lightProjection3 = glm::ortho(-oSize, oSize, -oSize, oSize, near_plane, csmDistances[3]);
+	glm::mat4 lightSpaceMatrix3 = lightProjection3 * lightView;
 
 
 	//load textures
@@ -63,50 +84,91 @@ int _29_CSM::DoMain()
 
 	//Shader
 	//------------------------
-	Shader simpleDepthShader{"27_SimpleDepthShader"};
+	Shader simpleDepthShader{"29_CSMDepthShader"};
 	Shader debugDepthQuadShader{"27_DebugDepthQuad"};
-	Shader shadowBaseSoftShader{"27_ShadowBase_Soft"};
+	Shader objShader{"29_CSMShadow_Soft"};
 
 	glEnable(GL_DEPTH_TEST);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, woodTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glActiveTexture(0);
+
+	debugDepthQuadShader.Use();
+	debugDepthQuadShader.SetInt("depthMap", 1);
+
+	objShader.Use();
+	objShader.SetInt("diffuseTexture", 0);
+	objShader.SetInt("shadowMap", 1);
+	objShader.SetVec3("lightPos", glm::normalize(lightPos));
+	objShader.SetVec4("lightSqrDist"
+	                  , glm::vec4(csmDistances[0] * csmDistances[0], csmDistances[1] * csmDistances[1]
+	                              , csmDistances[2] * csmDistances[2], csmDistances[3] * csmDistances[3]));
+	objShader.SetMat4("lightSpaceMatrix[0]", lightSpaceMatrix0);
+	objShader.SetMat4("lightSpaceMatrix[1]", lightSpaceMatrix1);
+	objShader.SetMat4("lightSpaceMatrix[2]", lightSpaceMatrix2);
+	objShader.SetMat4("lightSpaceMatrix[3]", lightSpaceMatrix3);
 
 	int halfWidth = SCR_WIDTH / 2.0;
 	int halfHeight = SCR_HEIGHT / 2.0;
 
-
-	glm::perspective(glm::radians(camera.zoom), static_cast<float>(SCR_WIDTH) / SCR_HEIGHT, 0.1f, 1000.0f);
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
 		camera.DoKeyboardMove(window);
 
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		simpleDepthShader.Use();
 
-		glViewport(1, 1, halfWidth - 1, halfHeight - 1);
-		float oSize = orthoSize * csmSetting[0];
-		glm::mat4 lightProjection0 = glm::ortho(-oSize, oSize, -oSize, oSize, near_plane, far_plane * csmSetting[0]);
-		glm::mat4 lightSpaceMatrix0 = lightProjection0 * lightView;
+		glScissor(1, 1, halfWidth - 1, halfHeight - 1);//裁剪框
+		glEnable(GL_SCISSOR_TEST);// 启用剪裁测试
+
+		glViewport(0, 0, halfWidth, halfHeight);
+		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix0);
 		RenderScene(simpleDepthShader);
 
-		glViewport(halfWidth + 1, 1, halfWidth - 1, halfHeight - 1);
+		glViewport(halfWidth , 0, halfWidth , halfHeight );
+		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix1);
 		RenderScene(simpleDepthShader);
 
-		glViewport(1, halfHeight + 1, halfWidth - 1, halfHeight - 1);
+		glViewport(0, halfHeight , halfWidth , halfHeight );
+		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix2);
 		RenderScene(simpleDepthShader);
 
-		glViewport(halfWidth + 1, halfHeight + 1, halfWidth - 1, halfHeight - 1);
+		glViewport(halfWidth , halfHeight , halfWidth , halfHeight );
+		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix3);
 		RenderScene(simpleDepthShader);
+        glDisable(GL_SCISSOR_TEST); // 禁用剪裁测试
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		shadowBaseSoftShader.Use();
-		shadowBaseSoftShader.SetMat4("viewProjection"
-		                             , camera.GetProjectionMat4() * camera.GetViewMat4());
-		shadowBaseSoftShader.SetVec3("viewPos", camera.position);
-		RenderScene(shadowBaseSoftShader);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+		objShader.Use();
+		objShader.SetMat4("lightSpaceMatrix[0]", lightSpaceMatrix0);
+		objShader.SetMat4("lightSpaceMatrix[0]", lightSpaceMatrix0);
+		objShader.SetMat4("lightSpaceMatrix[1]", lightSpaceMatrix1);
+		objShader.SetMat4("lightSpaceMatrix[2]", lightSpaceMatrix2);
+		objShader.SetMat4("lightSpaceMatrix[3]", lightSpaceMatrix3);
+
+		objShader.SetMat4("viewProjection"
+		                  , camera.GetProjectionMat4() * camera.GetViewMat4());
+		objShader.SetVec3("viewPos", camera.position);
+		RenderScene(objShader);
+
+		// glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		// debugDepthQuadShader.Use();
+		// glBindVertexArray(quadVAO);
+		// //GL_TRIANGLE_STRIP是将顶点传递给opengl渲染管道线（pipeline）
+		// //进行进一步处理的方式（创建几何图形）
+		// glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		// glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -123,14 +185,14 @@ void _29_CSM::BindPlaneVAO()
 	//---------------------
 	float planeVertices[] =
 	{
-		// positions            // normals         // texcoords
-		25.0f, -0.5f, 25.0f, 0.0f, 1.0f, 0.0f, 25.0f, 0.0f,
-		-25.0f, -0.5f, 25.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-		-25.0f, -0.5f, -25.0f, 0.0f, 1.0f, 0.0f, 0.0f, 25.0f,
+		// positions				// normals			// texcoords
+		100.0f, -0.5f, 100.0f, 0.0f, 1.0f, 0.0f, 100.0f, 0.0f,
+		-100.0f, -0.5f, 100.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		-100.0f, -0.5f, -100.0f, 0.0f, 1.0f, 0.0f, 0.0f, 100.0f,
 
-		25.0f, -0.5f, 25.0f, 0.0f, 1.0f, 0.0f, 25.0f, 0.0f,
-		-25.0f, -0.5f, -25.0f, 0.0f, 1.0f, 0.0f, 0.0f, 25.0f,
-		25.0f, -0.5f, -25.0f, 0.0f, 1.0f, 0.0f, 25.0f, 10.0f
+		100.0f, -0.5f, 100.0f, 0.0f, 1.0f, 0.0f, 100.0f, 0.0f,
+		-100.0f, -0.5f, -100.0f, 0.0f, 1.0f, 0.0f, 0.0f, 100.0f,
+		100.0f, -0.5f, -100.0f, 0.0f, 1.0f, 0.0f, 100.0f, 100.0f
 	};
 	glGenVertexArrays(1, &planeVAO);
 	unsigned int planeVBO;
@@ -252,22 +314,15 @@ void _29_CSM::RenderScene(const Shader& shader)
 	glBindVertexArray(0);
 
 	// cubes
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
-	model = glm::scale(model, glm::vec3(0.5f));
-	shader.SetMat4("model", model);
-	RenderCube();
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(2.0f, 0.1f, 1.0));
-	model = glm::scale(model, glm::vec3(0.5f));
-	shader.SetMat4("model", model);
-	RenderCube();
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
-	model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-	model = glm::scale(model, glm::vec3(0.25));
-	shader.SetMat4("model", model);
-	RenderCube();
+	for (int i = -10; i < 100; ++i)
+	{
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, i));
+		model = glm::rotate(model, glm::radians(i * 15.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+		model = glm::scale(model, glm::vec3((i % 4) * 0.25));
+		shader.SetMat4("model", model);
+		RenderCube();
+	}
 }
 
 void _29_CSM::RenderCube()

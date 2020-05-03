@@ -130,14 +130,12 @@ int _27_ShadowMapping_Soft::DoMain()
 		RenderScene(shadowBaseSoftShader);
 
 		//用于debug光的深度图
-		/*
-		debugDepthQuadShader.Use();
-		glBindVertexArray(quadVAO);
-		//GL_TRIANGLE_STRIP是将顶点传递给opengl渲染管道线（pipeline）
-		//进行进一步处理的方式（创建几何图形）
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-		*/
+		// debugDepthQuadShader.Use();
+		// glBindVertexArray(quadVAO);
+		// //GL_TRIANGLE_STRIP是将顶点传递给opengl渲染管道线（pipeline）
+		// //进行进一步处理的方式（创建几何图形）
+		// glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		// glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -162,13 +160,13 @@ void _27_ShadowMapping_Soft::BindPlaneVAO()
 	float planeVertices[] =
 	{
 		// positions            // normals         // texcoords
-		25.0f, -0.5f, 25.0f, 0.0f, 1.0f, 0.0f, 25.0f, 0.0f,
-		-25.0f, -0.5f, 25.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-		-25.0f, -0.5f, -25.0f, 0.0f, 1.0f, 0.0f, 0.0f, 25.0f,
+         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+        -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
 
-		25.0f, -0.5f, 25.0f, 0.0f, 1.0f, 0.0f, 25.0f, 0.0f,
-		-25.0f, -0.5f, -25.0f, 0.0f, 1.0f, 0.0f, 0.0f, 25.0f,
-		25.0f, -0.5f, -25.0f, 0.0f, 1.0f, 0.0f, 25.0f, 10.0f
+         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+         25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
 	};
 	glGenVertexArrays(1, &planeVAO);
 	unsigned int planeVBO;
@@ -279,7 +277,6 @@ void _27_ShadowMapping_Soft::BindQuadVAO()
 
 	glDeleteBuffers(1, &quadVBO);//这时候VBO已经写入VAO了 可以删除VBO了
 }
-
 
 void _27_ShadowMapping_Soft::RenderScene(const Shader& shader)
 {
