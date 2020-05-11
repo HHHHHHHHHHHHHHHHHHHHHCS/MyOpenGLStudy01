@@ -38,7 +38,7 @@ int _29_CSM::DoMain()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-	GLfloat borderColor[] = {1.0, 1.0, 1.0, 1.0};
+	GLfloat borderColor[] = {0.0, 0.0, 0.0, 1.0};
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
@@ -55,9 +55,9 @@ int _29_CSM::DoMain()
 
 	//LightSpaceMatrix
 	GLfloat near_plane = 0.1f, far_plane = 1000.0f, orthoSize = 1000.0f;
-	float csmOrth[]{5, 10, 20, 40};
-	float csmDistances[]{5, 10, 20, 40};
-	glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, -5.0f);
+	float csmOrth[]{2, 4, 6, 8};
+	float csmDistances[]{10, 20, 30, 40};
+	glm::vec3 lightPos = glm::vec3(0.0f, 6, -7);
 	glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f, 0.0f, 0.0f)
 	                                  , glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -106,13 +106,20 @@ int _29_CSM::DoMain()
 	objShader.SetVec4("lightSqrDist"
 	                  , glm::vec4(csmDistances[0] * csmDistances[0], csmDistances[1] * csmDistances[1]
 	                              , csmDistances[2] * csmDistances[2], csmDistances[3] * csmDistances[3]));
-	objShader.SetMat4("lightSpaceMatrix[0]", lightSpaceMatrix0);
+	
+	glm::mat4 offsetM4 = glm::mat4{ 1 };
+	offsetM4[0].x *= 0.5;
+	offsetM4[0].w = 0.0;
+	offsetM4[1].y *= 0.5;
+	offsetM4[1].w = 0.0;
+	objShader.SetMat4("lightSpaceMatrix[0]", offsetM4*lightSpaceMatrix0);
 	objShader.SetMat4("lightSpaceMatrix[1]", lightSpaceMatrix1);
 	objShader.SetMat4("lightSpaceMatrix[2]", lightSpaceMatrix2);
-	objShader.SetMat4("lightSpaceMatrix[3]", lightSpaceMatrix3);
 
-	int halfWidth = SCR_WIDTH / 2.0;
-	int halfHeight = SCR_HEIGHT / 2.0;
+	objShader.SetMat4("lightSpaceMatrix[3]", offsetM4 * lightSpaceMatrix3);
+
+	int halfShadowWidth = SHADOW_WIDTH / 2.0;
+	int halfShadowHeight = SHADOW_HEIGHT / 2.0;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -120,29 +127,33 @@ int _29_CSM::DoMain()
 		camera.DoKeyboardMove(window);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearDepth(1.0);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		simpleDepthShader.Use();
 
-		glScissor(1, 1, halfWidth - 1, halfHeight - 1);//裁剪框
-		glEnable(GL_SCISSOR_TEST);// 启用剪裁测试
+		glEnable(GL_SCISSOR_TEST); // 启用剪裁框
 
-		glViewport(0, 0, halfWidth, halfHeight);
+		glScissor(1, 1, halfShadowWidth - 2, halfShadowHeight - 2); //裁剪框
+		glViewport(0, 0, halfShadowWidth, halfShadowHeight);
 		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix0);
 		RenderScene(simpleDepthShader);
 
-		glViewport(halfWidth , 0, halfWidth , halfHeight );
+		glScissor(halfShadowWidth + 1, 1, halfShadowWidth - 2, halfShadowHeight - 2); //裁剪框
+		glViewport(halfShadowWidth, 0, halfShadowWidth, halfShadowHeight);
 		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix1);
 		RenderScene(simpleDepthShader);
 
-		glViewport(0, halfHeight , halfWidth , halfHeight );
+		glScissor(1, halfShadowHeight + 1, halfShadowWidth - 2, halfShadowHeight - 2); //裁剪框
+		glViewport(0, halfShadowHeight, halfShadowWidth, halfShadowHeight);
 		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix2);
 		RenderScene(simpleDepthShader);
 
-		glViewport(halfWidth , halfHeight , halfWidth , halfHeight );
+		glScissor(halfShadowWidth + 1, halfShadowHeight + 1, halfShadowWidth - 2, halfShadowHeight - 2); //裁剪框
+		glViewport(halfShadowWidth, halfShadowHeight, halfShadowWidth, halfShadowHeight);
 		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix3);
 		RenderScene(simpleDepthShader);
-        glDisable(GL_SCISSOR_TEST); // 禁用剪裁测试
+
+		glDisable(GL_SCISSOR_TEST); // 禁用剪裁测试
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -151,18 +162,11 @@ int _29_CSM::DoMain()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		objShader.Use();
-		objShader.SetMat4("lightSpaceMatrix[0]", lightSpaceMatrix0);
-		objShader.SetMat4("lightSpaceMatrix[0]", lightSpaceMatrix0);
-		objShader.SetMat4("lightSpaceMatrix[1]", lightSpaceMatrix1);
-		objShader.SetMat4("lightSpaceMatrix[2]", lightSpaceMatrix2);
-		objShader.SetMat4("lightSpaceMatrix[3]", lightSpaceMatrix3);
-
 		objShader.SetMat4("viewProjection"
 		                  , camera.GetProjectionMat4() * camera.GetViewMat4());
 		objShader.SetVec3("viewPos", camera.position);
 		RenderScene(objShader);
 
-		// glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		// debugDepthQuadShader.Use();
 		// glBindVertexArray(quadVAO);
 		// //GL_TRIANGLE_STRIP是将顶点传递给opengl渲染管道线（pipeline）

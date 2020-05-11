@@ -20,7 +20,7 @@ public:
 	static bool clickKeys[];
 	static bool keys[];
 	static void InitOpenGL(bool canResize = false);
-	static GLFWwindow* InitWindow();
+	static GLFWwindow* InitWindow(int width = SCR_WIDTH,int height = SCR_HEIGHT);
 	static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 	static void ProcessInput(GLFWwindow* window);
 	static void ProcessKeyClick();
@@ -28,6 +28,7 @@ public:
 	static bool CheckCompile(unsigned id);
 	static void UsePolygonMode();
 	static void HideCursor(GLFWwindow* window);
+	static void ShowCursor(GLFWwindow* window);
 private:
 	static bool lastKeys[];
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);

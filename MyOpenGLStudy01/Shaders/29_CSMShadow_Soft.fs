@@ -3,18 +3,19 @@ out vec4 FragColor;
 
 in VS_OUT
 {
-	vec3 FragPos;
 	vec3 Normal;
 	vec2 TexCoords;
-	vec4 FragPosLightSpace;
+	vec4 WorldPos;
 }fs_in;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D shadowMap;
 
+uniform vec3 viewPos;
+
 uniform vec4 lightSqrDist;
 uniform vec3 lightPos;
-uniform mat4[4] lightSpaceMatrix;
+uniform mat4[4]lightSpaceMatrix;
 
 float ShadowCalculation(vec4 FragPosLightSpace)
 {
@@ -27,6 +28,12 @@ float ShadowCalculation(vec4 FragPosLightSpace)
 	}
 	// transform to [0,1] range
 	projCoords=projCoords*.5+.5;
+	
+	if(!(projCoords.x>0&&projCoords.x<1&&projCoords.y>0&&projCoords.y<1))
+	{
+		return 0.;
+	}
+	
 	float closestDepth=texture(shadowMap,projCoords.xy).r;
 	float currentDepth=projCoords.z;
 	//calculate bias
@@ -65,12 +72,13 @@ void main()
 	float diffuse=max(dot(lightDir,normal),0.);
 	//spec
 	float spec=0.;
-	vec3 viewDir=normalize(viewPos-fs_in.FragPos);
+	vec3 viewDir=normalize(viewPos-fs_in.WorldPos.xyz);
 	vec3 halfWayDir=normalize(lightDir+viewDir);
 	spec=pow(max(dot(normal,halfWayDir),0.),64.);
 	vec3 specular=spec*lightColor;
 	//shadow
-	float shadow=0.0;//ShadowCalculation(fs_in.FragPosLightSpace);
+	vec4 fragPosLightSpace=lightSpaceMatrix[0]*fs_in.WorldPos;
+	float shadow=ShadowCalculation(fragPosLightSpace);
 	vec3 lighting=(ambient+(1.-shadow)*(diffuse+specular))*color;
 	
 	FragColor=vec4(lighting,1.);

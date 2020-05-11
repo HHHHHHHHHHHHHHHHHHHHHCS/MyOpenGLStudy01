@@ -27,9 +27,9 @@ void CommonBaseScript::InitOpenGL(bool canReisze)
 	glfwWindowHint(GLFW_RESIZABLE, canReisze);
 }
 
-GLFWwindow* CommonBaseScript::InitWindow()
+GLFWwindow* CommonBaseScript::InitWindow(int width,int height)
 {
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(width, height, "LearnOpenGL", nullptr, nullptr);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -133,4 +133,9 @@ void CommonBaseScript::UsePolygonMode()
 void CommonBaseScript::HideCursor(GLFWwindow* window)
 {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void CommonBaseScript::ShowCursor(GLFWwindow* window)
+{
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }

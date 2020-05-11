@@ -7,7 +7,6 @@ out vec2 Texcoords;
 
 out VS_OUT
 {
-	vec3 FragPos;
 	vec3 Normal;
 	vec2 TexCoords;
 	vec4 WorldPos;
@@ -20,7 +19,6 @@ uniform mat4 model;
 
 void main()
 {
-	vs_out.FragPos=vec3(model*vec4(aPos,1.));
 	vs_out.Normal=transpose(inverse(mat3(model)))*aNormal;
 	vs_out.TexCoords=aTexcoords;
 	vs_out.WorldPos=model*vec4(aPos,1.);

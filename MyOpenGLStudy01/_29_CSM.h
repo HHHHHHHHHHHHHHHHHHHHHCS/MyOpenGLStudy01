@@ -1,6 +1,5 @@
 ﻿#pragma once
-
-class Shader;
+#include "Shader.h"
 
 class _29_CSM
 {
