@@ -106,17 +106,37 @@ int _29_CSM::DoMain()
 	objShader.SetVec4("lightSqrDist"
 	                  , glm::vec4(csmDistances[0] * csmDistances[0], csmDistances[1] * csmDistances[1]
 	                              , csmDistances[2] * csmDistances[2], csmDistances[3] * csmDistances[3]));
-	
-	glm::mat4 offsetM4 = glm::mat4{ 1 };
-	offsetM4[0].x *= 0.5;
-	offsetM4[0].w = 0.0;
-	offsetM4[1].y *= 0.5;
-	offsetM4[1].w = 0.0;
-	objShader.SetMat4("lightSpaceMatrix[0]", offsetM4*lightSpaceMatrix0);
-	objShader.SetMat4("lightSpaceMatrix[1]", lightSpaceMatrix1);
-	objShader.SetMat4("lightSpaceMatrix[2]", lightSpaceMatrix2);
 
-	objShader.SetMat4("lightSpaceMatrix[3]", offsetM4 * lightSpaceMatrix3);
+	glm::mat4 endM4;
+
+	glm::mat4 offsetM4 = glm::mat4{1};
+	//[-1,1] 缩放到[0,1]
+	offsetM4 = glm::scale(offsetM4, glm::vec3(0.5, 0.5, 0.5));
+	offsetM4 = glm::translate(offsetM4, glm::vec3(1.0, 1.0, 1.0));
+
+	//TODO:矩阵偏移
+	//TODO:半径判定
+	glm::mat4 moveM4 = glm::mat4{1};
+
+	moveM4 = glm::scale(glm::mat4{ 1 }, glm::vec3(0.5, 0.5, 1.0));
+	moveM4 = glm::translate(moveM4, glm::vec3(0.0, 0.0, 0.0));
+	endM4 = glm::mat4{moveM4 * offsetM4 * lightSpaceMatrix0};
+	objShader.SetMat4("lightSpaceMatrix[0]", endM4);
+
+	moveM4 = glm::scale(glm::mat4{ 1 }, glm::vec3(0.5, 0.5, 1.0));
+	moveM4 = glm::translate(moveM4, glm::vec3(0.5, 0.0, 0.0));
+	endM4 = glm::mat4{moveM4 * offsetM4 * lightSpaceMatrix1};
+	objShader.SetMat4("lightSpaceMatrix[1]", endM4);
+
+	moveM4 = glm::scale(glm::mat4{ 1 }, glm::vec3(0.5, 0.5, 1.0));
+	moveM4 = glm::translate(moveM4, glm::vec3(0.0, 0.5, 0.0));
+	endM4 = glm::mat4{moveM4 * offsetM4 * lightSpaceMatrix2};
+	objShader.SetMat4("lightSpaceMatrix[2]", endM4);
+
+	moveM4 = glm::scale(glm::mat4{1}, glm::vec3(0.5, 0.5, 1.0));
+	moveM4 = glm::translate(moveM4, glm::vec3(0.5, 0.5, 0.0));
+	endM4 = glm::mat4{moveM4 * offsetM4 * lightSpaceMatrix3};
+	objShader.SetMat4("lightSpaceMatrix[3]", endM4);
 
 	int halfShadowWidth = SHADOW_WIDTH / 2.0;
 	int halfShadowHeight = SHADOW_HEIGHT / 2.0;
@@ -133,22 +153,22 @@ int _29_CSM::DoMain()
 
 		glEnable(GL_SCISSOR_TEST); // 启用剪裁框
 
-		glScissor(1, 1, halfShadowWidth - 2, halfShadowHeight - 2); //裁剪框
+		glScissor(4, 4, halfShadowWidth - 8, halfShadowHeight - 8); //裁剪框
 		glViewport(0, 0, halfShadowWidth, halfShadowHeight);
 		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix0);
 		RenderScene(simpleDepthShader);
 
-		glScissor(halfShadowWidth + 1, 1, halfShadowWidth - 2, halfShadowHeight - 2); //裁剪框
+		glScissor(halfShadowWidth + 4, 4, halfShadowWidth - 8, halfShadowHeight - 8); //裁剪框
 		glViewport(halfShadowWidth, 0, halfShadowWidth, halfShadowHeight);
 		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix1);
 		RenderScene(simpleDepthShader);
 
-		glScissor(1, halfShadowHeight + 1, halfShadowWidth - 2, halfShadowHeight - 2); //裁剪框
+		glScissor(4, halfShadowHeight + 4, halfShadowWidth - 8, halfShadowHeight - 8); //裁剪框
 		glViewport(0, halfShadowHeight, halfShadowWidth, halfShadowHeight);
 		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix2);
 		RenderScene(simpleDepthShader);
 
-		glScissor(halfShadowWidth + 1, halfShadowHeight + 1, halfShadowWidth - 2, halfShadowHeight - 2); //裁剪框
+		glScissor(halfShadowWidth + 4, halfShadowHeight + 4, halfShadowWidth - 8, halfShadowHeight - 8); //裁剪框
 		glViewport(halfShadowWidth, halfShadowHeight, halfShadowWidth, halfShadowHeight);
 		simpleDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix3);
 		RenderScene(simpleDepthShader);

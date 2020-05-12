@@ -21,20 +21,19 @@ float ShadowCalculation(vec4 FragPosLightSpace)
 {
 	// perform perspective divide
 	vec3 projCoords=FragPosLightSpace.xyz/FragPosLightSpace.w;
-	//if outside far_plane that shadow is 0.0
-	if(projCoords.z>1.)
+
+	// projCoords = projCoords*0.5+0.5;
+
+	//must in border
+	if((projCoords.z>1.||projCoords.z<0.)||!(projCoords.x>0&&projCoords.x<1&&projCoords.y>0&&projCoords.y<1))
 	{
-		return 0.;
+		return 0.6;
 	}
-	// transform to [0,1] range
-	projCoords=projCoords*.5+.5;
-	
-	if(!(projCoords.x>0&&projCoords.x<1&&projCoords.y>0&&projCoords.y<1))
-	{
-		return 0.;
-	}
-	
+
 	float closestDepth=texture(shadowMap,projCoords.xy).r;
+
+return projCoords.x;
+
 	float currentDepth=projCoords.z;
 	//calculate bias
 	vec3 normal=normalize(fs_in.Normal);
@@ -77,7 +76,7 @@ void main()
 	spec=pow(max(dot(normal,halfWayDir),0.),64.);
 	vec3 specular=spec*lightColor;
 	//shadow
-	vec4 fragPosLightSpace=lightSpaceMatrix[0]*fs_in.WorldPos;
+	vec4 fragPosLightSpace=lightSpaceMatrix[3]*fs_in.WorldPos;
 	float shadow=ShadowCalculation(fragPosLightSpace);
 	vec3 lighting=(ambient+(1.-shadow)*(diffuse+specular))*color;
 	
