@@ -17,23 +17,46 @@ uniform vec4 lightSqrDist;
 uniform vec3 lightPos;
 uniform mat4[4]lightSpaceMatrix;
 
-float ShadowCalculation(vec4 FragPosLightSpace)
+int CalcLightMat4Index(vec3 worldPos)
+{
+	vec3 pos=worldPos-lightPos;
+	float dis=dot(pos,pos);
+	if(dis<=lightSqrDist[0])
+	{
+		return 0;
+	}
+	else if(dis<=lightSqrDist[1])
+	{
+		return 1;
+	}
+	else if(dis<=lightSqrDist[2])
+	{
+		return 2;
+	}
+	else if(dis<=lightSqrDist[3])
+	{
+		return 3;
+	}
+	return 4;
+}
+
+float ShadowCalculation(vec4 FragPosLightSpace,int lightindex)
 {
 	// perform perspective divide
 	vec3 projCoords=FragPosLightSpace.xyz/FragPosLightSpace.w;
-
-	// projCoords = projCoords*0.5+0.5;
-
+	
 	//must in border
 	if((projCoords.z>1.||projCoords.z<0.)||!(projCoords.x>0&&projCoords.x<1&&projCoords.y>0&&projCoords.y<1))
 	{
-		return 0.6;
+		return 0.;
 	}
-
-	float closestDepth=texture(shadowMap,projCoords.xy).r;
-
-return projCoords.x;
-
+	
+	projCoords.xy=projCoords.xy*.5;
+	projCoords.x+=.5*(lightindex%2);
+	projCoords.y+=.5*int(lightindex/2);
+	
+	//float closestDepth=texture(shadowMap,projCoords.xy).r;
+	
 	float currentDepth=projCoords.z;
 	//calculate bias
 	vec3 normal=normalize(fs_in.Normal);
@@ -76,9 +99,16 @@ void main()
 	spec=pow(max(dot(normal,halfWayDir),0.),64.);
 	vec3 specular=spec*lightColor;
 	//shadow
-	vec4 fragPosLightSpace=lightSpaceMatrix[3]*fs_in.WorldPos;
-	float shadow=ShadowCalculation(fragPosLightSpace);
+	float shadow=0.;
+	int lightMat4Index=CalcLightMat4Index(fs_in.WorldPos.xyz);
+	if(lightMat4Index<4)
+	{
+		vec4 fragPosLightSpace=lightSpaceMatrix[lightMat4Index]*fs_in.WorldPos;
+		shadow=ShadowCalculation(fragPosLightSpace,lightMat4Index);
+	}
+	
 	vec3 lighting=(ambient+(1.-shadow)*(diffuse+specular))*color;
 	
 	FragColor=vec4(lighting,1.);
+	
 }

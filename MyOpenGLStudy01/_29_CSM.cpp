@@ -38,7 +38,7 @@ int _29_CSM::DoMain()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-	GLfloat borderColor[] = {0.0, 0.0, 0.0, 1.0};
+	GLfloat borderColor[] = {1.0, 1.0, 1.0, 1.0};
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
@@ -54,7 +54,7 @@ int _29_CSM::DoMain()
 	CommonBaseScript::RegisterKeyEvent(window);
 
 	//LightSpaceMatrix
-	GLfloat near_plane = 0.1f, far_plane = 1000.0f, orthoSize = 1000.0f;
+	GLfloat near_plane = 0.1f;
 	float csmOrth[]{2, 4, 6, 8};
 	float csmDistances[]{10, 20, 30, 40};
 	glm::vec3 lightPos = glm::vec3(0.0f, 6, -7);
@@ -104,39 +104,18 @@ int _29_CSM::DoMain()
 	objShader.SetInt("shadowMap", 1);
 	objShader.SetVec3("lightPos", glm::normalize(lightPos));
 	objShader.SetVec4("lightSqrDist"
-	                  , glm::vec4(csmDistances[0] * csmDistances[0], csmDistances[1] * csmDistances[1]
-	                              , csmDistances[2] * csmDistances[2], csmDistances[3] * csmDistances[3]));
-
-	glm::mat4 endM4;
+	                  , glm::vec4(csmOrth[0] * csmOrth[0], csmOrth[1] * csmOrth[1]
+	                              , csmOrth[2] * csmOrth[2], csmOrth[3] * csmOrth[3]));
 
 	glm::mat4 offsetM4 = glm::mat4{1};
 	//[-1,1] 缩放到[0,1]
 	offsetM4 = glm::scale(offsetM4, glm::vec3(0.5, 0.5, 0.5));
 	offsetM4 = glm::translate(offsetM4, glm::vec3(1.0, 1.0, 1.0));
 
-	//TODO:矩阵偏移
-	//TODO:半径判定
-	glm::mat4 moveM4 = glm::mat4{1};
-
-	moveM4 = glm::scale(glm::mat4{ 1 }, glm::vec3(0.5, 0.5, 1.0));
-	moveM4 = glm::translate(moveM4, glm::vec3(0.0, 0.0, 0.0));
-	endM4 = glm::mat4{moveM4 * offsetM4 * lightSpaceMatrix0};
-	objShader.SetMat4("lightSpaceMatrix[0]", endM4);
-
-	moveM4 = glm::scale(glm::mat4{ 1 }, glm::vec3(0.5, 0.5, 1.0));
-	moveM4 = glm::translate(moveM4, glm::vec3(0.5, 0.0, 0.0));
-	endM4 = glm::mat4{moveM4 * offsetM4 * lightSpaceMatrix1};
-	objShader.SetMat4("lightSpaceMatrix[1]", endM4);
-
-	moveM4 = glm::scale(glm::mat4{ 1 }, glm::vec3(0.5, 0.5, 1.0));
-	moveM4 = glm::translate(moveM4, glm::vec3(0.0, 0.5, 0.0));
-	endM4 = glm::mat4{moveM4 * offsetM4 * lightSpaceMatrix2};
-	objShader.SetMat4("lightSpaceMatrix[2]", endM4);
-
-	moveM4 = glm::scale(glm::mat4{1}, glm::vec3(0.5, 0.5, 1.0));
-	moveM4 = glm::translate(moveM4, glm::vec3(0.5, 0.5, 0.0));
-	endM4 = glm::mat4{moveM4 * offsetM4 * lightSpaceMatrix3};
-	objShader.SetMat4("lightSpaceMatrix[3]", endM4);
+	objShader.SetMat4("lightSpaceMatrix[0]", offsetM4 * lightSpaceMatrix0);
+	objShader.SetMat4("lightSpaceMatrix[1]", offsetM4 * lightSpaceMatrix1);
+	objShader.SetMat4("lightSpaceMatrix[2]", offsetM4 * lightSpaceMatrix2);
+	objShader.SetMat4("lightSpaceMatrix[3]", offsetM4 * lightSpaceMatrix3);
 
 	int halfShadowWidth = SHADOW_WIDTH / 2.0;
 	int halfShadowHeight = SHADOW_HEIGHT / 2.0;

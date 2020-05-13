@@ -30,6 +30,7 @@ public:
 	void SetVec3(const std::string& name, glm::vec3 value) const;
 	void SetVec4(const std::string& name, float v0, float v1, float v2, float v3) const;
 	void SetVec4(const std::string& name, glm::vec4 value) const;
+	void SetVec4(const std::string& name, float* value) const;
 	void SetVec3Array(const std::string& name, int count, float* address) const;
 private:
 	void Init(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geometryPath);
