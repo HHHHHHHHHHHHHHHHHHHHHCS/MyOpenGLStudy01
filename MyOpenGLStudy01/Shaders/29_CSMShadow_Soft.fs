@@ -1,6 +1,10 @@
 #version 460 core
 out vec4 FragColor;
 
+#define sat(x)clamp(ceil(x),0,1)
+
+#define Fast 0
+
 in VS_OUT
 {
 	vec3 Normal;
@@ -17,36 +21,50 @@ uniform vec4 lightSqrDist;
 uniform vec3 lightPos;
 uniform mat4[4]lightSpaceMatrix;
 
-int CalcLightMat4Index(vec3 worldPos)
+vec4 CalcLightMat4Index_Complex(vec4 worldPos)
+{
+	vec4 fragPosLightSpace;
+	vec3 projCoords;
+	
+	for(int i=0;i<4;++i)
+	{
+		fragPosLightSpace=lightSpaceMatrix[i]*worldPos;
+		projCoords=fragPosLightSpace.xyz/fragPosLightSpace.w;
+		if(projCoords.z<=0.99&&projCoords.z>=0.01&&projCoords.x>=0.01&&projCoords.x<=0.99&&projCoords.y>=0.01&&projCoords.y<=0.99)
+		{
+			return vec4(projCoords,i);
+		}
+	}
+	
+	return vec4(-1,-1,-1,-1);
+}
+
+int CalcLightMat4Index_Fast(vec3 worldPos)
 {
 	vec3 pos=worldPos-lightPos;
 	float dis=dot(pos,pos);
-	if(dis<=lightSqrDist[0])
-	{
-		return 0;
-	}
-	else if(dis<=lightSqrDist[1])
-	{
-		return 1;
-	}
-	else if(dis<=lightSqrDist[2])
-	{
-		return 2;
-	}
-	else if(dis<=lightSqrDist[3])
-	{
-		return 3;
-	}
-	return 4;
+	vec4 indexs=vec4(
+		sat(lightSqrDist[0]-dis),
+		sat(lightSqrDist[1]-dis),
+		sat(lightSqrDist[2]-dis),
+		sat(lightSqrDist[3]-dis)
+	);
+	
+	indexs.yzw=indexs.yzw-indexs.xyz;
+	
+	return int(4.-dot(vec4(4.,3.,2.,1.),indexs));
 }
 
 float ShadowCalculation(vec4 FragPosLightSpace,int lightindex)
 {
-	// perform perspective divide
+	#if Fast
 	vec3 projCoords=FragPosLightSpace.xyz/FragPosLightSpace.w;
+	#else
+	vec3 projCoords=FragPosLightSpace.xyz;
+	#endif
 	
 	//must in border
-	if((projCoords.z>1.||projCoords.z<0.)||!(projCoords.x>0&&projCoords.x<1&&projCoords.y>0&&projCoords.y<1))
+	if(!(projCoords.z<=1&&projCoords.z>=0&&projCoords.x>=0&&projCoords.x<=1&&projCoords.y>=0&&projCoords.y<=1))
 	{
 		return 0.;
 	}
@@ -100,15 +118,20 @@ void main()
 	vec3 specular=spec*lightColor;
 	//shadow
 	float shadow=0.;
-	int lightMat4Index=CalcLightMat4Index(fs_in.WorldPos.xyz);
+	
+	#if Fast
+	int lightMat4Index=CalcLightMat4Index_Fast(fs_in.WorldPos.xyz);
 	if(lightMat4Index<4)
 	{
 		vec4 fragPosLightSpace=lightSpaceMatrix[lightMat4Index]*fs_in.WorldPos;
 		shadow=ShadowCalculation(fragPosLightSpace,lightMat4Index);
 	}
+	#else
+	vec4 uvwIndex=CalcLightMat4Index_Complex(fs_in.WorldPos);
+	shadow=ShadowCalculation(uvwIndex,int(uvwIndex.w));
+	#endif
 	
 	vec3 lighting=(ambient+(1.-shadow)*(diffuse+specular))*color;
 	
 	FragColor=vec4(lighting,1.);
-	
 }
