@@ -159,6 +159,9 @@
     <ClCompile Include="_29_CSM.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_30_NormalMapping.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -301,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="_29_CSM.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_30_NormalMapping.h">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

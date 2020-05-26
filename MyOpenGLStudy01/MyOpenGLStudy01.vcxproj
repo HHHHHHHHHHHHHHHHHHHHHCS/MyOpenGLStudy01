@@ -190,6 +190,7 @@
     <ClCompile Include="_27_ShadowMapping_Soft.cpp" />
     <ClCompile Include="_28_PointShadow.cpp" />
     <ClCompile Include="_29_CSM.cpp" />
+    <ClCompile Include="_30_NormalMapping.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -239,6 +240,7 @@
     <ClInclude Include="_27_ShadowMapping_Soft.h" />
     <ClInclude Include="_28_PointShadow.h" />
     <ClInclude Include="_29_CSM.h" />
+    <ClInclude Include="_30_NormalMapping.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -177,6 +177,14 @@ int _29_CSM::DoMain()
 		glfwPollEvents();
 	}
 
+	glDeleteShader(simpleDepthShader.ID);
+	glDeleteShader(debugDepthQuadShader.ID);
+	glDeleteShader(objShader.ID);
+	glDeleteVertexArrays(1, &cubeVAO);
+	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteVertexArrays(1, &planeVAO);
+
+
 	glfwTerminate();
 
 	return 0;
