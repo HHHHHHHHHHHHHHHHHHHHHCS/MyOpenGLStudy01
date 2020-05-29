@@ -43,11 +43,12 @@
 #include "_27_ShadowMapping_Soft.h"
 #include "_28_PointShadow.h"
 #include "_29_CSM.h"
+#include "_30_NormalMapping.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _29_CSM::DoMain();
+	int ret = _30_NormalMapping::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }

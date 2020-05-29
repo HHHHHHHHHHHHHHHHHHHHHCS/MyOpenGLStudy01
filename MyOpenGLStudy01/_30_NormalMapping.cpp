@@ -25,12 +25,12 @@ int _30_NormalMapping::DoMain()
 
 	//Shader
 	//-----------------
-	Shader shader("30_NormalMapping");
+	Shader shader("29_CSMShadow_Soft");
 
 	//Textures
 	//-----------------
-	unsigned int diffuseMap = ImageHelper::LoadTexture("Images/brickwall.jpg");
-	unsigned int normalMap = ImageHelper::LoadTexture("Images/brickwall_normal.jpg");
+	unsigned int diffuseMap = ImageHelper::LoadTexture("brickwall.jpg");
+	unsigned int normalMap = ImageHelper::LoadTexture("brickwall_normal.jpg");
 
 	glm::vec3 lightPos(0.5f, 1.0f, 0.3f);
 
@@ -43,6 +43,7 @@ int _30_NormalMapping::DoMain()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, normalMap);
 	glActiveTexture(0);
+
 
 	shader.Use();
 	shader.SetInt("diffuseMap", 0);
@@ -58,6 +59,20 @@ int _30_NormalMapping::DoMain()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		shader.Use();
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::rotate(model,
+		                    glm::radians(static_cast<float>(glfwGetTime()) * -10.0f),
+		                    glm::normalize(glm::vec3(1.0, 1.0, 1.0)));
+		shader.SetMat4("model", model);
+		shader.SetMat4("viewProjection", camera.GetViewProjection());
+		RenderQuad();
+
+		//模拟光源
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.1f));
+		shader.SetMat4("model", model);
 		RenderQuad();
 
 		glfwSwapBuffers(window);
@@ -95,6 +110,7 @@ void _30_NormalMapping::BindQuadVAO()
 	glm::vec2 deltaUV1 = uv2 - uv1;
 	glm::vec2 deltaUV2 = uv3 - uv1;
 
+	//uv 占用边多少比率
 	GLfloat f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
 
 	tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
