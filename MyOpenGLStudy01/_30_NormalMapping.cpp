@@ -25,7 +25,7 @@ int _30_NormalMapping::DoMain()
 
 	//Shader
 	//-----------------
-	Shader shader("29_CSMShadow_Soft");
+	Shader shader("30_NormalMapping");
 
 	//Textures
 	//-----------------
@@ -50,20 +50,42 @@ int _30_NormalMapping::DoMain()
 	shader.SetInt("normalMap", 1);
 	shader.SetVec3("lightPos", lightPos);
 
+	bool haveNormal = true;
+	shader.SetBool("haveNormal", haveNormal);
+	std::cout << (haveNormal ? "Have Normal" : "No Normal") << '\n';
+
+	bool inVSTBN = true;
+	shader.SetBool("inVSTBN", inVSTBN);
+	std::cout << (inVSTBN ? "in vs TBN" : "in fs TBN") << '\n';
 
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
+		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
+
+		if (CommonBaseScript::clickKeys[GLFW_KEY_N])
+		{
+			haveNormal = !haveNormal;
+			shader.SetBool("haveNormal", haveNormal);
+			std::cout << (haveNormal ? "Have Normal" : "No Normal") << '\n';
+		}
+
+		if (CommonBaseScript::clickKeys[GLFW_KEY_B])
+		{
+			inVSTBN = !inVSTBN;
+			shader.SetBool("inVSTBN", inVSTBN);
+			std::cout << (inVSTBN ? "in vs TBN" : "in fs TBN") << '\n';
+		}
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader.Use();
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model,
-		                    glm::radians(static_cast<float>(glfwGetTime()) * -10.0f),
-		                    glm::normalize(glm::vec3(1.0, 1.0, 1.0)));
+		//model = glm::rotate(model,
+		//	glm::radians(static_cast<float>(glfwGetTime()) * -10.0f),
+		//	glm::normalize(glm::vec3(1.0, 1.0, 1.0)));
 		shader.SetMat4("model", model);
 		shader.SetMat4("viewProjection", camera.GetViewProjection());
 		RenderQuad();

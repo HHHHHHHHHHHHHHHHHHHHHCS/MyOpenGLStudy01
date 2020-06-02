@@ -1,7 +1,7 @@
 #version 460 core
 layout(location=0)in vec3 aPos;
 layout(location=1)in vec3 aNormal;
-layout(location=2)in vec3 aTexCoords;
+layout(location=2)in vec2 aTexCoords;
 layout(location=3)in vec3 aTangent;
 layout(location=4)in vec3 aBitangent;
 
@@ -12,6 +12,7 @@ out VS_OUT
 	vec3 TangentLightPos;
 	vec3 TangentViewPos;
 	vec3 TangentFragPos;
+	mat3 FSTBN;
 }vs_out;
 
 uniform mat4 viewProjection;
@@ -19,6 +20,8 @@ uniform mat4 model;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
+
+uniform bool inVSTBN;
 
 void main()
 {
@@ -35,6 +38,9 @@ void main()
 	T=normalize(T-dot(T,N)*N);
 	vec3 B=cross(N,T);
 	
+
+
+//TODO:inVSTBN
 	//TBN 原来是 切线空间 -> 对象空间
 	//由于TBN是正交矩阵，所以求TBN的逆等价于求它的转置。
 	//这种方法 对比 把TBN 放到像素阶段求法线的好处是   顶点运算少 节约运算数
