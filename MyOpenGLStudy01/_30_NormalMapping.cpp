@@ -83,9 +83,9 @@ int _30_NormalMapping::DoMain()
 
 		shader.Use();
 		glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::rotate(model,
-		//	glm::radians(static_cast<float>(glfwGetTime()) * -10.0f),
-		//	glm::normalize(glm::vec3(1.0, 1.0, 1.0)));
+		model = glm::rotate(model,
+			glm::radians(static_cast<float>(glfwGetTime()) * -10.0f),
+			glm::normalize(glm::vec3(1.0, 1.0, 1.0)));
 		shader.SetMat4("model", model);
 		shader.SetMat4("viewProjection", camera.GetViewProjection());
 		shader.SetVec3("viewPos", camera.position);

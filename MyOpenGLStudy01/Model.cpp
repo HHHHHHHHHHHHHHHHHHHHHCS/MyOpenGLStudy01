@@ -33,11 +33,12 @@ void Model::Draw(Shader shader)
 void Model::LoadModel(std::string path)
 {
 	Assimp::Importer importer;
-	//第二个参数是后期处理      Triangulate是全部三角化      FlipUVs翻转UV 的 Y坐标
+	//第二个参数是后期处理      Triangulate是全部三角化      FlipUVs翻转UV 的 Y坐标   CalcTangentSpace 读取的时候自动计算法线切线
 	//aiProcess_GenNormals：如果模型不包含法向量的话，就为每个顶点创建法线。
 	//aiProcess_SplitLargeMeshes：将比较大的网格分割成更小的子网格，如果你的渲染有最大顶点数限制，只能渲染较小的网格，那么它会非常有用。
 	//aiProcess_OptimizeMeshes：和上个选项相反，它会将多个小网格拼接为一个大的网格，减少绘制调用从而进行优化。
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs |
+	                                         aiProcess_CalcTangentSpace);
 
 	//如果没有场景  或者 flag==错误的flag  或者  没有根目录
 	if (!scene || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || !scene->mRootNode)
@@ -92,6 +93,11 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		vector.z = mesh->mNormals[i].z;
 		vertex.Normal = vector;
 
+		vector.x = mesh->mTangents[i].x;
+		vector.y = mesh->mTangents[i].y;
+		vector.z = mesh->mTangents[i].z;
+		vertex.Tangent = vector;
+
 		if (mesh->mTextureCoords[0])
 		{
 			//网格是否有纹理坐标?
@@ -128,6 +134,8 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 		std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+		std::vector<Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal");
+		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 	}
 
 	return Mesh(vertices, indices, textures);

@@ -5,8 +5,9 @@
 
 Mesh::~Mesh()
 {
-	glDeleteBuffers(1,&VBO);
-	glDeleteVertexArrays(1, &VAO);
+	//push_back 是拷贝所以 这里会被析构
+	//glDeleteBuffers(1,&VBO);
+	//glDeleteVertexArrays(1, &VAO);
 }
 
 
@@ -50,7 +51,7 @@ void Mesh::SetupMesh()
 	//顶点切线
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, vertSize, reinterpret_cast<void*>(offsetof(Vertex, Tangent)));
-	
+
 	//顶点辅助切线
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, vertSize, reinterpret_cast<void*>(offsetof(Vertex, Bitangent)));
@@ -67,9 +68,13 @@ void Mesh::Draw(Shader shader)
 	 * uniform sampler2D texture_diffuse3;
 	 * uniform sampler2D texture_specular1;
 	 * uniform sampler2D texture_specular2;
+	 * uniform sampler2D texture_normal1;
+	 * uniform sampler2D texture_normal2;
 	*/
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
+	unsigned int normalNr = 1;
+
 
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
@@ -85,7 +90,11 @@ void Mesh::Draw(Shader shader)
 		{
 			number = std::to_string(specularNr++);
 		}
-		shader.SetInt(("material." + name + number).c_str(), i);
+		else if (name == "texture_normal")
+		{
+			number = std::to_string(normalNr++);
+		}
+		shader.SetInt("material." + name.append(number), i);
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
 
