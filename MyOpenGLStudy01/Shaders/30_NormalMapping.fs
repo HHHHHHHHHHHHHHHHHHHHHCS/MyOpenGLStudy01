@@ -17,17 +17,25 @@ uniform vec3 lightPos;
 uniform vec3 viewPos;
 
 uniform bool haveNormal;
+uniform bool inVSTBN;
 
 void main()
 {
-	
-	//get normal in [0,1]
-	vec3 normal=vec3(.5,.5,1);
+	vec3 normal;
 	if(haveNormal)
 	{
+		//get normal in [0,1]
 		normal=texture(normalMap,fs_in.TexCoords).rgb;
 		//transform normal to [-1,1]
 		normal=normalize(normal*2.-1.);//this is in tangent space
+		if(!inVSTBN)
+		{
+			normal=fs_in.FSTBN*normal;
+		}
+	}
+	else
+	{
+		normal=fs_in.FSTBN[0];
 	}
 	
 	vec3 color=texture(diffuseMap,fs_in.TexCoords).rgb;

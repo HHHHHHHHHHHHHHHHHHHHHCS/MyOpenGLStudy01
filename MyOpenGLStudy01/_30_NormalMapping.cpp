@@ -88,6 +88,7 @@ int _30_NormalMapping::DoMain()
 		//	glm::normalize(glm::vec3(1.0, 1.0, 1.0)));
 		shader.SetMat4("model", model);
 		shader.SetMat4("viewProjection", camera.GetViewProjection());
+		shader.SetVec3("viewPos", camera.position);
 		RenderQuad();
 
 		//模拟光源
