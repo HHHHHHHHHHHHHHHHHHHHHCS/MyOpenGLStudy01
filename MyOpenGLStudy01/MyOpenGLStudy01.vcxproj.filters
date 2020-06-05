@@ -162,7 +162,7 @@
     <ClCompile Include="_30_NormalMapping.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="_31_MeshNormal.cpp">
+    <ClCompile Include="_31_ModelNormal.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -311,7 +311,7 @@
     <ClInclude Include="_30_NormalMapping.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="_31_MeshNormal.h">
+    <ClInclude Include="_31_ModelNormal.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

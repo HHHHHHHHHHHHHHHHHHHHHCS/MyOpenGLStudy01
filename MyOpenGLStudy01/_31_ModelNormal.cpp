@@ -21,14 +21,14 @@ int _31_ModelNormal::DoMain()
 
 	//Shader
 	//-----------------
-	Shader shader("30_NormalMapping");
+	Shader shader("31_Model");
 
 	//Model
 	//-----------------
-	Model model{ "Models/cyborg/cyborg.obj" };
+	Model cyborgModel{"Models/cyborg/cyborg.obj"};
 
 
-	glm::vec3 lightPos(0.5f, 1.0f, 0.3f);
+	glm::vec3 lightPos(0.5f, 4.0f, 0.3f);
 
 	//configure
 	//--------------------
@@ -74,6 +74,13 @@ int _31_ModelNormal::DoMain()
 		shader.SetMat4("model", model);
 		shader.SetMat4("viewProjection", camera.GetViewProjection());
 		shader.SetVec3("viewPos", camera.position);
+		cyborgModel.Draw(shader);
+
+		model = glm::translate(glm::mat4(1.0f), lightPos);
+		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+		shader.SetMat4("model", model);
+		cyborgModel.Draw(shader);
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

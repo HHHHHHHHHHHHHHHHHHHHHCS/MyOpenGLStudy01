@@ -44,11 +44,12 @@
 #include "_28_PointShadow.h"
 #include "_29_CSM.h"
 #include "_30_NormalMapping.h"
+#include "_31_ModelNormal.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _30_NormalMapping::DoMain();
+	int ret = _31_ModelNormal::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
