@@ -25,12 +25,14 @@ int _32_ParallaxMapping::DoMain()
 
 	//Shader
 	//-----------------
-	Shader shader("30_NormalMapping");
+	Shader shader("32_ParallaxMapping");
 
 	//Textures
 	//-----------------
-	unsigned int diffuseMap = ImageHelper::LoadTexture("brickwall.jpg");
-	unsigned int normalMap = ImageHelper::LoadTexture("brickwall_normal.jpg");
+	unsigned int diffuseMap = ImageHelper::LoadTexture("bricks2.jpg");
+	unsigned int normalMap = ImageHelper::LoadTexture("bricks2_normal.jpg");
+	unsigned int parallaxMap = ImageHelper::LoadTexture("bricks2_disp.jpg");
+
 
 	glm::vec3 lightPos(0.5f, 1.0f, 0.3f);
 
@@ -42,21 +44,22 @@ int _32_ParallaxMapping::DoMain()
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, normalMap);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, parallaxMap);
 	glActiveTexture(0);
 
 
 	shader.Use();
 	shader.SetInt("diffuseMap", 0);
 	shader.SetInt("normalMap", 1);
+	shader.SetInt("parallaxMap", 2);
+	shader.SetFloat("heightScale", 1.0f);
 	shader.SetVec3("lightPos", lightPos);
 
-	bool haveNormal = true;
-	shader.SetBool("haveNormal", haveNormal);
-	std::cout << (haveNormal ? "Have Normal" : "No Normal") << '\n';
 
-	bool inVSTBN = true;
-	shader.SetBool("inVSTBN", inVSTBN);
-	std::cout << (inVSTBN ? "in vs TBN" : "in fs TBN") << '\n';
+	bool haveHeight = true;
+	shader.SetFloat("heightScale", haveHeight?0.1f:0.0f);
+	std::cout << (haveHeight ? "open ParallaxMapping" : "no ParallaxMapping") << '\n';
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -64,18 +67,12 @@ int _32_ParallaxMapping::DoMain()
 		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
 
-		if (CommonBaseScript::clickKeys[GLFW_KEY_N])
+		if (CommonBaseScript::clickKeys[GLFW_KEY_H])
 		{
-			haveNormal = !haveNormal;
-			shader.SetBool("haveNormal", haveNormal);
-			std::cout << (haveNormal ? "Have Normal" : "No Normal") << '\n';
-		}
+			haveHeight = !haveHeight;
+			shader.SetFloat("heightScale", haveHeight ? 0.1f : 0.0f);
+			std::cout << (haveHeight ? "open ParallaxMapping" : "no ParallaxMapping") << '\n';
 
-		if (CommonBaseScript::clickKeys[GLFW_KEY_B])
-		{
-			inVSTBN = !inVSTBN;
-			shader.SetBool("inVSTBN", inVSTBN);
-			std::cout << (inVSTBN ? "in vs TBN" : "in fs TBN") << '\n';
 		}
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -85,7 +82,7 @@ int _32_ParallaxMapping::DoMain()
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::rotate(model,
 			glm::radians(static_cast<float>(glfwGetTime()) * -10.0f),
-			glm::normalize(glm::vec3(1.0, 1.0, 1.0)));
+			glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 		shader.SetMat4("model", model);
 		shader.SetMat4("viewProjection", camera.GetViewProjection());
 		shader.SetVec3("viewPos", camera.position);

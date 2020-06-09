@@ -13,9 +13,6 @@ in VS_OUT{
 uniform sampler2D diffuseMap;
 uniform sampler2D normalMap;
 
-uniform vec3 lightPos;
-uniform vec3 viewPos;
-
 uniform bool haveNormal;
 uniform bool inVSTBN;
 

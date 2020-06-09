@@ -12,7 +12,6 @@ out VS_OUT
 	vec3 TangentLightPos;
 	vec3 TangentViewPos;
 	vec3 TangentFragPos;
-	mat3 FSTBN;
 }vs_out;
 
 uniform mat4 viewProjection;
@@ -20,9 +19,6 @@ uniform mat4 model;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
-
-uniform bool haveNormal;
-uniform bool inVSTBN;
 
 void main()
 {
@@ -39,35 +35,17 @@ void main()
 	T=normalize(T-dot(T,N)*N);
 	vec3 B=cross(N,T);
 	
-	if(haveNormal)
-	{
-		if(inVSTBN)
-		{
-			mat3 TBN=transpose(mat3(T,B,N));
-			//TBN 原来是 切线空间 -> 对象空间
-			//由于TBN是正交矩阵，所以求TBN的逆等价于求它的转置。
-			//这种方法 对比 把TBN 放到像素阶段求法线的好处是   顶点运算少 节约运算数
-			vs_out.TangentLightPos=TBN*lightPos;
-			vs_out.TangentViewPos=TBN*viewPos;
-			vs_out.TangentFragPos=TBN*vs_out.FragPos;
-		}
-		else
-		{
-			mat3 TBN=mat3(T,B,N);
-			vs_out.FSTBN=TBN;
-			vs_out.TangentLightPos=lightPos;
-			vs_out.TangentViewPos=viewPos;
-			vs_out.TangentFragPos=vs_out.FragPos;
-		}
-	}
-	else
-	{
-		vec3 worldNormal=(model*vec4(aNormal,1.)).xyz;
-		vs_out.FSTBN[0]=worldNormal;
-		vs_out.TangentLightPos=lightPos;
-		vs_out.TangentViewPos=viewPos;
-		vs_out.TangentFragPos=vs_out.FragPos;
-	}
+	// vec3 T=normalize(mat3(model)*aTangent);
+	// vec3 B=normalize(mat3(model)*aBitangent);
+	// vec3 N=normalize(mat3(model)*aNormal);
+	
+	mat3 TBN=transpose(mat3(T,B,N));
+	//TBN 原来是 切线空间 -> 对象空间
+	//由于TBN是正交矩阵，所以求TBN的逆等价于求它的转置。
+	//这种方法 对比 把TBN 放到像素阶段求法线的好处是   顶点运算少 节约运算数
+	vs_out.TangentLightPos=TBN*lightPos;
+	vs_out.TangentViewPos=TBN*viewPos;
+	vs_out.TangentFragPos=TBN*vs_out.FragPos;
 	
 	gl_Position=viewProjection*worldPos;
 	

@@ -20,9 +20,6 @@ struct Material
 
 uniform Material material;
 
-uniform vec3 lightPos;
-uniform vec3 viewPos;
-
 uniform bool haveNormal;
 uniform bool inVSTBN;
 
