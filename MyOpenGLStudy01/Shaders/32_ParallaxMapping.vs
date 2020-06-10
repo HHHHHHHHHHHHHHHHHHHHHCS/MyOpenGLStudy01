@@ -26,18 +26,9 @@ void main()
 	vs_out.FragPos=worldPos.xyz;
 	vs_out.TexCoords=aTexCoords;
 	
-	//当多顶点共享数据的时候 , TBN可能不会互相垂直 ,
-	//这样TBN 就不是正交矩阵了 , 导致法线贴图偏移
-	//格拉姆-施密特正交化 让TBN 重新正交垂直
-	mat3 normalMatrix=transpose(inverse(mat3(model)));
-	vec3 T=normalize(normalMatrix*aTangent);
-	vec3 N=normalize(normalMatrix*aNormal);
-	T=normalize(T-dot(T,N)*N);
-	vec3 B=cross(N,T);
-	
-	// vec3 T=normalize(mat3(model)*aTangent);
-	// vec3 B=normalize(mat3(model)*aBitangent);
-	// vec3 N=normalize(mat3(model)*aNormal);
+	vec3 T=normalize(mat3(model)*aTangent);
+	vec3 B=normalize(mat3(model)*aBitangent);
+	vec3 N=normalize(mat3(model)*aNormal);
 	
 	mat3 TBN=transpose(mat3(T,B,N));
 	//TBN 原来是 切线空间 -> 对象空间

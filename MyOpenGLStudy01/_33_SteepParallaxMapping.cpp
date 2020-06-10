@@ -1,11 +1,11 @@
-﻿#include "_32_ParallaxMapping.h"
+﻿#include "_33_SteepParallaxMapping.h"
 #include "CommonBaseScript.h"
 #include "Camera.h"
 #include "ImageHelper.h"
 
-unsigned int _32_ParallaxMapping::quadVAO = 0;
+unsigned int _33_SteepParallaxMapping::quadVAO = 0;
 
-int _32_ParallaxMapping::DoMain()
+int _33_SteepParallaxMapping::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
 	GLFWwindow* window = CommonBaseScript::InitWindow();
@@ -58,7 +58,7 @@ int _32_ParallaxMapping::DoMain()
 
 
 	bool haveHeight = true;
-	shader.SetFloat("heightScale", haveHeight?0.1f:0.0f);
+	shader.SetFloat("heightScale", haveHeight ? 0.1f : 0.0f);
 	std::cout << (haveHeight ? "open ParallaxMapping" : "no ParallaxMapping") << '\n';
 
 	while (!glfwWindowShouldClose(window))
@@ -105,7 +105,7 @@ int _32_ParallaxMapping::DoMain()
 	return 0;
 }
 
-void _32_ParallaxMapping::BindQuadVAO()
+void _33_SteepParallaxMapping::BindQuadVAO()
 {
 	// positions
 	glm::vec3 pos1(-1.0f, 1.0f, 0.0f);
@@ -201,7 +201,7 @@ void _32_ParallaxMapping::BindQuadVAO()
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), reinterpret_cast<void*>(11 * sizeof(float)));
 }
 
-void _32_ParallaxMapping::RenderQuad()
+void _33_SteepParallaxMapping::RenderQuad()
 {
 	glBindVertexArray(quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

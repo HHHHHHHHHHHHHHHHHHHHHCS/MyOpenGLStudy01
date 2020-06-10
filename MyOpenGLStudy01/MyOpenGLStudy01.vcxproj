@@ -193,6 +193,7 @@
     <ClCompile Include="_30_NormalMapping.cpp" />
     <ClCompile Include="_31_ModelNormal.cpp" />
     <ClCompile Include="_32_ParallaxMapping.cpp" />
+    <ClCompile Include="_33_SteepParallaxMapping.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -245,6 +246,7 @@
     <ClInclude Include="_30_NormalMapping.h" />
     <ClInclude Include="_31_ModelNormal.h" />
     <ClInclude Include="_32_ParallaxMapping.h" />
+    <ClInclude Include="_33_SteepParallaxMapping.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

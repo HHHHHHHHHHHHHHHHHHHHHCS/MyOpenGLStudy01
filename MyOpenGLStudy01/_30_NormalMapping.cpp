@@ -143,7 +143,7 @@ void _30_NormalMapping::BindQuadVAO()
 
 	bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
 	bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-	bitangent1.x = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+	bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
 	bitangent1 = glm::normalize(bitangent1);
 
 
