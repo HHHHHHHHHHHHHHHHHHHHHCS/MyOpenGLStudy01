@@ -25,13 +25,13 @@ int _33_SteepParallaxMapping::DoMain()
 
 	//Shader
 	//-----------------
-	Shader shader("32_ParallaxMapping");
+	Shader shader("33_StepParallaxMapping");
 
 	//Textures
 	//-----------------
-	unsigned int diffuseMap = ImageHelper::LoadTexture("bricks2.jpg");
-	unsigned int normalMap = ImageHelper::LoadTexture("bricks2_normal.jpg");
-	unsigned int parallaxMap = ImageHelper::LoadTexture("bricks2_disp.jpg");
+	unsigned int diffuseMap = ImageHelper::LoadTexture("toy_box_diffuse.png");
+	unsigned int normalMap = ImageHelper::LoadTexture("toy_box_normal.png");
+	unsigned int parallaxMap = ImageHelper::LoadTexture("toy_box_disp.png");
 
 
 	glm::vec3 lightPos(0.5f, 1.0f, 0.3f);
@@ -80,9 +80,9 @@ int _33_SteepParallaxMapping::DoMain()
 
 		shader.Use();
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model,
-			glm::radians(static_cast<float>(glfwGetTime()) * -10.0f),
-			glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+		//model = glm::rotate(model,
+		//	glm::radians(static_cast<float>(glfwGetTime()) * -10.0f),
+		//	glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
 		shader.SetMat4("model", model);
 		shader.SetMat4("viewProjection", camera.GetViewProjection());
 		shader.SetVec3("viewPos", camera.position);
