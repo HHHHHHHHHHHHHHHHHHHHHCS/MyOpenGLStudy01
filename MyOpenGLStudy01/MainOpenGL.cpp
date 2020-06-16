@@ -47,11 +47,12 @@
 #include "_31_ModelNormal.h"
 #include "_32_ParallaxMapping.h"
 #include "_33_SteepParallaxMapping.h"
+#include "_34_ParallaxOcclusionMapping.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _33_SteepParallaxMapping::DoMain();
+	int ret = _34_ParallaxOcclusionMapping::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }

@@ -171,6 +171,9 @@
     <ClCompile Include="_33_SteepParallaxMapping.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_34_ParallaxOcclusionMapping.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -324,6 +327,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_33_SteepParallaxMapping.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_34_ParallaxOcclusionMapping.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -39,7 +39,18 @@ vec2 ParallaxMapping(vec2 texCoords,vec3 viewDir)
 		currentLayerDepth+=layerDepth;
 	}
 	
- 	return currentTexCoords;
+	// 碰撞前获取纹理坐标（反向操作）
+	vec2 prevTexCoords=currentTexCoords+deltaTexCoords;
+	
+	// 线性插值的碰撞前后深度
+	float afterDepth=currentDepthMapValue-currentLayerDepth;
+	float beforeDepth=texture(parallaxMap,prevTexCoords).r-currentLayerDepth+layerDepth;
+	
+	// 线性插值的碰撞前后深度
+	float weight=afterDepth/(afterDepth-beforeDepth);
+	vec2 finalTexCoords=prevTexCoords*weight+currentTexCoords*(1.-weight);
+	
+	return finalTexCoords;
 }
 
 void main()
