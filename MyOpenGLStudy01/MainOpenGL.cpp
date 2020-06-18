@@ -52,7 +52,7 @@
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _34_ParallaxOcclusionMapping::DoMain();
+	int ret = _13_Mesh::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }

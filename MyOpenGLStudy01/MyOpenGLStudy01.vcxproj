@@ -195,6 +195,7 @@
     <ClCompile Include="_32_ParallaxMapping.cpp" />
     <ClCompile Include="_33_SteepParallaxMapping.cpp" />
     <ClCompile Include="_34_ParallaxOcclusionMapping.cpp" />
+    <ClCompile Include="_35_HDR.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -249,6 +250,7 @@
     <ClInclude Include="_32_ParallaxMapping.h" />
     <ClInclude Include="_33_SteepParallaxMapping.h" />
     <ClInclude Include="_34_ParallaxOcclusionMapping.h" />
+    <ClInclude Include="_35_HDR.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

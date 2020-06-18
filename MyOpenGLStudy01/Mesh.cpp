@@ -6,8 +6,8 @@
 Mesh::~Mesh()
 {
 	//push_back 是拷贝所以 这里会被析构
-	//glDeleteBuffers(1,&VBO);
-	//glDeleteVertexArrays(1, &VAO);
+	// glDeleteBuffers(1,&VBO);
+	// glDeleteVertexArrays(1, &VAO);
 }
 
 
