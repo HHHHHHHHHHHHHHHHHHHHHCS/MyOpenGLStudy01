@@ -52,7 +52,7 @@
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _13_Mesh::DoMain();
+	int ret = _14_DepthTesting::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
