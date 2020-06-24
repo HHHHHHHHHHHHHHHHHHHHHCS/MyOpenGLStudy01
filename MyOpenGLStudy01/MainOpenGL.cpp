@@ -48,11 +48,12 @@
 #include "_32_ParallaxMapping.h"
 #include "_33_SteepParallaxMapping.h"
 #include "_34_ParallaxOcclusionMapping.h"
+#include "_35_HDR.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _14_DepthTesting::DoMain();
+	int ret = _35_HDR::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }

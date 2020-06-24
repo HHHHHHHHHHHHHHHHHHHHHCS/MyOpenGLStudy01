@@ -21,7 +21,7 @@ void main()
 	vec3 color=texture(diffuseTexture,fs_in.TexCoords).rgb;
 	vec3 normal=normalize(fs_in.Normal);
 	//ambient
-	vec3=0.*color;
+	vec3 ambient=0.*color;
 	//lighting
 	vec3 lighting=vec3(0.);
 	for(int i=0;i<16;++i)

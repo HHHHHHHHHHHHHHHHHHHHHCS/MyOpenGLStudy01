@@ -115,14 +115,14 @@ int _35_HDR::DoMain()
 
 		if (CommonBaseScript::keys[GLFW_KEY_Q])
 		{
-			exposure -= 0.001f;
+			exposure -= 0.01f;
 			hdrShader.Use();
 			hdrShader.SetFloat("exposure", exposure);
 			std::cout << "exposure: " << exposure << std::endl;
 		}
 		else if (CommonBaseScript::keys[GLFW_KEY_E])
 		{
-			exposure += 0.001f;
+			exposure += 0.01f;
 			hdrShader.Use();
 			hdrShader.SetFloat("exposure", exposure);
 			std::cout << "exposure: " << exposure << std::endl;

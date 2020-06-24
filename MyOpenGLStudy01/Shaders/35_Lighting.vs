@@ -13,6 +13,8 @@ out VS_OUT
 uniform mat4 viewProjection;
 uniform mat4 model;
 
+uniform bool inverse_normals;
+
 void main()
 {
 	vs_out.FragPos=vec3(model*vec4(aPos,1.));
