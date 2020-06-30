@@ -177,6 +177,9 @@
     <ClCompile Include="_35_HDR.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_36_Bloom.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -336,6 +339,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_35_HDR.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_36_Bloom.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
