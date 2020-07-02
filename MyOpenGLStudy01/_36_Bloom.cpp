@@ -123,6 +123,112 @@ int _36_Bloom::DoMain()
 		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
 
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//1.渲染场景到HDR RT
+		//-----------------------------
+		glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glm::mat4 vp = camera.GetViewProjection();
+		glm::mat4 model = glm::mat4{1.0f};
+		objShader.Use();
+		objShader.SetMat4("viewProjection", vp);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, woodTexture);
+		//set lighting uniforms
+		for (unsigned int i = 0; i < lightPositions.size(); i++)
+		{
+			objShader.SetVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
+			objShader.SetVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
+		}
+		objShader.SetVec3("viewPos", camera.position);
+		//创建巨大的cube 当作地板
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(12.5f, 0.5f, 12.5f));
+		objShader.SetMat4("model", model);
+		RenderCube();
+		//创建许多cube 在场景里
+		glBindTexture(GL_TEXTURE_2D, containerTexture);
+		model = glm::mat4{ 1.0f };
+		model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.5f));
+		objShader.SetMat4("model", model);
+		RenderCube();
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
+		model = glm::scale(model, glm::vec3(0.5f));
+		objShader.SetMat4("model", model);
+		RenderCube();
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-1.0f, -1.0f, 2.0));
+		model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+		objShader.SetMat4("model", model);
+		RenderCube();
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 2.7f, 4.0));
+		model = glm::rotate(model, glm::radians(23.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+		model = glm::scale(model, glm::vec3(1.25));
+		objShader.SetMat4("model", model);
+		RenderCube();
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-2.0f, 1.0f, -3.0));
+		model = glm::rotate(model, glm::radians(124.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+		objShader.SetMat4("model", model);
+		RenderCube();
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 0.0));
+		model = glm::scale(model, glm::vec3(0.5f));
+		objShader.SetMat4("model", model);
+		RenderCube();
+
+		//渲染灯光cube
+		lightShader.Use();
+		lightShader.SetMat4("viewProjection", vp);
+		for(unsigned int i=0;i<lightPositions.size();i++)
+		{
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(lightPositions[i]));
+			model = glm::scale(model, glm::vec3(0.25f));
+			lightShader.SetMat4("model", model);
+			lightShader.SetVec3("lightColor", lightColors[i]);
+			RenderCube();
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		//2.模糊亮度过高的
+		bool horizontal = true;
+		bool first_iteration = true;
+		unsigned int amount = 10;
+		blurShader.Use();
+		for(unsigned int i=0;i<amount;i++)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+			blurShader.SetInt("horizontal", horizontal);
+			glBindTexture(GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongColorbuffers[!horizontal]);
+			RenderQuad();
+			horizontal = !horizontal;
+			if (first_iteration)
+				first_iteration = false;
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		//3.渲染会主屏幕
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		bloomFinalShader.Use();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
+		bloomFinalShader.SetInt("bloom", bloom);
+		//TODO:
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
