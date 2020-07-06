@@ -94,10 +94,10 @@ int _35_HDR::DoMain()
 
 	bool isHDR = true;
 	float exposure = 1.0f;
-	std::cout << "isHDR: " << (isHDR ? "on" : "off") << "| exposure: " << exposure << std::endl;
 	hdrShader.Use();
 	hdrShader.SetBool("hdr", isHDR);
 	hdrShader.SetFloat("exposure", exposure);
+	std::cout << "isHDR: " << (isHDR ? "on" : "off") << "| exposure: " << exposure << std::endl;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -250,7 +250,7 @@ void _35_HDR::BindQuadVAO()
 	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(0));
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
 }

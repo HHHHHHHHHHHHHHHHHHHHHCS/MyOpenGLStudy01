@@ -80,15 +80,15 @@ int _36_Bloom::DoMain()
 
 	//Shader
 	//-----------------
-	Shader objShader{};
-	Shader lightShader{};
-	Shader blurShader{};
-	Shader bloomFinalShader{};
+	Shader objShader{"36_BloomObj"};
+	Shader lightShader{ "" };
+	Shader blurShader{ "" };
+	Shader bloomFinalShader{ "" };
 
 	//Textures
 	//---------------
-	unsigned int woodTexture = ImageHelper::LoadTexture("");
-	unsigned int containerTexture = ImageHelper::LoadTexture("");
+	unsigned int woodTexture = ImageHelper::LoadTexture("wood.png");
+	unsigned int containerTexture = ImageHelper::LoadTexture("container.jpg");
 
 	//lighting info
 	//--------------
@@ -108,13 +108,20 @@ int _36_Bloom::DoMain()
 
 	//Shader Configuration
 	//-------------------
-	objShader.Use();
 	objShader.SetInt("diffuseTexture", 0);
-	blurShader.Use();
+
 	blurShader.SetInt("image", 0);
-	bloomFinalShader.Use();
+
 	bloomFinalShader.SetInt("scene", 0);
 	bloomFinalShader.SetInt("bloomBlur", 1);
+
+
+	bool bloom = false;
+	float exposure = 1.0f;
+	bloomFinalShader.SetInt("bloom", bloom);
+	bloomFinalShader.SetFloat("exposure", exposure);
+	std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
+
 
 
 	while (!glfwWindowShouldClose(window))
@@ -122,6 +129,27 @@ int _36_Bloom::DoMain()
 		CommonBaseScript::ProcessInput(window);
 		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
+
+		if (CommonBaseScript::clickKeys[GLFW_KEY_B])
+		{
+			bloom = !bloom;
+			//理论上不用use
+			bloomFinalShader.SetInt("bloom", bloom);
+			std::cout << "bloom: " << (bloom ? "on" : "off") <<  std::endl;
+		}
+
+		if (CommonBaseScript::keys[GLFW_KEY_Q])
+		{
+			exposure -= 0.01f;
+			bloomFinalShader.SetFloat("exposure", exposure);
+			std::cout << "exposure: " << exposure << std::endl;
+		}
+		else if (CommonBaseScript::keys[GLFW_KEY_E])
+		{
+			exposure += 0.01f;
+			bloomFinalShader.SetFloat("exposure", exposure);
+			std::cout << "exposure: " << exposure << std::endl;
+		}
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -226,8 +254,7 @@ int _36_Bloom::DoMain()
 		glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
-		bloomFinalShader.SetInt("bloom", bloom);
-		//TODO:
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
