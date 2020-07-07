@@ -81,8 +81,8 @@ int _36_Bloom::DoMain()
 	//Shader
 	//-----------------
 	Shader objShader{"36_BloomObj"};
-	Shader lightShader{ "" };
-	Shader blurShader{ "" };
+	Shader lightShader{ "36_BloomLight" };
+	Shader blurShader{ "36_BloomBlur" };
 	Shader bloomFinalShader{ "" };
 
 	//Textures
