@@ -21,7 +21,7 @@ void main()
 	vs_out.TexCoords=aTexCoords;
 	
 	mat3 normalMatrix=transpose(inverse(mat3(model)));
-	vs_out.Normal=normalize(normalMatrix*n);
+	vs_out.Normal=normalize(normalMatrix*aNormal);
 	
 	gl_Position=viewProjection*vec4(vs_out.FragPos.xyz,1.);
 	

@@ -49,11 +49,12 @@
 #include "_33_SteepParallaxMapping.h"
 #include "_34_ParallaxOcclusionMapping.h"
 #include "_35_HDR.h"
+#include "_36_Bloom.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _35_HDR::DoMain();
+	int ret = _36_Bloom::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }

@@ -27,6 +27,7 @@ void main()
 	//ambient
 	vec3 ambient=0.*color;
 	vec3 viewDir=normalize(viewPos-fs_in.FragPos);
+	vec3 lighting = vec3(0);
 	for(int i=0;i<4;i++)
 	{
 		//diffuse

@@ -16,6 +16,9 @@ int _36_Bloom::DoMain()
 		return -1;
 	}
 
+	BindCubeVAO();
+	BindQuadVAO();
+
 	// configure (floating point) framebuffers
 	// ---------------------------------------
 	unsigned int hdrFBO;
@@ -83,7 +86,7 @@ int _36_Bloom::DoMain()
 	Shader objShader{"36_BloomObj"};
 	Shader lightShader{ "36_BloomLight" };
 	Shader blurShader{ "36_BloomBlur" };
-	Shader bloomFinalShader{ "" };
+	Shader bloomFinalShader{ "36_BloomFinal" };
 
 	//Textures
 	//---------------
@@ -100,10 +103,10 @@ int _36_Bloom::DoMain()
 	lightPositions.emplace_back(-0.8f, 2.4f, -1.0f);
 	//colors
 	std::vector<glm::vec3> lightColors;
-	lightPositions.emplace_back(5.0f, 5.0f, 5.0f);
-	lightPositions.emplace_back(10.0f, 0.0f, 0.0f);
-	lightPositions.emplace_back(0.0f, 0.5f, 15.0f);
-	lightPositions.emplace_back(0.0f, 5.0f, 0.0f);
+	lightColors.emplace_back(5.0f, 5.0f, 5.0f);
+	lightColors.emplace_back(10.0f, 0.0f, 0.0f);
+	lightColors.emplace_back(0.0f, 0.5f, 15.0f);
+	lightColors.emplace_back(0.0f, 5.0f, 0.0f);
 
 
 	//Shader Configuration
@@ -151,8 +154,8 @@ int _36_Bloom::DoMain()
 			std::cout << "exposure: " << exposure << std::endl;
 		}
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+
 
 		//1.渲染场景到HDR RT
 		//-----------------------------
@@ -229,7 +232,7 @@ int _36_Bloom::DoMain()
 			RenderCube();
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+		
 		//2.模糊亮度过高的
 		bool horizontal = true;
 		bool first_iteration = true;
@@ -254,7 +257,7 @@ int _36_Bloom::DoMain()
 		glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
-
+		
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
