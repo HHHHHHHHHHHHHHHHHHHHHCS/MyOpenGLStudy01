@@ -84,9 +84,9 @@ int _36_Bloom::DoMain()
 	//Shader
 	//-----------------
 	Shader objShader{"36_BloomObj"};
-	Shader lightShader{ "36_BloomLight" };
-	Shader blurShader{ "36_BloomBlur" };
-	Shader bloomFinalShader{ "36_BloomFinal" };
+	Shader lightShader{"36_BloomLight"};
+	Shader blurShader{"36_BloomBlur"};
+	Shader bloomFinalShader{"36_BloomFinal"};
 
 	//Textures
 	//---------------
@@ -111,20 +111,24 @@ int _36_Bloom::DoMain()
 
 	//Shader Configuration
 	//-------------------
+	//不用use可能 不知道配置那个 shader Program
+	objShader.Use();
 	objShader.SetInt("diffuseTexture", 0);
 
+	blurShader.Use();
 	blurShader.SetInt("image", 0);
 
+	bloomFinalShader.Use();
 	bloomFinalShader.SetInt("scene", 0);
 	bloomFinalShader.SetInt("bloomBlur", 1);
 
 
-	bool bloom = false;
+	bool bloom = true;
 	float exposure = 1.0f;
+	bloomFinalShader.Use();
 	bloomFinalShader.SetInt("bloom", bloom);
 	bloomFinalShader.SetFloat("exposure", exposure);
 	std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
-
 
 
 	while (!glfwWindowShouldClose(window))
@@ -136,25 +140,27 @@ int _36_Bloom::DoMain()
 		if (CommonBaseScript::clickKeys[GLFW_KEY_B])
 		{
 			bloom = !bloom;
-			//理论上不用use
+			bloomFinalShader.Use();
 			bloomFinalShader.SetInt("bloom", bloom);
-			std::cout << "bloom: " << (bloom ? "on" : "off") <<  std::endl;
+			std::cout << "bloom: " << (bloom ? "on" : "off") << std::endl;
 		}
 
 		if (CommonBaseScript::keys[GLFW_KEY_Q])
 		{
 			exposure -= 0.01f;
+			bloomFinalShader.Use();
 			bloomFinalShader.SetFloat("exposure", exposure);
 			std::cout << "exposure: " << exposure << std::endl;
 		}
 		else if (CommonBaseScript::keys[GLFW_KEY_E])
 		{
 			exposure += 0.01f;
+			bloomFinalShader.Use();
 			bloomFinalShader.SetFloat("exposure", exposure);
 			std::cout << "exposure: " << exposure << std::endl;
 		}
 
-		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 
 		//1.渲染场景到HDR RT
@@ -182,7 +188,7 @@ int _36_Bloom::DoMain()
 		RenderCube();
 		//创建许多cube 在场景里
 		glBindTexture(GL_TEXTURE_2D, containerTexture);
-		model = glm::mat4{ 1.0f };
+		model = glm::mat4{1.0f};
 		model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.5f));
 		objShader.SetMat4("model", model);
@@ -222,7 +228,7 @@ int _36_Bloom::DoMain()
 		//渲染灯光cube
 		lightShader.Use();
 		lightShader.SetMat4("viewProjection", vp);
-		for(unsigned int i=0;i<lightPositions.size();i++)
+		for (unsigned int i = 0; i < lightPositions.size(); i++)
 		{
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(lightPositions[i]));
@@ -231,14 +237,14 @@ int _36_Bloom::DoMain()
 			lightShader.SetVec3("lightColor", lightColors[i]);
 			RenderCube();
 		}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		
+
+
 		//2.模糊亮度过高的
 		bool horizontal = true;
 		bool first_iteration = true;
 		unsigned int amount = 10;
 		blurShader.Use();
-		for(unsigned int i=0;i<amount;i++)
+		for (unsigned int i = 0; i < amount; i++)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
 			blurShader.SetInt("horizontal", horizontal);
@@ -257,7 +263,7 @@ int _36_Bloom::DoMain()
 		glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
-		
+		RenderQuad();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
