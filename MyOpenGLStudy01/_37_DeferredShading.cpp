@@ -52,7 +52,7 @@ int _37_DeferredShading::DoMain()
 	glGenFramebuffers(1, &gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 	unsigned int gPosition, gNormal, gAlbedoSpec;
-	
+
 	//position color buffer
 	glGenTextures(1, &gPosition);
 	glBindTexture(GL_TEXTURE_2D, gPosition);
@@ -62,7 +62,7 @@ int _37_DeferredShading::DoMain()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	//最后一位指定要附加的纹理图像的mipmap级别，该级别必须为0。
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
-	
+
 	//normal color buffer
 	glGenTextures(1, &gNormal);
 	glBindTexture(GL_TEXTURE_2D, gNormal);
@@ -70,7 +70,7 @@ int _37_DeferredShading::DoMain()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
-	
+
 	//color + specular color buffer
 	glGenTextures(1, &gAlbedoSpec);
 	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
@@ -80,20 +80,40 @@ int _37_DeferredShading::DoMain()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
 
 	//MRT
-	unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, };
+	unsigned int attachments[3] = {GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,};
 	glDrawBuffers(3, attachments);
-	
+
 	//depth rt
 	unsigned int rboDepth;
 	glGenBuffers(1, &rboDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER)!=GL_FRAMEBUFFER_COMPLETE)
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
 		std::cout << "Frame not complete!" << std::endl;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// lighting info
+	//-------------------
+	const unsigned int NR_LIGHTS = 32;
+	std::vector<glm::vec3> lightPositions;
+	std::vector<glm::vec3> lightColors;
+	srand(13);
+	for (unsigned int i = 0; i < NR_LIGHTS; i++)
+	{
+		//calculate slightly random offsets
+		float xPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
+		float yPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
+		float zPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
+		lightPositions.emplace_back(glm::vec3(xPos, yPos, zPos));
+		//also calculate random color
+		float rColor = ((rand() % 100) / 200.0f) + 0.5; //[0.5 , 1.0]
+		float gColor = ((rand() % 100) / 200.0f) + 0.5; //[0.5 , 1.0]
+		float bColor = ((rand() % 100) / 200.0f) + 0.5; //[0.5 , 1.0]
+		lightColors.emplace_back(glm::vec3(rColor, gColor, bColor));
+	}
 
 
 	while (!glfwWindowShouldClose(window))
