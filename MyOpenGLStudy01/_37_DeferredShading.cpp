@@ -27,7 +27,7 @@ int _37_DeferredShading::DoMain()
 
 	// build and compile shaders
 	//--------------------------
-	Shader geometryPassShader{""};
+	Shader geometryPassShader{"37_GeometryPass"};
 	Shader lightingPassShader{""};
 	Shader lightBoxShader{""};
 
