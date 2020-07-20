@@ -21,19 +21,18 @@ int _37_DeferredShading::DoMain()
 	BindCubeVAO();
 	BindQuadVAO();
 
-	// configure global opengl state
-	//-----------------------------
-	glEnable(GL_DEPTH_TEST);
 
 	// build and compile shaders
 	//--------------------------
 	Shader geometryPassShader{"37_GeometryPass"};
-	Shader lightingPassShader{""};
-	Shader lightBoxShader{""};
+	Shader lightingPassShader{"37_DeferredLighting"};
+	Shader lightBoxShader{"37_LightBox"};
+	Shader fboDebugShader{ "37_FBODebug" };
+
 
 	//load models
 	//--------------
-	Model nanosuit = Model{""};
+	Model nanosuit = Model{"Models/nanosuit/nanosuit.obj"};
 	std::vector<glm::vec3> objectPositions;
 	objectPositions.emplace_back(glm::vec3(-3.0, -3.0, -3.0));
 	objectPositions.emplace_back(glm::vec3(0.0, -3.0, -3.0));
@@ -85,10 +84,11 @@ int _37_DeferredShading::DoMain()
 
 	//depth rt
 	unsigned int rboDepth;
-	glGenBuffers(1, &rboDepth);
+	glGenRenderbuffers(1, &rboDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
 		std::cout << "Frame not complete!" << std::endl;
@@ -122,12 +122,18 @@ int _37_DeferredShading::DoMain()
 	lightingPassShader.SetInt("gNormal", 1);
 	lightingPassShader.SetInt("gAlbedoSpec", 2);
 
+	fboDebugShader.Use();
+	lightingPassShader.SetInt("fboAttachment", 0);
+
 	//Camera
 	//-----------------
 	Camera camera{};
 	Camera::AddMouseEvent(window);
 	CommonBaseScript::RegisterKeyEvent(window);
 
+	// configure global opengl state
+	//-----------------------------
+	glEnable(GL_DEPTH_TEST);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -158,20 +164,18 @@ int _37_DeferredShading::DoMain()
 			geometryPassShader.SetMat4("model", model);
 			nanosuit.Draw(geometryPassShader);
 		}
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+		//TODO:
 
 		//2.lighting pass: calculate lighting by iterating over a screen filled quad pixel-by-pixel using the gbuffer's content
 		//------------------------------
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		lightingPassShader.Use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, gPosition);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, gNormal);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+		lightingPassShader.Use();
 		//send light relevant uniforms
 		for (unsigned int i = 0; i < lightPositions.size(); i++)
 		{
@@ -188,26 +192,27 @@ int _37_DeferredShading::DoMain()
 		//render quad
 		RenderQuad();
 
-		//2.5 复制深度 为了后面的遮挡
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
-		glBindFramebuffer(GL_DRAW_BUFFER, 0); //写入默认 framebuffer
-		//blit到默认帧缓冲区。请注意，由于FBO和默认帧缓冲区的内部格式必须匹配，这可能也可能不起作用。
-		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		//3.渲染灯光在场景里面
-		lightBoxShader.Use();
-		lightBoxShader.SetMat4("projection", projection);
-		lightBoxShader.SetMat4("view", view);
-		for(unsigned int i=0;i<lightPositions.size();i++)
-		{
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, lightPositions[i]);
-			model = glm::scale(model, glm::vec3(0.125f));
-			lightBoxShader.SetMat4("model", model);
-			lightBoxShader.SetVec3("lightColor", lightColors[i]);
-			RenderCube();
-		}
+		// //2.5 复制深度 为了后面的遮挡
+		// glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+		// glBindFramebuffer(GL_DRAW_BUFFER, 0); //写入默认 framebuffer
+		// //blit到默认帧缓冲区。请注意，由于FBO和默认帧缓冲区的内部格式必须匹配，这可能也可能不起作用。
+		// glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// //3.渲染灯光在场景里面
+		// lightBoxShader.Use();
+		// lightBoxShader.SetMat4("projection", projection);
+		// lightBoxShader.SetMat4("view", view);
+		// for(unsigned int i=0;i<lightPositions.size();i++)
+		// {
+		// 	model = glm::mat4(1.0f);
+		// 	model = glm::translate(model, lightPositions[i]);
+		// 	model = glm::scale(model, glm::vec3(0.125f));
+		// 	lightBoxShader.SetMat4("model", model);
+		// 	lightBoxShader.SetVec3("lightColor", lightColors[i]);
+		// 	RenderCube();
+		// }
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

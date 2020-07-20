@@ -50,11 +50,12 @@
 #include "_34_ParallaxOcclusionMapping.h"
 #include "_35_HDR.h"
 #include "_36_Bloom.h"
+#include "_37_DeferredShading.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _36_Bloom::DoMain();
+	int ret = _37_DeferredShading::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
