@@ -95,12 +95,12 @@ int _38_DeferredShading_Volumes::DoMain()
 		float xPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
 		float yPos = ((rand() % 100) / 100.0) * 6.0 - 4.0;
 		float zPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
-		lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
+		lightPositions.emplace_back(xPos, yPos, zPos);
 		// also calculate random color
 		float rColor = ((rand() % 100) / 200.0f) + 0.5; // between 0.5 and 1.0
 		float gColor = ((rand() % 100) / 200.0f) + 0.5; // between 0.5 and 1.0
 		float bColor = ((rand() % 100) / 200.0f) + 0.5; // between 0.5 and 1.0
-		lightColors.push_back(glm::vec3(rColor, gColor, bColor));
+		lightColors.emplace_back(rColor, gColor, bColor);
 	}
 
 	// shader configuration
@@ -153,6 +153,7 @@ int _38_DeferredShading_Volumes::DoMain()
 		glBindTexture(GL_TEXTURE_2D, gNormal);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+		lightingPassShader.Use();
 		for (unsigned int i = 0; i < lightPositions.size(); ++i)
 		{
 			std::string lightName = "lights[" + std::to_string(i) + "].";
@@ -165,9 +166,34 @@ int _38_DeferredShading_Volumes::DoMain()
 			const float quadratic = 1.8;
 			lightingPassShader.SetFloat(lightName + "Linear", linear);
 			lightingPassShader.SetFloat(lightName + "Quadratic", quadratic);
-
 			//calc radius of light volume/sphere
+			const float maxBrightness = std::fmaxf(std::fmaxf(lightColors[i].r, lightColors[i].g), lightColors[i].b);
+			float radius = (-linear + std::sqrt(
+				linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
+			lightingPassShader.SetFloat(lightName + "Radius", radius);
 		}
+		lightingPassShader.SetVec3("viewPos", camera.position);
+		RenderQuad();
+
+		//copy depth
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		lightBoxShader.Use();
+		lightBoxShader.SetMat4("projection", camera.GetProjectionMat4());
+		lightBoxShader.SetMat4("view", camera.GetViewMat4());
+		for (unsigned int i = 0; i < lightPositions.size(); i++)
+		{
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, lightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.125f));
+			lightBoxShader.SetMat4("model", model);
+			lightBoxShader.SetVec3("lightColor", lightColors[i]);
+			RenderCube();
+		}
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
