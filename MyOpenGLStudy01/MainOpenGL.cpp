@@ -51,11 +51,12 @@
 #include "_35_HDR.h"
 #include "_36_Bloom.h"
 #include "_37_DeferredShading.h"
+#include "_38_DeferredShading_Volumes.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _37_DeferredShading::DoMain();
+	int ret = _38_DeferredShading_Volumes::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }

@@ -35,10 +35,11 @@ void main()
 	for(int i=0;i<NR_LIGHTS;++i)
 	{
 		float distance=length(lights[i].Position-FragPos);
+		//在GPU 可能也是假的分支执行
 		if(distance<lights[i].Radius)
 		{
 			//diffuse
-			vec3 lightDir=normalize(ligths[i].Position-FragPos);
+			vec3 lightDir=normalize(lights[i].Position-FragPos);
 			vec3 diffuse=max(dot(Normal,lightDir),0.)*Diffuse*lights[i].Color;
 			//specular
 			vec3 halfWayDir=normalize(lightDir+viewDir);
