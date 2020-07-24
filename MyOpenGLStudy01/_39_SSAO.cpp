@@ -2,6 +2,7 @@
 #include "CommonBaseScript.h"
 #include "Camera.h"
 #include "Model.h"
+#include <random>
 
 int _39_SSAO::DoMain()
 {
@@ -71,8 +72,62 @@ int _39_SSAO::DoMain()
 		std::cout << "Framebuffer not complete!" << std::endl;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	)
 
+
+	//SSAO 
+	//-------------------------
+	unsigned int ssaoFBO;
+	glGenFramebuffers(1, &ssaoFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+	unsigned int ssaoColorBuffer;
+	//SSAO color bufer
+	glGenTextures(1, &ssaoColorBuffer);
+	glBindFramebuffer(GL_TEXTURE_2D, ssaoColorBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "SSAO Framebuffer not complete" << std::endl;
+	}
+	//and blur stage 
+	unsigned int ssaoBlurFBO;
+	glGenFramebuffers(1, &ssaoBlurFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+	unsigned int ssaoColorBufferBlur;
+	glGenTextures(1, &ssaoColorBufferBlur);
+	glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBufferBlur, 0);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "SSAO Blur Framebuffer not complete!";
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	//generate sample kernel
+	//----------------------
+	//产生均匀分布的随机数 值是半开放的 [a , b)
+	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); //generates random floats [0.0 , 1.0)
+	std::default_random_engine generator; //随机分部引擎
+	std::vector<glm::vec3> ssaoKernel;
+	for (unsigned int i = 0; i < 64; ++i)
+	{
+		glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0,
+		                 randomFloats(generator));
+		sample = glm::normalize(sample);
+		sample *= randomFloats(generator);
+
+		float scale = float(i) / 64.0;
+		//缩放样本ST , 越大越结晶中心
+		scale = Lerp(0.1f, 1.0f, scale * scale);
+		sample *= scale;
+		ssaoKernel.push_back(sample);
+	}
 
 	//Camera
 	//-----------
@@ -94,4 +149,10 @@ int _39_SSAO::DoMain()
 	glfwTerminate();
 
 	return 0;
+}
+
+
+float _39_SSAO::Lerp(float a, float b, float f)
+{
+	return a + f * (b - a);
 }

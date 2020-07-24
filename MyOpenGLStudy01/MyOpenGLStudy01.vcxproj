@@ -199,6 +199,7 @@
     <ClCompile Include="_36_Bloom.cpp" />
     <ClCompile Include="_37_DeferredShading.cpp" />
     <ClCompile Include="_38_DeferredShading_Volumes.cpp" />
+    <ClCompile Include="_39_SSAO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -257,6 +258,7 @@
     <ClInclude Include="_36_Bloom.h" />
     <ClInclude Include="_37_DeferredShading.h" />
     <ClInclude Include="_38_DeferredShading_Volumes.h" />
+    <ClInclude Include="_39_SSAO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
