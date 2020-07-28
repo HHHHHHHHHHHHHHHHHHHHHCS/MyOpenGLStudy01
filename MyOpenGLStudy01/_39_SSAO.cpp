@@ -17,6 +17,9 @@ int _39_SSAO::DoMain()
 		return -1;
 	}
 
+	BindCubeVAO();
+	BindQuadVAO();
+
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
@@ -137,7 +140,7 @@ int _39_SSAO::DoMain()
 	std::vector<glm::vec3> ssaoNoise;
 	for (unsigned int i = 0; i < 16; ++i)
 	{
-		glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f); //因为在切线空间  旋转Z轴
+		glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f); //因为在切线空间 不用Z轴
 		ssaoNoise.push_back(noise);
 	}
 	unsigned int noiseTexture;
@@ -238,6 +241,7 @@ int _39_SSAO::DoMain()
 		//------------------------
 		glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
 		glClear(GL_COLOR_BUFFER_BIT);
+		SSAOBlurshader.Use();
 		SSAOBlurshader.Use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
