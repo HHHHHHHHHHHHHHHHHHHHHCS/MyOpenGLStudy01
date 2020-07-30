@@ -26,10 +26,10 @@ int _39_SSAO::DoMain()
 
 	// build and compile shaders
 	// -------------------------
-	Shader geometryPassshader("");
-	Shader lightingPassshader("");
-	Shader SSAOshader("");
-	Shader SSAOBlurshader("");
+	Shader geometryPassshader("39_GeometryPass");
+	Shader SSAOshader("39_SSAO");
+	Shader SSAOBlurshader("39_SSAOBlur");
+	Shader lightingPassshader("39_LightingPass");
 
 	//load models
 	//--------------

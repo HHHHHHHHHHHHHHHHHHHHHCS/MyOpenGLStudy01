@@ -1,11 +1,51 @@
 #version 460 core
-layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec2 aTexCoords;
 
-out vec2 TexCoords;
+out vec4 FragColor;
+
+in vec2 TexCoords;
+
+uniform sampler2D gPosition;
+uniform sampler2D gNormal;
+uniform sampler2D gAlbedo;
+uniform sampler2D ssao;
+
+struct Light
+{
+	vec3 Position;
+	vec3 Color;
+	
+	float Linear;
+	float Quadratic;
+};
+
+uniform Light light;
 
 void main()
 {
-	TexCoords = aTexCoords;
-	gl_Position = vec4(aPos,1.0);
+	//从gbuffer 读取数据
+	vec3 FragPos=texture(gPosition,TexCoords).rgb;
+	vec3 Normal=texture(gNormal,TexCoords).rgb;
+	vec3 Diffuse=texture(gAlbedo,TexCoords).rgb;
+	//ssao 遮挡
+	float AmbientOcclustion=texture(ssao,TexCoords).r;
+	
+	//计算灯光
+	vec3 ambient=vec3(.3*Diffuse*AmbientOcclustion);
+	vec3 light=ambient;
+	vec3 viewDir=normalize(-FragPos);//因为在view空间 viewPos 是(0,0,0)
+	//diffuse light 也在view空间
+	vec3 lightDir=normalize(light.Position-FragPos);
+	vec3 diffuse=max(dot(Normal,lightDir),0.)*Diffuse*light.Color;
+	//specular
+	vec3 halfwayDir=normalize(lightDir+viewDir);
+	float spec=pow(max(dot(Normal,halfwayDir),0.),8.);
+	vec3 specular=light.Color*spec;
+	//attenuation
+	float distance=length(light.Postion-FragPos);
+	float attenuation=1./(1.+light.Linear*distance*light.Quadratic*distance*distance);
+	diffuse*=attenuation;
+	specular*=attenuation;
+	lighting+=diffuse+specular;
+	
+	FragColor=vec4(lighting,1.);
 }
