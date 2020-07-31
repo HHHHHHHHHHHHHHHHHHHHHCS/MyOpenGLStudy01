@@ -56,6 +56,6 @@ void main()
 	//遮挡的平均值
 	occlusion=1.-(occlusion/kernelSize);
 	
-	FragColor=pow(occlusion,1f);
+	FragColor=pow(occlusion,1);
 	
 }
