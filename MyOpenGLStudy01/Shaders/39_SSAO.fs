@@ -15,7 +15,7 @@ float radius=.5;
 float bias=.025;
 
 //屏幕尺寸/噪音大小的块   用于UV GL_REPEAT (可以外部传入 这里还是偷懒)
-const vec2 noiseScale=vec2(1280./4.,720./4.);
+const vec2 noiseScale=vec2(800./4.,600./4.);
 
 uniform mat4 projection;
 
@@ -50,11 +50,12 @@ void main()
 		//是否在检测半径里面
 		float rangeCheck=smoothstep(0.,1.,radius/abs(fragPos.z-sampleDepth));
 		//如果在偏移内是被遮挡的  则是ao   越远效果越不明显
-		occlusion+=(sampleDepth>=sampleOffset.z+bias?1.:0.)*rangeCheck;
+		occlusion+=((sampleDepth>=sampleOffset.z+bias)?1.:0.)*rangeCheck;
 	}
-	
+
 	//遮挡的平均值
 	occlusion=1.-(occlusion/kernelSize);
 	
-	FragColor=occlusion;
+	FragColor=pow(occlusion,1f);
+	
 }

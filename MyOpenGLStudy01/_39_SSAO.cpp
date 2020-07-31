@@ -111,7 +111,7 @@ int _39_SSAO::DoMain()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBufferBlur, 0);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		std::cout << "SSAO Blur Framebuffer not complete!";
+		std::cout << "SSAO Blur Framebuffer not complete!" << std::endl;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -142,7 +142,7 @@ int _39_SSAO::DoMain()
 	for (unsigned int i = 0; i < 16; ++i)
 	{
 		glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f); //因为在切线空间 不用Z轴
-		ssaoNoise.push_back(noise);
+		ssaoNoise.emplace_back(noise);
 	}
 	unsigned int noiseTexture;
 	glGenTextures(1, &noiseTexture);
@@ -174,6 +174,13 @@ int _39_SSAO::DoMain()
 	SSAOBlurshader.SetInt("ssaoInput", 0);
 	fboDebugShader.Use();
 	fboDebugShader.SetInt("fboAttachment", 0);
+
+	SSAOshader.Use();
+	//send kernel + rotation
+	for (unsigned int i = 0; i < 64; ++i)
+	{
+		SSAOshader.SetVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
+	}
 
 	//Camera
 	//-----------
@@ -221,16 +228,12 @@ int _39_SSAO::DoMain()
 		nanosuit.Draw(geometryPassshader);
 
 
+
 		//2.generate ssao texture
 		//---------------------------
 		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
 		glClear(GL_COLOR_BUFFER_BIT);
 		SSAOshader.Use();
-		//send kernel + rotation
-		for (unsigned int i = 0; i < 64; ++i)
-		{
-			SSAOshader.SetVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
-		}
 		SSAOshader.SetMat4("projection", projection);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, gPosition);
@@ -240,6 +243,13 @@ int _39_SSAO::DoMain()
 		glBindTexture(GL_TEXTURE_2D, noiseTexture);
 		RenderQuad();
 
+
+		// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// fboDebugShader.Use();
+		// glActiveTexture(GL_TEXTURE0);
+		// glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+		// RenderQuad();
 
 		//3.blur ssao texture to remove noise
 		//------------------------
@@ -251,19 +261,14 @@ int _39_SSAO::DoMain()
 		RenderQuad();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// fboDebugShader.Use();
-		// glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
-		// RenderQuad();
+
 
 		//4.lighting pass
 		//-------------------------
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		lightingPassshader.Use();
-		glm::vec3 lightPosView = glm::vec3(camera.GetViewMat4() * glm::vec4(lightPos, 1.0));
+		glm::vec3 lightPosView = glm::vec3(view * glm::vec4(lightPos, 1.0));
 		lightingPassshader.SetVec3("light.Position", lightPosView);
 		lightingPassshader.SetVec3("light.Color", lightColor);
 		//update attenuation parameters
@@ -281,6 +286,7 @@ int _39_SSAO::DoMain()
 		glActiveTexture(GL_TEXTURE3); // add extra SSAO texture to lighting pass
 		glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
 		RenderQuad();
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

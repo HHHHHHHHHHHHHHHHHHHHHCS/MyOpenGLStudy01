@@ -27,10 +27,10 @@ void main()
 	vec3 Normal=texture(gNormal,TexCoords).rgb;
 	vec3 Diffuse=texture(gAlbedo,TexCoords).rgb;
 	//ssao 遮挡
-	float AmbientOcclustion=texture(ssao,TexCoords).r;
+	float AmbientOcclusion=texture(ssao,TexCoords).r;
 	
 	//计算灯光
-	vec3 ambient=vec3(.3*Diffuse*AmbientOcclustion);
+	vec3 ambient=vec3(.3*Diffuse*AmbientOcclusion);
 	vec3 lighting=ambient;
 	vec3 viewDir=normalize(-FragPos);//因为在view空间 viewPos 是(0,0,0)
 	//diffuse light 也在view空间
@@ -42,7 +42,7 @@ void main()
 	vec3 specular=light.Color*spec;
 	//attenuation
 	float distance=length(light.Position-FragPos);
-	float attenuation=1./(1.+light.Linear*distance*light.Quadratic*distance*distance);
+	float attenuation=1./(1.+light.Linear*distance+light.Quadratic*distance*distance);
 	diffuse*=attenuation;
 	specular*=attenuation;
 	lighting+=diffuse+specular;
