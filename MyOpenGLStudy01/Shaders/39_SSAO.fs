@@ -17,7 +17,7 @@ float bias=.025;
 //屏幕尺寸/噪音大小的块   用于UV GL_REPEAT (可以外部传入 这里还是偷懒)
 const vec2 noiseScale=vec2(1280./4.,720./4.);
 
-uniform mat4 projeciton;
+uniform mat4 projection;
 
 void main()
 {
@@ -41,7 +41,7 @@ void main()
 		sampleOffset=fragPos+sampleOffset*radius;
 		
 		vec4 offset=vec4(sampleOffset,1.);
-		offset=projeciton*offset;//view -> clipPos
+		offset=projection*offset;//view -> clipPos
 		offset.xyz/=offset.w;//透视摄像机 齐次坐标对齐
 		offset.xyz=offset.xyz*.5+.5;//cliPos->uv => [-1,1] -> [0,1]
 		

@@ -31,7 +31,7 @@ void main()
 	
 	//计算灯光
 	vec3 ambient=vec3(.3*Diffuse*AmbientOcclustion);
-	vec3 light=ambient;
+	vec3 lighting=ambient;
 	vec3 viewDir=normalize(-FragPos);//因为在view空间 viewPos 是(0,0,0)
 	//diffuse light 也在view空间
 	vec3 lightDir=normalize(light.Position-FragPos);
@@ -41,7 +41,7 @@ void main()
 	float spec=pow(max(dot(Normal,halfwayDir),0.),8.);
 	vec3 specular=light.Color*spec;
 	//attenuation
-	float distance=length(light.Postion-FragPos);
+	float distance=length(light.Position-FragPos);
 	float attenuation=1./(1.+light.Linear*distance*light.Quadratic*distance*distance);
 	diffuse*=attenuation;
 	specular*=attenuation;

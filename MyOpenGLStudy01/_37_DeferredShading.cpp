@@ -123,7 +123,7 @@ int _37_DeferredShading::DoMain()
 	lightingPassShader.SetInt("gAlbedoSpec", 2);
 
 	fboDebugShader.Use();
-	lightingPassShader.SetInt("fboAttachment", 0);
+	fboDebugShader.SetInt("fboAttachment", 0);
 
 	//Camera
 	//-----------------

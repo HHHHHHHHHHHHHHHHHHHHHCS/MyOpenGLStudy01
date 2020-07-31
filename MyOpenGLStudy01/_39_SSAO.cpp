@@ -30,6 +30,7 @@ int _39_SSAO::DoMain()
 	Shader SSAOshader("39_SSAO");
 	Shader SSAOBlurshader("39_SSAOBlur");
 	Shader lightingPassshader("39_LightingPass");
+	Shader fboDebugShader("38_FBODebug");
 
 	//load models
 	//--------------
@@ -88,7 +89,7 @@ int _39_SSAO::DoMain()
 	unsigned int ssaoColorBuffer;
 	//SSAO color bufer
 	glGenTextures(1, &ssaoColorBuffer);
-	glBindFramebuffer(GL_TEXTURE_2D, ssaoColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -171,6 +172,8 @@ int _39_SSAO::DoMain()
 	SSAOshader.SetInt("texNoise", 2);
 	SSAOBlurshader.Use();
 	SSAOBlurshader.SetInt("ssaoInput", 0);
+	fboDebugShader.Use();
+	fboDebugShader.SetInt("fboAttachment", 0);
 
 	//Camera
 	//-----------
@@ -206,7 +209,7 @@ int _39_SSAO::DoMain()
 		model = glm::translate(model, glm::vec3(0.0f, 7.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(7.5f, 7.5f, 7.5f));
 		geometryPassshader.SetMat4("model", model);
-		geometryPassshader.SetInt("inverseNormals", 1); //因为在cube里面 所以要invert normals
+		geometryPassshader.SetInt("invertedNormals", 1); //因为在cube里面 所以要invert normals
 		RenderCube();
 		//nanosuit model on the floor
 		model = glm::mat4(1.0f);
@@ -214,8 +217,9 @@ int _39_SSAO::DoMain()
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
 		model = glm::scale(model, glm::vec3(0.5f));
 		geometryPassshader.SetMat4("model", model);
+		geometryPassshader.SetInt("invertedNormals", 0); //因为在cube里面 所以要invert normals
 		nanosuit.Draw(geometryPassshader);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 		//2.generate ssao texture
 		//---------------------------
@@ -235,18 +239,24 @@ int _39_SSAO::DoMain()
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, noiseTexture);
 		RenderQuad();
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 		//3.blur ssao texture to remove noise
 		//------------------------
 		glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
 		glClear(GL_COLOR_BUFFER_BIT);
 		SSAOBlurshader.Use();
-		SSAOBlurshader.Use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
 		RenderQuad();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// fboDebugShader.Use();
+		// glActiveTexture(GL_TEXTURE0);
+		// glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+		// RenderQuad();
 
 		//4.lighting pass
 		//-------------------------
