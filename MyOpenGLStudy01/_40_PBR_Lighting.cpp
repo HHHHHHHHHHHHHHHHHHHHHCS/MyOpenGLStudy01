@@ -68,6 +68,49 @@ int _40_PBR_Lighting::DoMain()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+		shader.Use();
+		glm::mat4 view = camera.GetViewMat4();
+		shader.SetMat4("view", view);
+		shader.SetVec3("cameraPos", camera.position);
+
+		glm::mat4 model = glm::mat4(1.0f);
+
+		//渲染灯光
+		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+		{
+			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime()*5.0)*5.0, 0.0, 0.0);
+			newPos = lightPositions[i];//移动
+			shader.SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+			shader.SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, newPos);
+			model = glm::scale(model, glm::vec3(0.5f));
+			shader.SetMat4("model", model);
+			RenderSphere();
+		}
+
+		//渲染PBR
+		for (int row = 0; row < nrRows; ++row)
+		{
+			shader.SetFloat("metallic", (float)row / (float)nrRows);
+			for (int col = 0; col < nrColumns; ++col)
+			{
+				shader.SetFloat("roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
+
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(
+					                       (col - (nrColumns / 2)) * spacing,
+					                       (row - (nrRows / 2)) * spacing,
+					                       0.0f
+				                       ));
+				shader.SetMat4("model", model);
+				RenderSphere();
+			}
+		}
+
+
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
