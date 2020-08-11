@@ -189,6 +189,9 @@
     <ClCompile Include="_39_SSAO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_40_PBR_Lighting.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -360,6 +363,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_39_SSAO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_40_PBR_Lighting.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

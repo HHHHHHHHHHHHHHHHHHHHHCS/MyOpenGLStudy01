@@ -16,7 +16,7 @@ void main()
 {
 	TexCoords=aTexCoords;
 	WorldPos=vec3(model*vec4(aPos,1.));
-	Normal=mat3(model)*anormal;//这里是统一缩放的  所以不用逆矩阵
+	Normal=mat3(model)*aNormal;//这里是统一缩放的  所以不用逆矩阵
 	
-	gl_Postion=projection*view*vec4(WorldPos,1.);
+	gl_Position=projection*view*vec4(WorldPos,1.);
 }

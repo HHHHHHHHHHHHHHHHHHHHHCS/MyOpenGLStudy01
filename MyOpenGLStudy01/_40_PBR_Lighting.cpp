@@ -7,7 +7,6 @@
 #include "Shader.h"
 #include "Camera.h"
 
-class Camera;
 unsigned int _40_PBR_Lighting::sphereVAO = 0;
 unsigned int _40_PBR_Lighting::sphereIndexCount = 0;
 
@@ -48,7 +47,6 @@ int _40_PBR_Lighting::DoMain()
 
 
 	shader.Use();
-	shader.SetVec3("albedo", 0.5f, 0.0f, 0.0f);
 	shader.SetFloat("ao", 1.0f);
 	shader.SetMat4("projection", camera.GetProjectionMat4());
 
@@ -64,7 +62,7 @@ int _40_PBR_Lighting::DoMain()
 		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -76,10 +74,11 @@ int _40_PBR_Lighting::DoMain()
 		glm::mat4 model = glm::mat4(1.0f);
 
 		//渲染灯光
+		shader.SetVec3("albedo", 1.0f, 1.0f, 1.0f);
 		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
 		{
-			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime()*5.0)*5.0, 0.0, 0.0);
-			newPos = lightPositions[i];//移动
+			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+			newPos = lightPositions[i]; //移动
 			shader.SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
 			shader.SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
 
@@ -91,6 +90,7 @@ int _40_PBR_Lighting::DoMain()
 		}
 
 		//渲染PBR
+		shader.SetVec3("albedo", 0.5f, 0.0f, 0.0f);
 		for (int row = 0; row < nrRows; ++row)
 		{
 			shader.SetFloat("metallic", (float)row / (float)nrRows);
@@ -108,7 +108,6 @@ int _40_PBR_Lighting::DoMain()
 				RenderSphere();
 			}
 		}
-
 
 
 		glfwSwapBuffers(window);
@@ -172,6 +171,8 @@ void _40_PBR_Lighting::BindSphereVAO()
 		}
 		oddRow = !oddRow;
 	}
+	sphereIndexCount = indices.size();
+
 
 	std::vector<float> data;
 	for (int i = 0; i < positions.size(); ++i)
@@ -203,7 +204,7 @@ void _40_PBR_Lighting::BindSphereVAO()
 
 	unsigned int ebo;
 	glGenBuffers(1, &ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), &indices[0], GL_STATIC_DRAW);
 
 	const unsigned int stride = (3 + 2 + 3) * sizeof(float);

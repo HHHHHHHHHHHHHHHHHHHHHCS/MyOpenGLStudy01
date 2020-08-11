@@ -53,11 +53,12 @@
 #include "_37_DeferredShading.h"
 #include "_38_DeferredShading_Volumes.h"
 #include "_39_SSAO.h"
+#include "_40_PBR_Lighting.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _39_SSAO::DoMain();
+	int ret = _40_PBR_Lighting::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
