@@ -22,7 +22,7 @@ int _41_PBR_Lighting_Textured::DoMain()
 
 	BindSphereVAO();
 
-	Shader shader{"40_PBR_Lighting_Textured"};
+	Shader shader{"41_PBR_Lighting_Textured"};
 
 	// camera
 	// --------------------------
@@ -74,6 +74,7 @@ int _41_PBR_Lighting_Textured::DoMain()
 	shader.SetInt("roughnessMap", 3);
 	shader.SetInt("aoMap", 4);
 	shader.SetMat4("projection", camera.GetProjectionMat4());
+	shader.SetInt("lightCount", sizeof(lightPositions) / sizeof(lightPositions[0]));
 
 	while (!glfwWindowShouldClose(window))
 	{

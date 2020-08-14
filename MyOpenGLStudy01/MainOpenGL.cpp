@@ -54,11 +54,12 @@
 #include "_38_DeferredShading_Volumes.h"
 #include "_39_SSAO.h"
 #include "_40_PBR_Lighting.h"
+#include "_41_PBR_Lighting_Textured.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _40_PBR_Lighting::DoMain();
+	int ret = _41_PBR_Lighting_Textured::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
