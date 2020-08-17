@@ -31,7 +31,7 @@ int _41_PBR_Lighting_Textured::DoMain()
 	CommonBaseScript::RegisterKeyEvent(window);
 
 
-	glEnable(GL_DEPTH);
+	glEnable(GL_DEPTH_TEST);
 
 	//lights
 	//-----------------
@@ -107,8 +107,10 @@ int _41_PBR_Lighting_Textured::DoMain()
 
 		for (int row = 0; row < nrRows; ++row)
 		{
+			shader.SetFloat("metallicIntensity", static_cast<float>(row + 1) / nrRows);
 			for (int col = 0; col < nrColumns; ++col)
 			{
+				shader.SetFloat("roughnessIntensity", static_cast<float>(col + 1) / nrColumns);
 				model = glm::mat4{1.0f};
 				model = glm::translate(model, glm::vec3(
 					                       static_cast<float>(col - (nrColumns / 2)) * spacing,
