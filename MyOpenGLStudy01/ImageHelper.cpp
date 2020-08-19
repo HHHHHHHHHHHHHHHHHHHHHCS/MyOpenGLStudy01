@@ -162,3 +162,42 @@ unsigned int ImageHelper::LoadCubemap(std::vector<std::string> faces, std::strin
 
 	return textureID;
 }
+
+unsigned int ImageHelper::LoadHDR_Filp(std::string path,std::string directory)
+{
+	//这个是翻转读取的图片
+//因为OPENGL的UV是反着的 要么1-UV.Y  要么翻转图片
+	stbi_set_flip_vertically_on_load(true);
+	auto out = LoadTexture(path, directory);
+	stbi_set_flip_vertically_on_load(false);
+	return out;
+}
+
+unsigned int ImageHelper::LoadHDR(std::string path, std::string directory)
+{
+	path = directory + path;
+
+	int width, height, nrComponents;
+	//用 float 的读取 因为是HDR
+	float *data = stbi_loadf(path.c_str(), &width, &height, &nrComponents, 0);
+	unsigned int hdrTexture;
+
+	if(data)
+	{
+		glGenTextures(1, &hdrTexture);
+		glBindTexture(GL_TEXTURE_2D, hdrTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+	
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
+	else
+	{
+		std::cout << "Failed to load HDR image."<<std::endl;
+	}
+
+}
