@@ -27,7 +27,7 @@ vec3 GetNormalFromMap()
 {
 	vec3 tangentNormal=texture(normalMap,TexCoords).xyz*2.-1.;
 	
-	//正常的渲染是2*2的去渲染  可以求出相邻两个坐标的差值
+	//正常的渲染是2*2的去渲染  可拿到相邻的局部变量的值  可以求出相邻坐标的局部变量的变化率
 	vec3 Q1=dFdx(WorldPos);
 	vec3 Q2=dFdy(WorldPos);
 	vec2 st1=dFdx(TexCoords);
