@@ -163,10 +163,10 @@ unsigned int ImageHelper::LoadCubemap(std::vector<std::string> faces, std::strin
 	return textureID;
 }
 
-unsigned int ImageHelper::LoadHDR_Filp(std::string path,std::string directory)
+unsigned int ImageHelper::LoadHDR_Filp(std::string path, std::string directory)
 {
 	//这个是翻转读取的图片
-//因为OPENGL的UV是反着的 要么1-UV.Y  要么翻转图片
+	//因为OPENGL的UV是反着的 要么1-UV.Y  要么翻转图片
 	stbi_set_flip_vertically_on_load(true);
 	auto out = LoadTexture(path, directory);
 	stbi_set_flip_vertically_on_load(false);
@@ -179,15 +179,15 @@ unsigned int ImageHelper::LoadHDR(std::string path, std::string directory)
 
 	int width, height, nrComponents;
 	//用 float 的读取 因为是HDR
-	float *data = stbi_loadf(path.c_str(), &width, &height, &nrComponents, 0);
+	float* data = stbi_loadf(path.c_str(), &width, &height, &nrComponents, 0);
 	unsigned int hdrTexture;
 
-	if(data)
+	if (data)
 	{
 		glGenTextures(1, &hdrTexture);
 		glBindTexture(GL_TEXTURE_2D, hdrTexture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
-	
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -197,7 +197,26 @@ unsigned int ImageHelper::LoadHDR(std::string path, std::string directory)
 	}
 	else
 	{
-		std::cout << "Failed to load HDR image."<<std::endl;
+		std::cout << "Failed to load HDR image." << std::endl;
 	}
 
+	return hdrTexture;
+}
+
+unsigned ImageHelper::BindHDRCubemap()
+{
+	unsigned int envCubemap;
+	glGenTextures(1, &envCubemap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	return envCubemap;
 }
