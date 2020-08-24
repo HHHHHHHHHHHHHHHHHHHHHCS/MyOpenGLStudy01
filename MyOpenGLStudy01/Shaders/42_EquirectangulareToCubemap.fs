@@ -1,21 +1,26 @@
 #version 460 core
-layout(location=0)in vec3 aPos;
-layout(location=1)in vec2 aTexCoords;
-layout(location=2)in vec3 aNormal;
 
-out vec2 TexCoords;
-out vec3 WorldPos;
-out vec3 Normal;
+out vec4 FragColor;
 
-uniform mat4 projection;
-uniform mat4 view;
-uniform mat4 model;
+in vec3 WorldPos;
+
+uniform sampler2D equirectangularMap;
+
+const vec2 invAtan=vec2(.1591,.3183);//1/2pi  , 1/pi
+
+vec2 SampleSphericalMap(vec3 v)
+{
+	//3D 坐标 反算 2D UV
+	vec2 uv=vec2(atan(v.z,v.x),asin(v.y));
+	uv*=invAtan;//-0.5,0.5
+	uv+=.5;//0,1
+	return uv;
+}
 
 void main()
 {
-	TexCoords=aTexCoords;
-	WorldPos=vec3(model*vec4(aPos,1.));
-	Normal=transpose(inverse(mat3(model)))*aNormal;
+	vec2 uv=SampleSphericalMap(normalize(WorldPos));
+	vec3 color=texture(equirectangularMap,uv).rgb;
 	
-	gl_Position=projection*view*vec4(WorldPos,1.);
+	FragColor=vec4(color,1.);
 }
