@@ -195,6 +195,9 @@
     <ClCompile Include="_41_PBR_Lighting_Textured.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_42_PBR_IBL_Irradiance_Conversion.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -372,6 +375,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_41_PBR_Lighting_Textured.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_42_PBR_IBL_Irradiance_Conversion.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

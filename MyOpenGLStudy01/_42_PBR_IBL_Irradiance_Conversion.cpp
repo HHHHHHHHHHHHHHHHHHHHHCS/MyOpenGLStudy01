@@ -25,7 +25,7 @@ int _42_PBR_IBL_Irradiance_Conversion::DoMain()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL); //天空盒深度是1  小于等于1 的被渲染
 
-	Shader pbrShader{"42_PBR_Lingting_Cubemap"};
+	Shader pbrShader{"42_PBR_Ligting_Cubemap"};
 	Shader equirectangulareToCubemapShader{"42_EquirectangulareToCubemap"};
 	Shader backgroundShader{"42_Background"};
 
@@ -114,6 +114,8 @@ int _42_PBR_IBL_Irradiance_Conversion::DoMain()
 
 
 	Camera camera{};
+	Camera::AddMouseEvent(window);
+	CommonBaseScript::RegisterKeyEvent(window);
 
 	glm::mat4 projection = camera.GetProjectionMat4();
 
@@ -121,6 +123,7 @@ int _42_PBR_IBL_Irradiance_Conversion::DoMain()
 	pbrShader.SetVec3("albedo", 0.5f, 0.0f, 0.0f);
 	pbrShader.SetFloat("ao", 1.0f);
 	pbrShader.SetMat4("projection", projection);
+	pbrShader.SetFloat("lightCount", sizeof(lightPositions) / sizeof(lightPositions[0]));
 
 	backgroundShader.Use();
 	backgroundShader.SetInt("environmentMap", 0);
