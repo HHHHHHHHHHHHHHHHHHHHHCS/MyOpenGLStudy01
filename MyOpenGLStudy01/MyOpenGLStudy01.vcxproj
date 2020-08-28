@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -203,6 +203,7 @@
     <ClCompile Include="_40_PBR_Lighting.cpp" />
     <ClCompile Include="_41_PBR_Lighting_Textured.cpp" />
     <ClCompile Include="_42_PBR_IBL_Irradiance_Conversion.cpp" />
+    <ClCompile Include="_43_PBR_IBL_Irradiance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -265,6 +266,7 @@
     <ClInclude Include="_40_PBR_Lighting.h" />
     <ClInclude Include="_41_PBR_Lighting_Textured.h" />
     <ClInclude Include="_42_PBR_IBL_Irradiance_Conversion.h" />
+    <ClInclude Include="_43_PBR_IBL_Irradiance.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
