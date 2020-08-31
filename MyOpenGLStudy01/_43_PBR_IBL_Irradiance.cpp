@@ -24,10 +24,10 @@ int _43_PBR_IBL_Irradiance::DoMain()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	Shader pbrShader{""};
-	Shader equirectangularToCubemapShader{""};
-	Shader irradianceShader{""};
-	Shader backgroundShader{""};
+	Shader pbrShader{"43_PBR"};
+	Shader equirectangularToCubemapShader{"43_Cubemap"};
+	Shader irradianceShader{"43_Irradiance"};
+	Shader backgroundShader{"43_Background"};
 
 	//render envCubemap 512*512
 	unsigned int hdrTexture = ImageHelper::LoadHDR_Filp("hdr/newport_loft.hdr");
