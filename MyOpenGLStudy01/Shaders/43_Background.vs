@@ -12,7 +12,7 @@ void main()
 	WorldPos=aPos;
 	
 	mat4 rotView=mat4(mat3(view));
-	vec4 clipPos=projection*view*vec4(WorldPos,1.);
+	vec4 clipPos=projection*rotView*vec4(WorldPos,1.);
 	
-	gl_Postion=clipPos.xyww;
+	gl_Position=clipPos.xyww;
 }

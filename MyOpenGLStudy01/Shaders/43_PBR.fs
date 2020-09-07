@@ -32,7 +32,7 @@ float DistributionGGX(vec3 N,vec3 H,float roughness)
 	
 	float nom=a2;
 	float denom=(NdotH2*(a2-1.)+1.);
-	denom=Pi*denom*denom;
+	denom=PI*denom*denom;
 	
 	return nom/denom;
 }
@@ -71,7 +71,7 @@ void main()
 	vec3 R=reflect(-V,N);
 	
 	vec3 F0=vec3(.04);
-	F0=lerp(F0,albedo,metallic);
+	F0=mix(F0,albedo,metallic);
 	
 	vec3 Lo=vec3(0.);
 	
@@ -106,7 +106,7 @@ void main()
 	vec3 kS=FresnelSchlick(max(dot(N,V),0.),F0);
 	vec3 kD=1.-kS;
 	kD*=1.-metallic;
-	vec3 irradiance=texture(irradianceMap,N).rgb;//TODO:N 和 R 都可以试一下
+	vec3 irradiance=texture(irradianceMap,N).rgb;
 	vec3 diffuse=irradiance*albedo;
 	vec3 ambient=(kD*diffuse)*ao;
 	
@@ -115,7 +115,7 @@ void main()
 	//HDR
 	color=color/(color+vec3(1.));
 	//gamma
-	color=pow(color,vec3(1.,2.2));
+	color=pow(color,vec3(1./2.2));
 	
 	FragColor=vec4(color,1.);
 }

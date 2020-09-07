@@ -17,6 +17,9 @@ int _43_PBR_IBL_Irradiance::DoMain()
 		return -1;
 	}
 
+	BindCubeVAO();
+	BindSphereVAO();
+
 	Camera camera{};
 	Camera::AddMouseEvent(window);
 	CommonBaseScript::RegisterKeyEvent(window);
@@ -306,7 +309,7 @@ void _43_PBR_IBL_Irradiance::BindSphereVAO()
 	const unsigned int Y_SEGMENTS = 64;
 	const float PI = 3.14159265359;
 
-	for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+	for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
 	{
 		for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
 		{
