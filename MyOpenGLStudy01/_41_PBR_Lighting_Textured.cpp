@@ -143,7 +143,7 @@ void _41_PBR_Lighting_Textured::BindSphereVAO()
 	const unsigned int Y_SEGMENTS = 64;
 	const float PI = 3.14159265359;
 
-	for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+	for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
 	{
 		for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
 		{
@@ -161,7 +161,7 @@ void _41_PBR_Lighting_Textured::BindSphereVAO()
 	}
 
 	bool oddRow = false;
-	for (int y = 0; y < Y_SEGMENTS; ++y)
+	for (int y = 0; y <= Y_SEGMENTS; ++y)
 	{
 		if (!oddRow)
 		{

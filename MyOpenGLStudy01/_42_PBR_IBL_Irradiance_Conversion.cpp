@@ -284,7 +284,7 @@ void _42_PBR_IBL_Irradiance_Conversion::BindSphereVAO()
 	const unsigned int Y_SEGMENTS = 64;
 	const float PI = 3.14159265359;
 
-	for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+	for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
 	{
 		for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
 		{
@@ -325,7 +325,7 @@ void _42_PBR_IBL_Irradiance_Conversion::BindSphereVAO()
 	sphereIndexCount = indices.size();
 
 	std::vector<float> data;
-	for (int i = 0; i < positions.size(); ++i)
+	for (int i = 0; i <= positions.size(); ++i)
 	{
 		data.emplace_back(positions[i].x);
 		data.emplace_back(positions[i].y);

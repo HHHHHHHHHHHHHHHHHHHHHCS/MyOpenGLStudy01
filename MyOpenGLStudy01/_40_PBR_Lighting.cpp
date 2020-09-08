@@ -151,7 +151,7 @@ void _40_PBR_Lighting::BindSphereVAO()
 
 	//4个点画一个quad 错行 合成
 	bool oddRow = false; //奇数行
-	for (int y = 0; y < Y_SEGMENTS; ++y)
+	for (int y = 0; y <= Y_SEGMENTS; ++y)
 	{
 		if (!oddRow) //偶数行
 		{
