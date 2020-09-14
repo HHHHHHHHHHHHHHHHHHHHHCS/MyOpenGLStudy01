@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "ImageHelper.h"
 
+unsigned int _44_PBR_IBL_Specular_Textured::quadVAO = 0;
 unsigned int _44_PBR_IBL_Specular_Textured::cubeVAO = 0;
 unsigned int _44_PBR_IBL_Specular_Textured::sphereVAO = 0;
 unsigned int _44_PBR_IBL_Specular_Textured::sphereIndexCount = 0;
@@ -176,8 +177,84 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	//PBR:preFilter cubemap by environment lighting
+	//-----------------------------
+	unsigned int prefilterMap;
+	glGenTextures(1, &prefilterMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // 缩小的时候用mipmap
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//告诉opengl自动生成mimap
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+	prefilterShader.Use();
+	prefilterShader.SetInt("environmentMap", 0);
+	prefilterShader.SetMat4("projection", captureProjection);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	unsigned int maxMipLevels = 5;
+	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+	{
+		unsigned int mipWidth = 128 * std::pow(0.5, mip);
+		unsigned int mipHeight = 128 * std::pow(0.5, mip);
+		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+		glViewport(0, 0, mipWidth, mipHeight);
+
+		float roughness = static_cast<float>(mip) / static_cast<float>(maxMipLevels - 1);
+		prefilterShader.SetFloat("roughness", roughness);
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			prefilterShader.SetMat4("view", captureViews[i]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+			                       prefilterMap, mip);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			RenderCube();
+		}
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	//PBR:2D LUT 
+	//--------------------------
+	unsigned int brdfLUTTexture;
+	glGenTextures(1, &brdfLUTTexture);
+
+	glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 512, 512, 0, GL_RG, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//再次重复利用
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
+
+	glViewport(0, 0, 512, 512);
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	brdfShader.Use();
+	RenderQuad();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	Camera camera{};
+
 
 	pbrShader.Use();
+	pbrShader.SetMat4("projection", camera.GetProjectionMat4());
 	pbrShader.SetInt("irradianceMap", 0);
 	pbrShader.SetInt("prefilterMap", 1);
 	pbrShader.SetInt("brdfLUT", 2);
@@ -190,8 +267,14 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	backgroundShader.Use();
 	backgroundShader.SetInt("environmentMap", 0);
 
+	int scrWidth, scrHeight;
+	glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
+	glViewport(0, 0, scrWidth, scrHeight);
+
 	while (!glfwWindowShouldClose(window))
 	{
+		//todo:
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -200,6 +283,34 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 
 	return 0;
 }
+
+void _44_PBR_IBL_Specular_Textured::BindQuadVAO()
+{
+	float quadVertices[] = {
+		-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	};
+	glGenVertexArrays(1, &quadVAO);
+	glBindVertexArray(quadVAO);
+	unsigned int quadVBO;
+	glGenBuffers(1, &quadVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(0));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+}
+
+void _44_PBR_IBL_Specular_Textured::RenderQuad()
+{
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
+}
+
 
 void _44_PBR_IBL_Specular_Textured::BindCubeVAO()
 {
