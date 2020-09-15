@@ -251,6 +251,8 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	Camera camera{};
+	Camera::AddMouseEvent(window);
+	CommonBaseScript::RegisterKeyEvent(window);
 
 
 	pbrShader.Use();
@@ -273,7 +275,135 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 
 	while (!glfwWindowShouldClose(window))
 	{
-		//todo:
+		CommonBaseScript::ProcessInput(window);
+		CommonBaseScript::ProcessKeyClick();
+		camera.DoKeyboardMove(window);
+
+		pbrShader.Use();
+		glm::mat4 model = glm::mat4(1.0f);
+		glm::mat4 view = camera.GetViewMat4();
+		pbrShader.SetMat4("view", view);
+		pbrShader.SetVec3("camPos", camera.position);
+
+		//bind pre-computed IBL data
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
+		// rusted iron
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, ironAlbedoMap);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, ironNormalMap);
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, ironMetallicMap);
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, ironRoughnessMap);
+		glActiveTexture(GL_TEXTURE7);
+		glBindTexture(GL_TEXTURE_2D, ironAOMap);
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-5.0, 0.0, 2.0));
+		pbrShader.SetMat4("model", model);
+		RenderSphere();
+
+
+		// gold
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, goldAlbedoMap);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, goldNormalMap);
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, goldMetallicMap);
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, goldRoughnessMap);
+		glActiveTexture(GL_TEXTURE7);
+		glBindTexture(GL_TEXTURE_2D, goldAOMap);
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-3.0, 0.0, 2.0));
+		pbrShader.SetMat4("model", model);
+		RenderSphere();
+
+		// grass
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, grassAlbedoMap);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, grassNormalMap);
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, grassMetallicMap);
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, grassRoughnessMap);
+		glActiveTexture(GL_TEXTURE7);
+		glBindTexture(GL_TEXTURE_2D, grassAOMap);
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-1.0, 0.0, 2.0));
+		pbrShader.SetMat4("model", model);
+		RenderSphere();
+
+		// plastic
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, plasticAlbedoMap);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, plasticNormalMap);
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, plasticMetallicMap);
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, plasticRoughnessMap);
+		glActiveTexture(GL_TEXTURE7);
+		glBindTexture(GL_TEXTURE_2D, plasticAOMap);
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(1.0, 0.0, 2.0));
+		pbrShader.SetMat4("model", model);
+		RenderSphere();
+
+		// wall
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, wallAlbedoMap);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, wallNormalMap);
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, wallMetallicMap);
+		glActiveTexture(GL_TEXTURE6);
+		glBindTexture(GL_TEXTURE_2D, wallRoughnessMap);
+		glActiveTexture(GL_TEXTURE7);
+		glBindTexture(GL_TEXTURE_2D, wallAOMap);
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(3.0, 0.0, 2.0));
+		pbrShader.SetMat4("model", model);
+		RenderSphere();
+
+		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+		{
+			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+			newPos = lightPositions[i];
+			pbrShader.SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+			pbrShader.SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, newPos);
+			model = glm::scale(model, glm::vec3(0.5f));
+			pbrShader.SetMat4("model", model);
+			RenderSphere();
+		}
+
+		backgroundShader.Use();
+		backgroundShader.SetMat4("view", view);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
+		RenderCube();
+
+		// render BRDF map to screen
+		//brdfShader.Use();
+		//renderQuad();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
