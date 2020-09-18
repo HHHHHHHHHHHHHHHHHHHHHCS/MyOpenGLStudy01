@@ -89,11 +89,63 @@ void main()
 	float metallic=texture(metallicMap,TexCoords).r;
 	float roughness=texture(roughnessMap,TexCoords).r;
 	float ao=texture(aoMap,TexCoords).r;
-
-	vec3 N = GetNormalFromMap();
-	vec3 V = normalize(camPos-WolrdPos);
-	vec3 R = reflect(-V,N);
-
-	vec3 F0 = vec3(0.04);
-	//TODO:
+	
+	vec3 N=GetNormalFromMap();
+	vec3 V=normalize(camPos-WolrdPos);
+	vec3 R=reflect(-V,N);
+	
+	vec3 F0=vec3(.04);
+	F0=mix(F0,albedo,metallic);
+	
+	vec3 Lo=vec3(0.);
+	for(int i=0;i<4;++i)
+	{
+		
+		float distance=length(lightPositions[i]-WolrdPos);
+		float attenuation=1./(distance*distance);
+		float radiance=lightColors[i]*attenuation;
+		
+		vec3 L=normalize(lightPositions[i]-WolrdPos);
+		vec3 H=normalize(V+L);
+		float NDF=DistributionGGX(N,H,roughness);
+		float G=GeomtrySmith(N,V,L,roughness);
+		vec3 F=FresnelSchlickRoughness(max(dot(H,V),0.),F0);
+		
+		vec3 nominator=NDF*G*F;
+		float denominator=4*max(dot(N,V),0.)*max(dot(N,L),0.)+.001;
+		vec3 specular=nominator/denominator;
+		
+		vec3 kS=F;
+		vec3 KD=vec3(1.)-kS;
+		kD*=1.-metallic;
+		
+		float NdotL=max(dot(N,L),0.);
+		
+		Lo+=(kD*albedo/PI+specular)*radiance*NdotL;
+		
+	}
+	
+	vec3 F=FresnelSchlickRoughness(max(dot(N,V),0.),F0,roughness);
+	
+	vec3 kS=F;
+	vec3 kD=1.-kS;
+	kD+=1.-metallic;
+	
+	vec3 irradiance=texture(irradianceMap,N).rgb;
+	vec3 diffuse=irradiance*albedo;
+	
+	const float MAX_REFLECTION_LOD=4.;
+	vec3 prefilteredColor=textureLod(prefilterMap,R,roughness*MAX_REFLECTION_LOD);
+	vec2 brdf=texture(brdfLut,vec2(max(dot(N,V),0.),roughness)).rg;
+	vec3 specular=prefilteredColor*(F*brdf.x*brdf.y);
+	
+	vec3 ambient=(kD*diffuse+specular)*ao;
+	
+	vec3 color=ambient+Lo;
+	
+	color=color/(color+vec3(1.));
+	color=pow(color,vec3(1./2.2));
+	
+	FragColor=vec4(color,1.);
+	
 }
