@@ -28,9 +28,9 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 
 	//Shader
 	//---------------------
-	Shader pbrShader("");
-	Shader equirectangularToCubemapShader("");
-	Shader irradianceShader("");
+	Shader pbrShader("44_PBR");
+	Shader equirectangularToCubemapShader("44_EquirectangularToCubemap");
+	Shader irradianceShader("44_Irradiance");
 	Shader prefilterShader("");
 	Shader brdfShader("");
 	Shader backgroundShader("");
