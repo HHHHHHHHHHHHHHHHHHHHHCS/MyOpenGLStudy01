@@ -31,7 +31,7 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	Shader pbrShader("44_PBR");
 	Shader equirectangularToCubemapShader("44_EquirectangularToCubemap");
 	Shader irradianceShader("44_Irradiance");
-	Shader prefilterShader("");
+	Shader prefilterShader("44_Prefilter");
 	Shader brdfShader("");
 	Shader backgroundShader("");
 
@@ -111,6 +111,7 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	//在环境贴图上开启三线性过滤
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); //缩小了 启用mimap 滤波
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
