@@ -57,11 +57,12 @@
 #include "_41_PBR_Lighting_Textured.h"
 #include "_42_PBR_IBL_Irradiance_Conversion.h"
 #include "_43_PBR_IBL_Irradiance.h"
+#include "_44_PBR_IBL_Specular_Textured.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _43_PBR_IBL_Irradiance::DoMain();
+	int ret = _44_PBR_IBL_Specular_Textured::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }

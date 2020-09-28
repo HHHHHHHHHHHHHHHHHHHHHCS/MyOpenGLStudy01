@@ -350,7 +350,7 @@ void _43_PBR_IBL_Irradiance::BindSphereVAO()
 	sphereIndexCount = indices.size();
 
 	std::vector<float> data;
-	for (int i = 0; i <= positions.size(); ++i)
+	for (int i = 0; i < positions.size(); ++i)
 	{
 		data.emplace_back(positions[i].x);
 		data.emplace_back(positions[i].y);

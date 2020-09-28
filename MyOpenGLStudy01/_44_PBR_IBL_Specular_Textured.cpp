@@ -166,6 +166,9 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	irradianceShader.SetInt("environmentMap", 0);
 	irradianceShader.SetMat4("projection", captureProjection);
 	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+
+	glViewport(0, 0, 32, 32);
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	for (unsigned int i = 0; i < 6; ++i)
 	{
@@ -568,7 +571,7 @@ void _44_PBR_IBL_Specular_Textured::BindSphereVAO()
 	sphereIndexCount = indices.size();
 
 	std::vector<float> data;
-	for (int i = 0; i <= positions.size(); ++i)
+	for (int i = 0; i < positions.size(); ++i)
 	{
 		data.emplace_back(positions[i].x);
 		data.emplace_back(positions[i].y);
