@@ -271,7 +271,9 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	pbrShader.SetInt("aoMap", 7);
 
 	backgroundShader.Use();
+	backgroundShader.SetMat4("projection", camera.GetProjectionMat4());
 	backgroundShader.SetInt("environmentMap", 0);
+
 
 	int scrWidth, scrHeight;
 	glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
@@ -283,11 +285,30 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
 
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		pbrShader.Use();
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = camera.GetViewMat4();
 		pbrShader.SetMat4("view", view);
 		pbrShader.SetVec3("camPos", camera.position);
+
+		/*
+		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+		{
+			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+			newPos = lightPositions[i];
+			pbrShader.SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+			pbrShader.SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, newPos);
+			model = glm::scale(model, glm::vec3(0.5f));
+			pbrShader.SetMat4("model", model);
+			RenderSphere();
+		}
+
 
 		//bind pre-computed IBL data
 		glActiveTexture(GL_TEXTURE0);
@@ -382,20 +403,7 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 		model = glm::translate(model, glm::vec3(3.0, 0.0, 2.0));
 		pbrShader.SetMat4("model", model);
 		RenderSphere();
-
-		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
-		{
-			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-			newPos = lightPositions[i];
-			pbrShader.SetVec3("lightPositions[" + std::to_string(i) + "]", newPos);
-			pbrShader.SetVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
-
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, newPos);
-			model = glm::scale(model, glm::vec3(0.5f));
-			pbrShader.SetMat4("model", model);
-			RenderSphere();
-		}
+		*/
 
 		backgroundShader.Use();
 		backgroundShader.SetMat4("view", view);

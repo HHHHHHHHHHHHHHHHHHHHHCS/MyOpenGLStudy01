@@ -83,7 +83,7 @@ void main()
 			//另一种方案如 Chetan Jags 所述，我们可以在预过滤卷积时，不直接采样环境贴图，而是基于积分的 PDF 和粗糙度采样环境贴图的 mipmap ，以减少伪像：
 			float D=DistributionGGX(N,H,roughness);
 			float NdotH=max(dot(N,H),0.);
-			float NdotV=max(dot(H,V),0.);
+			float HdotV=max(dot(H,V),0.);
 			float pdf=D*NdotH/(4.*HdotV)+.0001;
 			
 			float resolution=512.;

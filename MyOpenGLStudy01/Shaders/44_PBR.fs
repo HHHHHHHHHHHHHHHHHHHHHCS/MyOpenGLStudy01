@@ -80,7 +80,7 @@ vec3 FresnelSchlick(float cosTheta,vec3 F0)
 
 vec3 FresnelSchlickRoughness(float cosTheta,vec3 F0,float roughness)
 {
-	return F0+max(vec3(1.-roughness),F0)-F0)*pow(1.-cosTheta,5.);
+	return F0+(max(vec3(1.-roughness),F0)-F0)*pow(1.-cosTheta,5.);
 }
 
 void main()
@@ -89,8 +89,10 @@ void main()
 	float metallic=texture(metallicMap,TexCoords).r;
 	float roughness=texture(roughnessMap,TexCoords).r;
 	float ao=texture(aoMap,TexCoords).r;
-	
+
 	vec3 N=GetNormalFromMap();
+	FragColor=vec4(N,1.);
+	return;
 	vec3 V=normalize(camPos-WolrdPos);
 	vec3 R=reflect(-V,N);
 	
@@ -103,27 +105,30 @@ void main()
 		
 		float distance=length(lightPositions[i]-WolrdPos);
 		float attenuation=1./(distance*distance);
-		float radiance=lightColors[i]*attenuation;
+		vec3 radiance=lightColors[i]*attenuation;
 		
 		vec3 L=normalize(lightPositions[i]-WolrdPos);
 		vec3 H=normalize(V+L);
 		float NDF=DistributionGGX(N,H,roughness);
 		float G=GeomtrySmith(N,V,L,roughness);
-		vec3 F=FresnelSchlickRoughness(max(dot(H,V),0.),F0);
+		vec3 F=FresnelSchlick(max(dot(H,V),0.),F0);
 		
 		vec3 nominator=NDF*G*F;
 		float denominator=4*max(dot(N,V),0.)*max(dot(N,L),0.)+.001;
 		vec3 specular=nominator/denominator;
 		
 		vec3 kS=F;
-		vec3 KD=vec3(1.)-kS;
+		vec3 kD=vec3(1.)-kS;
 		kD*=1.-metallic;
 		
 		float NdotL=max(dot(N,L),0.);
 		
 		Lo+=(kD*albedo/PI+specular)*radiance*NdotL;
+
 		
 	}
+	FragColor=vec4(Lo,1.);
+	return;
 	
 	vec3 F=FresnelSchlickRoughness(max(dot(N,V),0.),F0,roughness);
 	
@@ -135,7 +140,7 @@ void main()
 	vec3 diffuse=irradiance*albedo;
 	
 	const float MAX_REFLECTION_LOD=4.;
-	vec3 prefilteredColor=textureLod(prefilterMap,R,roughness*MAX_REFLECTION_LOD);
+	vec3 prefilteredColor=textureLod(prefilterMap,R,roughness*MAX_REFLECTION_LOD).rgb;
 	vec2 brdf=texture(brdfLut,vec2(max(dot(N,V),0.),roughness)).rg;
 	vec3 specular=prefilteredColor*(F*brdf.x*brdf.y);
 	
@@ -147,5 +152,4 @@ void main()
 	color=pow(color,vec3(1./2.2));
 	
 	FragColor=vec4(color,1.);
-	
 }

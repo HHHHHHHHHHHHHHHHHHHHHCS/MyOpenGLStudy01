@@ -10,5 +10,5 @@ void main()
 {
 	WorldPos=aPos;
 	
-	gl_Postion=projection*view*vec4(WorldPos,1.);
+	gl_Position=projection*view*vec4(WorldPos,1.);
 }
