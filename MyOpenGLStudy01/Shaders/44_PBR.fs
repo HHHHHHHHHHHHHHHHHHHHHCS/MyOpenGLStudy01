@@ -1,7 +1,7 @@
 #version 460 core
 out vec4 FragColor;
 in vec2 TexCoords;
-in vec3 WolrdPos;
+in vec3 WorldPos;
 in vec3 Normal;
 
 uniform sampler2D albedoMap;
@@ -12,7 +12,7 @@ uniform sampler2D aoMap;
 
 uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
-uniform sampler2D brdfLut;
+uniform sampler2D brdfLUT;
 
 uniform vec3 lightPositions[4];
 uniform vec3 lightColors[4];
@@ -25,8 +25,8 @@ vec3 GetNormalFromMap()
 {
 	vec3 tangentNormal=texture(normalMap,TexCoords).xyz*2.-1.;
 	
-	vec3 Q1=dFdx(WolrdPos);
-	vec3 Q2=dFdy(WolrdPos);
+	vec3 Q1=dFdx(WorldPos);
+	vec3 Q2=dFdy(WorldPos);
 	vec2 st1=dFdx(TexCoords);
 	vec2 st2=dFdy(TexCoords);
 	
@@ -63,7 +63,7 @@ float GeometrySchlickGGX(float NdotV,float roughness)
 	return nom/denom;
 }
 
-float GeomtrySmith(vec3 N,vec3 V,vec3 L,float roughness)
+float GeometrySmith(vec3 N,vec3 V,vec3 L,float roughness)
 {
 	float NdotV=max(dot(N,V),0.);
 	float NdotL=max(dot(N,L),0.);
@@ -91,9 +91,7 @@ void main()
 	float ao=texture(aoMap,TexCoords).r;
 
 	vec3 N=GetNormalFromMap();
-	FragColor=vec4(N,1.);
-	return;
-	vec3 V=normalize(camPos-WolrdPos);
+	vec3 V=normalize(camPos-WorldPos);
 	vec3 R=reflect(-V,N);
 	
 	vec3 F0=vec3(.04);
@@ -103,14 +101,14 @@ void main()
 	for(int i=0;i<4;++i)
 	{
 		
-		float distance=length(lightPositions[i]-WolrdPos);
+		float distance=length(lightPositions[i]-WorldPos);
 		float attenuation=1./(distance*distance);
 		vec3 radiance=lightColors[i]*attenuation;
 		
-		vec3 L=normalize(lightPositions[i]-WolrdPos);
+		vec3 L=normalize(lightPositions[i]-WorldPos);
 		vec3 H=normalize(V+L);
 		float NDF=DistributionGGX(N,H,roughness);
-		float G=GeomtrySmith(N,V,L,roughness);
+		float G=GeometrySmith(N,V,L,roughness);
 		vec3 F=FresnelSchlick(max(dot(H,V),0.),F0);
 		
 		vec3 nominator=NDF*G*F;
@@ -124,25 +122,21 @@ void main()
 		float NdotL=max(dot(N,L),0.);
 		
 		Lo+=(kD*albedo/PI+specular)*radiance*NdotL;
-
-		
 	}
-	FragColor=vec4(Lo,1.);
-	return;
 	
 	vec3 F=FresnelSchlickRoughness(max(dot(N,V),0.),F0,roughness);
 	
 	vec3 kS=F;
 	vec3 kD=1.-kS;
-	kD+=1.-metallic;
+	kD*=1.-metallic;
 	
 	vec3 irradiance=texture(irradianceMap,N).rgb;
 	vec3 diffuse=irradiance*albedo;
 	
 	const float MAX_REFLECTION_LOD=4.;
 	vec3 prefilteredColor=textureLod(prefilterMap,R,roughness*MAX_REFLECTION_LOD).rgb;
-	vec2 brdf=texture(brdfLut,vec2(max(dot(N,V),0.),roughness)).rg;
-	vec3 specular=prefilteredColor*(F*brdf.x*brdf.y);
+	vec2 brdf=texture(brdfLUT,vec2(max(dot(N,V),0.),roughness)).rg;
+	vec3 specular=prefilteredColor*(F*brdf.x+brdf.y);
 	
 	vec3 ambient=(kD*diffuse+specular)*ao;
 	

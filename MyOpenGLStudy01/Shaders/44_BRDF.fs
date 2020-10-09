@@ -66,6 +66,7 @@ float GeometrySmith(vec3 N,vec3 V,vec3 L,float roughness)
 vec2 IntegrateBRDF(float NdotV,float roughness)
 {
 	//BRDF 卷积着色器在 2D 平面上执行计算，直接使用其 2D 纹理坐标作为卷积输入（NdotV 和 roughness）
+	//输出diffuse  和  specular 系数
 	vec3 V;
 	V.x=sqrt(1.-NdotV*NdotV);
 	V.y=0.;
@@ -107,6 +108,6 @@ vec2 IntegrateBRDF(float NdotV,float roughness)
 
 void main()
 {
-	vec2 IntegrateBRDF=IntegrateBRDF(TexCoords.x,TexCoords.y);
-	FragColor=IntegrateBRDF;
+	vec2 integratedBRDF=IntegrateBRDF(TexCoords.x,TexCoords.y);
+	FragColor=integratedBRDF;
 }

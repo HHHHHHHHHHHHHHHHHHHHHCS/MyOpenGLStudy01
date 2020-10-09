@@ -18,6 +18,7 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 		return -1;
 	}
 
+	BindQuadVAO();
 	BindCubeVAO();
 	BindSphereVAO();
 
@@ -100,13 +101,13 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
 	//PBR:HDR CubeMap
-	unsigned int hdrTexutre = ImageHelper::LoadHDR_Filp("hdr/newport_loft.hdr");
+	unsigned int hdrTexture = ImageHelper::LoadHDR_Filp("hdr/newport_loft.hdr");
 	unsigned int envCubemap;
 	glGenTextures(1, &envCubemap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 	for (unsigned int i = 0; i < 6; ++i)
 	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -124,11 +125,12 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f))
 	};
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, hdrTexture);
 	equirectangularToCubemapShader.Use();
 	equirectangularToCubemapShader.SetInt("equirectangularMap", 0);
 	equirectangularToCubemapShader.SetMat4("projection", captureProjection);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, hdrTexutre);
+
 
 	glViewport(0, 0, 512, 512);
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
@@ -141,6 +143,10 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 		RenderCube();
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//让OpenGL生成mimap
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
 	//PBR:Irradiance Map
 	//-----------------------------
@@ -235,7 +241,7 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	glGenTextures(1, &brdfLUTTexture);
 
 	glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 512, 512, 0, GL_RG, GL_FLOAT, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -258,6 +264,13 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 	Camera::AddMouseEvent(window);
 	CommonBaseScript::RegisterKeyEvent(window);
 
+	//bind pre-computed IBL data
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
 	pbrShader.Use();
 	pbrShader.SetMat4("projection", camera.GetProjectionMat4());
@@ -294,7 +307,6 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 		pbrShader.SetMat4("view", view);
 		pbrShader.SetVec3("camPos", camera.position);
 
-		/*
 		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
 		{
 			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
@@ -308,15 +320,6 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 			pbrShader.SetMat4("model", model);
 			RenderSphere();
 		}
-
-
-		//bind pre-computed IBL data
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
 		// rusted iron
 		glActiveTexture(GL_TEXTURE3);
@@ -403,19 +406,19 @@ int _44_PBR_IBL_Specular_Textured::DoMain()
 		model = glm::translate(model, glm::vec3(3.0, 0.0, 2.0));
 		pbrShader.SetMat4("model", model);
 		RenderSphere();
-		*/
 
-		backgroundShader.Use();
-		backgroundShader.SetMat4("view", view);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+		//backgroundShader.Use();
+		//backgroundShader.SetMat4("view", view);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 		//glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
 		//glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
-		RenderCube();
+		//RenderCube();
 
-		// render BRDF map to screen
-		//brdfShader.Use();
-		//renderQuad();
+		// glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// brdfShader.Use();
+		// RenderQuad();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
