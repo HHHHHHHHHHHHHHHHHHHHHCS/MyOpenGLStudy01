@@ -205,6 +205,7 @@
     <ClCompile Include="_42_PBR_IBL_Irradiance_Conversion.cpp" />
     <ClCompile Include="_43_PBR_IBL_Irradiance.cpp" />
     <ClCompile Include="_44_PBR_IBL_Specular_Textured.cpp" />
+    <ClCompile Include="_45_Debugging.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -269,6 +270,7 @@
     <ClInclude Include="_42_PBR_IBL_Irradiance_Conversion.h" />
     <ClInclude Include="_43_PBR_IBL_Irradiance.h" />
     <ClInclude Include="_44_PBR_IBL_Specular_Textured.h" />
+    <ClInclude Include="_45_Debugging.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

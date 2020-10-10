@@ -198,6 +198,15 @@
     <ClCompile Include="_42_PBR_IBL_Irradiance_Conversion.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_43_PBR_IBL_Irradiance.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_44_PBR_IBL_Specular_Textured.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_45_Debugging.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -378,6 +387,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_42_PBR_IBL_Irradiance_Conversion.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_43_PBR_IBL_Irradiance.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_44_PBR_IBL_Specular_Textured.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_45_Debugging.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
