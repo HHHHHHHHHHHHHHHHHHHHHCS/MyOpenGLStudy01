@@ -1,13 +1,22 @@
 #include "Shader.h"
 #include <gtc/type_ptr.inl>
 
-bool Shader::CheckCompileErrors(unsigned id, const std::string& path)
+
+bool Shader::CheckCompileErrors(unsigned int id, bool isShader, const std::string& path)
 {
 	//如果有编译错误则打印
 	char infoLog[512];
 	GLint success;
 
-	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+	if (isShader)
+	{
+		glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+	}
+	else
+	{
+		glGetProgramiv(id, GL_LINK_STATUS, &success);
+	}
+
 	if (!success)
 	{
 		glGetShaderInfoLog(id, 512, nullptr, infoLog);
@@ -17,6 +26,9 @@ bool Shader::CheckCompileErrors(unsigned id, const std::string& path)
 	return success;
 }
 
+Shader::Shader()
+{
+}
 
 Shader::Shader(const GLchar* fileName, bool haveGS)
 {
@@ -94,13 +106,13 @@ void Shader::Init(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
 	vertex = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertex, 1, &vShaderCode, nullptr);
 	glCompileShader(vertex);
-	CheckCompileErrors(vertex, vertexPath);
+	CheckCompileErrors(vertex, true, vertexPath);
 
 	//片元着色器
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment, 1, &fShaderCode, nullptr);
 	glCompileShader(fragment);
-	CheckCompileErrors(fragment, fragmentPath);
+	CheckCompileErrors(fragment, true, fragmentPath);
 
 	unsigned int geometry;
 	//几何着色器
@@ -111,7 +123,7 @@ void Shader::Init(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
 		glShaderSource(geometry, 1, &gShaderCode, nullptr);
 		glCompileShader(geometry);
 
-		CheckCompileErrors(geometry, geometryPath);
+		CheckCompileErrors(geometry, true, geometryPath);
 	}
 
 	//着色器程序
@@ -120,9 +132,9 @@ void Shader::Init(const GLchar* vertexPath, const GLchar* fragmentPath, const GL
 	glAttachShader(ID, fragment);
 	if (geometryPath != nullptr)
 		glAttachShader(ID, geometry);
-	glLinkProgram(ID);
 
-	CheckCompileErrors(ID, "Shader");
+	glLinkProgram(ID);
+	CheckCompileErrors(ID, false, "Shader");
 
 
 	//因为顶点和片元着色器已经加载到程序中了,可以删除了
@@ -193,7 +205,7 @@ void Shader::SetVec4(const std::string& name, float* value) const
 	glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, value);
 }
 
-void Shader::SetVec3Array(const std::string& name,int count,float* address) const
+void Shader::SetVec3Array(const std::string& name, int count, float* address) const
 {
 	glUniform3fv(glGetUniformLocation(ID, name.c_str()), count, address);
 }

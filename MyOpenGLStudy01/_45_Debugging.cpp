@@ -2,6 +2,9 @@
 #include "CommonBaseScript.h"
 #include "ImageHelper.h"
 
+bool _45_Debugging::notInitDebugging = false;
+Shader _45_Debugging::debuggingDisplayShader{};
+unsigned int _45_Debugging::debuggingQuadVAO = 0;
 
 GLenum glCheckError_(const char* file, int line)
 {
@@ -114,7 +117,41 @@ void APIENTRY glDebugOutput(GLenum source,
 
 void _45_Debugging::DisplayFramebufferTexture(GLuint textureID)
 {
-	//TODO:
+	if (!notInitDebugging)
+	{
+		notInitDebugging = true;
+
+		debuggingDisplayShader = Shader{"45_Debugging"};
+		debuggingDisplayShader.Use();
+		debuggingDisplayShader.SetInt("fboAttachment", 0);
+
+		float debuggingVertices[] = {
+			0.5f, 1.0f, 0.0f, 0.0f, 1.0f,
+			0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, 0.5f, 0.0f, 1.0f, 0.0f,
+		};
+		glGenVertexArrays(1, &debuggingQuadVAO);
+		glBindVertexArray(debuggingQuadVAO);
+		unsigned int debuggingQuadVBO;
+		glGenBuffers(1, &debuggingQuadVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, debuggingQuadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(debuggingVertices), &debuggingVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(0));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	}
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	debuggingDisplayShader.Use();
+	glBindVertexArray(debuggingQuadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	glBindVertexArray(0);
+	glUseProgram(0);
 }
 
 
@@ -180,13 +217,45 @@ int _45_Debugging::DoMain()
 	glBindBuffer(GL_VERTEX_ARRAY, vbo);
 	MyGLCheckError();
 
+
+	//=====================================================
+	unsigned int debugFBO;
+	glGenFramebuffers(1, &debugFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, debugFBO);
+
+	unsigned int debugAttachment0;
+	glGenTextures(1, &debugAttachment0);
+	glBindTexture(GL_TEXTURE_2D, debugAttachment0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	unsigned int debugDepth;
+	glGenRenderbuffers(1, &debugDepth);
+	glBindRenderbuffer(GL_RENDERBUFFER, debugDepth);
+
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, debugAttachment0, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, debugDepth);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "Framebuffer not complete!" << std::endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glBindFramebuffer(GL_FRAMEBUFFER, debugFBO);
+		glClearColor(0.6f, 0.1f, 0.9f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(0.2f, 0.8f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		DisplayFramebufferTexture(debugAttachment0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

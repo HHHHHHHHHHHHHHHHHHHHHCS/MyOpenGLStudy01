@@ -9,10 +9,12 @@
 class Shader
 {
 public:
-	static bool CheckCompileErrors(unsigned int id, const std::string &path);
+	static bool CheckCompileErrors(unsigned int id, bool isShader, const std::string& path);
 
 	//程序ID
 	unsigned int ID;
+	//空的 static 用
+	Shader();
 	//构造 读取并且构造着色器
 	Shader(const GLchar* filePath, bool haveGS = false);
 	Shader(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geometryPath = nullptr);
