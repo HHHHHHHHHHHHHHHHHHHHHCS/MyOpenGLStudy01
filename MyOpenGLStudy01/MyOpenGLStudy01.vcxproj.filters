@@ -207,6 +207,9 @@
     <ClCompile Include="_45_Debugging.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_46_Text.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -398,5 +401,16 @@
     <ClInclude Include="_45_Debugging.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="_46_Text.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\assimp-5.0\assimp-vc141-mt.dll">
+      <Filter>资源文件</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\freetype-2.10.3\win64\freetype.dll">
+      <Filter>资源文件</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -70,20 +70,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)assimp-5.0\include;$(SolutionDir)glfw-3.3.bin.WIN64\include;$(SolutionDir)glew-2.1.0\include\GL;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)assimp-5.0;$(SolutionDir)glfw-3.3.bin.WIN64\lib-vc2017;$(SolutionDir)glew-2.1.0\lib\Release\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)assimp-5.0\include;$(SolutionDir)glfw-3.3.bin.WIN64\include;$(SolutionDir)glew-2.1.0\include\GL;$(SolutionDir)freetype-2.10.3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)assimp-5.0;$(SolutionDir)glfw-3.3.bin.WIN64\lib-vc2017;$(SolutionDir)glew-2.1.0\lib\Release\x64;$(SolutionDir)freetype-2.10.3\win64;$(LibraryPath)</LibraryPath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)assimp-5.0\include;$(SolutionDir)glfw-3.3.bin.WIN64\include;$(SolutionDir)glew-2.1.0\include\GL;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)assimp-5.0;$(SolutionDir)glfw-3.3.bin.WIN64\lib-vc2017;$(SolutionDir)glew-2.1.0\lib\Release\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)assimp-5.0\include;$(SolutionDir)glfw-3.3.bin.WIN64\include;$(SolutionDir)glew-2.1.0\include\GL;$(SolutionDir)freetype-2.10.3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)assimp-5.0;$(SolutionDir)glfw-3.3.bin.WIN64\lib-vc2017;$(SolutionDir)glew-2.1.0\lib\Release\x64;$(SolutionDir)freetype-2.10.3\win64;$(LibraryPath)</LibraryPath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)assimp-5.0\include;$(SolutionDir)glfw-3.3.bin.WIN64\include;$(SolutionDir)glew-2.1.0\include\GL;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)assimp-5.0;$(SolutionDir)glfw-3.3.bin.WIN64\lib-vc2017;$(SolutionDir)glew-2.1.0\lib\Release\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)assimp-5.0\include;$(SolutionDir)glfw-3.3.bin.WIN64\include;$(SolutionDir)glew-2.1.0\include\GL;$(SolutionDir)freetype-2.10.3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)assimp-5.0;$(SolutionDir)glfw-3.3.bin.WIN64\lib-vc2017;$(SolutionDir)glew-2.1.0\lib\Release\x64;$(SolutionDir)freetype-2.10.3\win64;$(LibraryPath)</LibraryPath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)assimp-5.0\include;$(SolutionDir)glfw-3.3.bin.WIN64\include;$(SolutionDir)glew-2.1.0\include\GL;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)assimp-5.0;$(SolutionDir)glfw-3.3.bin.WIN64\lib-vc2017;$(SolutionDir)glew-2.1.0\lib\Release\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)assimp-5.0\include;$(SolutionDir)glfw-3.3.bin.WIN64\include;$(SolutionDir)glew-2.1.0\include\GL;$(SolutionDir)freetype-2.10.3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)assimp-5.0;$(SolutionDir)glfw-3.3.bin.WIN64\lib-vc2017;$(SolutionDir)glew-2.1.0\lib\Release\x64;$(SolutionDir)freetype-2.10.3\win64;$(LibraryPath)</LibraryPath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -91,10 +95,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\assimp-5.0\include;..\glm\glm;..\glad-4.6\include;..\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\assimp-5.0\include;..\glm\glm;..\glad-4.6\include;..\glew-2.1.0\include;..\freetype-2.10.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp-vc141-mt.lib;glfw3.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc141-mt.lib;glfw3.lib;opengl32.lib;freetype.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -103,10 +107,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\assimp-5.0\include;..\glm\glm;..\glad-4.6\include;..\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\assimp-5.0\include;..\glm\glm;..\glad-4.6\include;..\glew-2.1.0\include;..\freetype-2.10.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp-vc141-mt.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc141-mt.lib;glfw3.lib;opengl32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,12 +121,12 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\assimp-5.0\include;..\glm\glm;..\glad-4.6\include;..\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\assimp-5.0\include;..\glm\glm;..\glad-4.6\include;..\glew-2.1.0\include;..\freetype-2.10.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp-vc141-mt.lib;glfw3.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc141-mt.lib;glfw3.lib;opengl32.lib;freetype.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,12 +137,12 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\assimp-5.0\include;..\glm\glm;..\glad-4.6\include;..\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\assimp-5.0\include;..\glm\glm;..\glad-4.6\include;..\glew-2.1.0\include;..\freetype-2.10.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp-vc141-mt.lib;glfw3.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc141-mt.lib;glfw3.lib;opengl32.lib;freetype.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -206,6 +210,7 @@
     <ClCompile Include="_43_PBR_IBL_Irradiance.cpp" />
     <ClCompile Include="_44_PBR_IBL_Specular_Textured.cpp" />
     <ClCompile Include="_45_Debugging.cpp" />
+    <ClCompile Include="_46_Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -271,6 +276,17 @@
     <ClInclude Include="_43_PBR_IBL_Irradiance.h" />
     <ClInclude Include="_44_PBR_IBL_Specular_Textured.h" />
     <ClInclude Include="_45_Debugging.h" />
+    <ClInclude Include="_46_Text.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\freetype-2.10.3\win64\freetype.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\assimp-5.0\assimp-vc141-mt.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
