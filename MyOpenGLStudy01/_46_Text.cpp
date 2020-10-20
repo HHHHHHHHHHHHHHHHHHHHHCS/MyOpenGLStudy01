@@ -1,13 +1,28 @@
 ﻿#include "_46_Text.h"
 #include  <iostream>
-
+#include <GLFW/glfw3.h>
+#include "CommonBaseScript.h"
+#include <mat4x4.hpp>
+#include "Camera.h"
+//下面两个一起出现
 #include  <ft2build.h>
 #include FT_FREETYPE_H
 
+
 std::map<GLchar, _46_Text::Character> _46_Text::characters{};
+GLuint _46_Text::textVAO = 0;
+
 
 int _46_Text::DoMain()
 {
+	CommonBaseScript::InitOpenGL();
+	GLFWwindow* window = CommonBaseScript::InitWindow();
+
+	if (window == nullptr)
+	{
+		return -1;
+	}
+
 	//初始化
 	FT_Library ft;
 	if (FT_Init_FreeType(&ft))
@@ -74,5 +89,73 @@ int _46_Text::DoMain()
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 
+
+	//Text VAO
+	BindTextVAO();
+
+	Shader textShader{"46_Text"};
+
+	//因为字体是Alpha 所以要启动Alpha 混合
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	Camera camera{};
+	Camera::AddMouseEvent(window);
+	CommonBaseScript::RegisterKeyEvent(window);
+
+	//绘制UI的正交投影矩阵
+	glm::mat4 uiProjection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
+
+	while (!glfwWindowShouldClose(window))
+	{
+		CommonBaseScript::ProcessInput(window);
+
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(0.2f, 0.8f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
 	return 0;
+}
+
+void _46_Text::BindTextVAO()
+{
+	//给UI文字用的Quad  VBO数据后面填充
+	GLuint VBO;
+	glGenVertexArrays(1, &textVAO);
+	glGenBuffers(1, &VBO);
+	glBindVertexArray(textVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//float4 * 6 => quad  因为数据是后面补充的 所以用GL_DYNAMIC_DRAW
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 4 * 6, nullptr, GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	// 4 个 float 为一组数据    每次间隔 4*sizeof(float)
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+
+void _46_Text::RenderText(Shader& s, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+{
+	s.Use();
+	s.SetVec3("textColor", color);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindVertexArray(textVAO);
+
+	for (std::string::const_iterator c = text.begin(); c != text.end(); ++c)
+	{
+		Character ch = characters[*c];
+
+		//左边位置 根据字体的宽度
+		GLfloat xpos = x + ch.Bearing.x * scale;
+		//高度要计算 上下的偏移量 
+		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+	}
 }

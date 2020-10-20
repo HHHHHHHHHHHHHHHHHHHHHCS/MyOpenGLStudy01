@@ -2,6 +2,9 @@
 #include <glad/glad.h>
 #include <vec2.hpp>
 #include <map>
+#include <vec3.hpp>
+
+class Shader;
 
 class _46_Text
 {
@@ -14,7 +17,13 @@ public:
 		GLuint Advance; //原点距下一个字形原点的距离
 	};
 
+	static GLuint textVAO;
+
 	static std::map<GLchar, Character> characters;
 
 	static int DoMain();
+
+	static void BindTextVAO();
+	static void RenderText(Shader& s, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+
 };
