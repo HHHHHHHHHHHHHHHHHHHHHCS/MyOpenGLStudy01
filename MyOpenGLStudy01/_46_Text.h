@@ -18,6 +18,8 @@ public:
 	};
 
 	static GLuint textVAO;
+	static GLuint textVBO;
+
 
 	static std::map<GLchar, Character> characters;
 

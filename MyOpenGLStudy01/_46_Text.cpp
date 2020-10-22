@@ -11,8 +11,10 @@
 
 std::map<GLchar, _46_Text::Character> _46_Text::characters{};
 GLuint _46_Text::textVAO = 0;
+GLuint _46_Text::textVBO = 0;
 
-
+//有向距离场 可以缓解字模糊
+//https://www.valvesoftware.com/publications/2007/SIGGRAPH2007_AlphaTestedMagnification.pdf
 int _46_Text::DoMain()
 {
 	CommonBaseScript::InitOpenGL();
@@ -96,6 +98,7 @@ int _46_Text::DoMain()
 	Shader textShader{"46_Text"};
 
 	//因为字体是Alpha 所以要启动Alpha 混合
+	//可以关闭混合 查看文字框大小
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -106,14 +109,20 @@ int _46_Text::DoMain()
 	//绘制UI的正交投影矩阵
 	glm::mat4 uiProjection = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f);
 
+	textShader.Use();
+	textShader.SetMat4("projection", uiProjection);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		CommonBaseScript::ProcessInput(window);
 
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(0.2f, 0.8f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		RenderText(textShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5f, 0.8f, 0.2f));
+		RenderText(textShader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3f, 0.7f, 0.9f));
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -125,11 +134,10 @@ int _46_Text::DoMain()
 void _46_Text::BindTextVAO()
 {
 	//给UI文字用的Quad  VBO数据后面填充
-	GLuint VBO;
 	glGenVertexArrays(1, &textVAO);
-	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &textVBO);
 	glBindVertexArray(textVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, textVBO);
 	//float4 * 6 => quad  因为数据是后面补充的 所以用GL_DYNAMIC_DRAW
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 4 * 6, nullptr, GL_DYNAMIC_DRAW);
 	glEnableVertexAttribArray(0);
@@ -157,5 +165,28 @@ void _46_Text::RenderText(Shader& s, std::string text, GLfloat x, GLfloat y, GLf
 		GLfloat xpos = x + ch.Bearing.x * scale;
 		//高度要计算 上下的偏移量 
 		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+
+		GLfloat w = ch.Size.x * scale;
+		GLfloat h = ch.Size.y * scale;
+		GLfloat vertices[6][4] = {
+			{xpos, ypos + h, 0.0, 0.0},
+			{xpos, ypos, 0.0, 1.0},
+			{xpos + w, ypos, 1.0, 1.0},
+
+			{xpos, ypos + h, 0.0, 0.0},
+			{xpos + w, ypos, 1.0, 1.0},
+			{xpos + w, ypos + h, 1.0, 0.0},
+		};
+		//在四边形上绘制文字纹理
+		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+		//更新VBO内容
+		glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//绘制四边形
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		x += (ch.Advance >> 6) * scale; //1/64 是一个像素(2^6=64) 偏移到下个字的原点
 	}
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
