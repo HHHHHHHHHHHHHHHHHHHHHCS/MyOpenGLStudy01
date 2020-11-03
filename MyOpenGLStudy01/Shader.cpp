@@ -11,15 +11,17 @@ bool Shader::CheckCompileErrors(unsigned int id, bool isShader, const std::strin
 	if (isShader)
 	{
 		glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+		glGetShaderInfoLog(id, 512, nullptr, infoLog);
+
 	}
 	else
 	{
 		glGetProgramiv(id, GL_LINK_STATUS, &success);
+		glGetProgramInfoLog(id, 512, nullptr, infoLog);
 	}
 
 	if (!success)
 	{
-		glGetShaderInfoLog(id, 512, nullptr, infoLog);
 		std::cout << path << "->ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
