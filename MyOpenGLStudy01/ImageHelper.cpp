@@ -11,7 +11,7 @@ unsigned int ImageHelper::LoadTexture_Filp(std::string path, std::string directo
 	//这个是翻转读取的图片
 	//因为OPENGL的UV是反着的 要么1-UV.Y  要么翻转图片
 	stbi_set_flip_vertically_on_load(true);
-	auto out = LoadTexture(path, directory);
+	auto out = LoadTexture(path, directory, isSRGB);
 	stbi_set_flip_vertically_on_load(false);
 	return out;
 }
