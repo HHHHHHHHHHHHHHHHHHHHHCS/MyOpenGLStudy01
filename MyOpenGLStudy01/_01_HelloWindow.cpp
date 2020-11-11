@@ -1,5 +1,7 @@
 #include "_01_HelloWindow.h"
 
+#include <thread>
+
 int _01_HelloWindow::DoMain()
 {
 	InitOpenGL();
@@ -52,6 +54,7 @@ void _01_HelloWindow::UpdateDraw(GLFWwindow* window)
 	//glfwWindowShouldClose函数在我们每次循环的开始前检查一次GLFW是否被要求退出
 	while (!glfwWindowShouldClose(window))
 	{
+		glfwPollEvents(); //检查有没有触发什么事件（比如键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数（可以通过回调方法手动设置）
 
 		ProcessInput(window); //按键关闭检测
 
@@ -59,7 +62,10 @@ void _01_HelloWindow::UpdateDraw(GLFWwindow* window)
 		glClear(GL_COLOR_BUFFER_BIT); //清空缓冲颜色
 
 		glfwSwapBuffers(window); //函数会交换颜色缓冲（它是一个储存着GLFW窗口每一个像素颜色值的大缓冲），它在这一迭代中被用来绘制，并且将会作为输出显示在屏幕上。
-		glfwPollEvents(); //检查有没有触发什么事件（比如键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数（可以通过回调方法手动设置）
+
+		//最暴力的垂直同步锁帧数 避免while GPU跑满 理论应该差值的
+		//后面的例子都没有加 因为里面有一定的计算了
+		std::this_thread::sleep_for(std::chrono::milliseconds(6));
 	}
 
 	glfwTerminate(); //正确释放/删除之前的分配的所有资源
