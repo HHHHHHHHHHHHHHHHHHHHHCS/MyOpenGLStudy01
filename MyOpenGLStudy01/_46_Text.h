@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <vec2.hpp>
 #include <map>
+#include <string>
 #include <vec3.hpp>
 
 class Shader;

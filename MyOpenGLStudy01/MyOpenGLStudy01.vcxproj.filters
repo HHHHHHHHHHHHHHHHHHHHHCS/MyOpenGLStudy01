@@ -210,6 +210,9 @@
     <ClCompile Include="_46_Text.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_47_OIT.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -402,6 +405,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_46_Text.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_47_OIT.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
