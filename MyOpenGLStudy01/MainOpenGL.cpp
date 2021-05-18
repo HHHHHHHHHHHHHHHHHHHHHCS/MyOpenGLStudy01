@@ -60,11 +60,12 @@
 #include "_44_PBR_IBL_Specular_Textured.h"
 #include "_45_Debugging.h"
 #include "_46_Text.h"
+#include "_47_OIT.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _46_Text::DoMain();
+	int ret = _47_OIT::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
