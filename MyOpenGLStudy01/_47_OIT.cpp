@@ -114,7 +114,7 @@ int _47_OIT::DoMain()
 	CommonBaseScript::RegisterKeyEvent(window);
 
 	// set up transformation matrices
-// ------------------------------------------------------------------
+	// ------------------------------------------------------------------
 	glm::mat4 redModelMat = CalculateModelMatrix(glm::vec3(0.0f, 0.0f, 1.0f));
 	glm::mat4 greenModelMat = CalculateModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f));
 	glm::mat4 blueModelMat = CalculateModelMatrix(glm::vec3(0.0f, 0.0f, 2.0f));
@@ -131,10 +131,102 @@ int _47_OIT::DoMain()
 		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
 
+		glm::mat4 viewProjection = camera.GetViewProjection();
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		glDepthMask(GL_TRUE);
+		glDisable(GL_BLEND);
+		glClearColor(0.0f, 0.f, 0.0f, 0.0f);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, opaqueFBO);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// use solid shader
+		//-------------------
+		solidShader.Use();
+
+		//draw red 
+		solidShader.SetMat4("MVP", viewProjection * redModelMat);
+		solidShader.SetVec3("Color", glm::vec3(1.0f, 0.0f, 0.0f));
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		//--------------------
+		glDepthMask(GL_FALSE);
+		glEnable(GL_BLEND);
+		//glBlendFunci  i 可以指定attach
+		glBlendFunci(0, GL_ONE, GL_ONE);
+		glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+		glBlendEquation(GL_FUNC_ADD);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, transparentFBO);
+		//glClearBuffer  可以指定清除哪种缓存 和attach
+		glClearBufferfv(GL_COLOR, 0, &zeroFillerVec[0]);
+		glClearBufferfv(GL_COLOR, 1, &oneFillerVec[0]);
+
+		transparentShader.Use();
+
+		//draw green
+		transparentShader.SetMat4("MVP", viewProjection * greenModelMat);
+		transparentShader.SetVec4("Color", glm::vec4(0.0f, 1.0f, 0.0f, 0.5f));
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		//draw blue
+		transparentShader.SetMat4("MVP", viewProjection * blueModelMat);
+		transparentShader.SetVec4("Color", glm::vec4(0.0f, 0.0f, 1.0f, 0.5f));
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		//draw composite image
+		//----------------------------
+
+		glDepthFunc(GL_ALWAYS);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, opaqueFBO);
+
+		compositeShader.Use();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, accumTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, revealTexture);
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		//draw to backbuffer(final pass)
+		//----------------------------
+		glDisable(GL_DEPTH);
+		glDepthMask(GL_TRUE); //enable depth writes 
+		glDisable(GL_BLEND);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		screenShader.Use();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, opaqueTexture);
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	glDeleteVertexArrays(1, &quadVAO);
+	glDeleteBuffers(1, &quadVBO);
+	glDeleteTextures(1, &opaqueTexture);
+	glDeleteTextures(1, &depthTexture);
+	glDeleteTextures(1, &accumTexture);
+	glDeleteTextures(1, &revealTexture);
+	glDeleteFramebuffers(1, &opaqueFBO);
+	glDeleteFramebuffers(1, &transparentFBO);
 
 	glfwTerminate();
 
