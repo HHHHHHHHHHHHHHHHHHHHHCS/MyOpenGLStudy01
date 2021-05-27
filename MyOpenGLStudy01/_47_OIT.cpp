@@ -55,6 +55,7 @@ int _47_OIT::DoMain()
 
 	unsigned int opaqueTexture;
 	glGenTextures(1, &opaqueTexture);
+	glBindTexture(GL_TEXTURE_2D, opaqueTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_HALF_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -115,15 +116,18 @@ int _47_OIT::DoMain()
 
 	// set up transformation matrices
 	// ------------------------------------------------------------------
-	glm::mat4 redModelMat = CalculateModelMatrix(glm::vec3(0.0f, 0.0f, 1.0f));
-	glm::mat4 greenModelMat = CalculateModelMatrix(glm::vec3(0.0f, 0.0f, 0.0f));
-	glm::mat4 blueModelMat = CalculateModelMatrix(glm::vec3(0.0f, 0.0f, 2.0f));
+	glm::mat4 whiteModelMat = CalculateModelMatrix(glm::vec3(0.0f, 0.0f, -1.0f));
+	glm::mat4 redModelMat = CalculateModelMatrix(glm::vec3(0.0f, -0.25f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+	                                             glm::vec3(1.0f, 0.1f, 1.0f));
+	glm::mat4 greenModelMat = CalculateModelMatrix(glm::vec3(-0.25f, 0.0f, 0.0f), glm::vec3(5.0f, 0.0f, 45.0f),
+	                                               glm::vec3(1.0f, 0.1f, 1.0f));
+	glm::mat4 blueModelMat = CalculateModelMatrix(glm::vec3(0.25f, 0.0f, 0.0f), glm::vec3(-5.0f, 0.0f, -45.0f),
+	                                              glm::vec3(1.0f, 0.1f, 1.0f));
 
 	// set up intermediate variables
 	// ------------------------------------------------------------------
 	glm::vec4 zeroFillerVec(0.0f);
 	glm::vec4 oneFillerVec(1.0f);
-
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -137,7 +141,7 @@ int _47_OIT::DoMain()
 		glDepthFunc(GL_LESS);
 		glDepthMask(GL_TRUE);
 		glDisable(GL_BLEND);
-		glClearColor(0.0f, 0.f, 0.0f, 0.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, opaqueFBO);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -147,8 +151,8 @@ int _47_OIT::DoMain()
 		solidShader.Use();
 
 		//draw red 
-		solidShader.SetMat4("MVP", viewProjection * redModelMat);
-		solidShader.SetVec3("Color", glm::vec3(1.0f, 0.0f, 0.0f));
+		solidShader.SetMat4("MVP", viewProjection * whiteModelMat);
+		solidShader.SetVec3("Color", glm::vec3(1.0f, 1.0f, 1.0f));
 		glBindVertexArray(quadVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -166,6 +170,12 @@ int _47_OIT::DoMain()
 		glClearBufferfv(GL_COLOR, 1, &oneFillerVec[0]);
 
 		transparentShader.Use();
+
+		//draw red 
+		transparentShader.SetMat4("MVP", viewProjection * redModelMat);
+		transparentShader.SetVec4("Color", glm::vec4(1.0f, 0.0f, 0.0f, 0.5f));
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		//draw green
 		transparentShader.SetMat4("MVP", viewProjection * greenModelMat);
@@ -208,6 +218,7 @@ int _47_OIT::DoMain()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		screenShader.Use();
+		screenShader.SetInt("screen", 0);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, opaqueTexture);
