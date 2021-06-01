@@ -117,6 +117,9 @@ int _47_OIT::DoMain()
 	// set up transformation matrices
 	// ------------------------------------------------------------------
 	glm::mat4 whiteModelMat = CalculateModelMatrix(glm::vec3(0.0f, 0.0f, -1.0f));
+
+	glm::mat4 yellowModelMat = CalculateModelMatrix(glm::vec3(0.0f, 0.0f, 1.0f));
+
 	glm::mat4 redModelMat = CalculateModelMatrix(glm::vec3(0.0f, -0.25f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
 	                                             glm::vec3(1.0f, 0.1f, 1.0f));
 	glm::mat4 greenModelMat = CalculateModelMatrix(glm::vec3(-0.25f, 0.0f, 0.0f), glm::vec3(5.0f, 0.0f, 45.0f),
@@ -150,9 +153,16 @@ int _47_OIT::DoMain()
 		//-------------------
 		solidShader.Use();
 
-		//draw red 
+		//draw white 
 		solidShader.SetMat4("MVP", viewProjection * whiteModelMat);
 		solidShader.SetVec3("Color", glm::vec3(1.0f, 1.0f, 1.0f));
+		glBindVertexArray(quadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+		//draw white 
+		solidShader.SetMat4("MVP", viewProjection * yellowModelMat);
+		solidShader.SetVec3("Color", glm::vec3(1.0f, 1.0f, 0.0f));
 		glBindVertexArray(quadVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
