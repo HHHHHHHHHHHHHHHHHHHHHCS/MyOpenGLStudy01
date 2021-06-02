@@ -212,6 +212,7 @@
     <ClCompile Include="_45_Debugging.cpp" />
     <ClCompile Include="_46_Text.cpp" />
     <ClCompile Include="_47_OIT.cpp" />
+    <ClCompile Include="_48_SkeletalAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_17_Blending_Sort.h" />
@@ -279,6 +280,7 @@
     <ClInclude Include="_45_Debugging.h" />
     <ClInclude Include="_46_Text.h" />
     <ClInclude Include="_47_OIT.h" />
+    <ClInclude Include="_48_SkeletalAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\freetype-2.10.3\win64\freetype.dll">

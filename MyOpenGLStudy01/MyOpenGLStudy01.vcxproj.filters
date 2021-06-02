@@ -213,6 +213,9 @@
     <ClCompile Include="_47_OIT.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_48_SkeletalAnimation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -408,6 +411,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="_47_OIT.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_48_SkeletalAnimation.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

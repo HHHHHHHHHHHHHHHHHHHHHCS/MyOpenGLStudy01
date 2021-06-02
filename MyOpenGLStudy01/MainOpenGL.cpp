@@ -61,11 +61,12 @@
 #include "_45_Debugging.h"
 #include "_46_Text.h"
 #include "_47_OIT.h"
+#include "_48_SkeletalAnimation.h"
 
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _47_OIT::DoMain();
+	int ret = _48_SkeletalAnimation::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }
