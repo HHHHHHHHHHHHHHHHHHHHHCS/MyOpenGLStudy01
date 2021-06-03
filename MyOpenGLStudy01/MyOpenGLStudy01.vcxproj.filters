@@ -216,6 +216,12 @@
     <ClCompile Include="_48_SkeletalAnimation.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SkinMesh.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinModel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -415,6 +421,12 @@
     </ClInclude>
     <ClInclude Include="_48_SkeletalAnimation.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinMesh.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinModel.h">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

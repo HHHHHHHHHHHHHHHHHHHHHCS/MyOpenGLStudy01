@@ -146,6 +146,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SkinMesh.cpp" />
+    <ClCompile Include="SkinModel.cpp" />
     <ClCompile Include="_17_Blending_Sort.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ImageHelper.cpp" />
@@ -215,6 +217,8 @@
     <ClCompile Include="_48_SkeletalAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SkinMesh.h" />
+    <ClInclude Include="SkinModel.h" />
     <ClInclude Include="_17_Blending_Sort.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ImageHelper.h" />

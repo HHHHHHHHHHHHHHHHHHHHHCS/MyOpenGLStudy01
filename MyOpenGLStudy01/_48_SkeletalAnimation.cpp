@@ -16,12 +16,12 @@ int _48_SkeletalAnimation::DoMain()
 	}
 
 	// configure global opengl state
-// -----------------------------
+	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 
 	// build and compile shaders
 	// -------------------------
-	Shader ourShader("anim_model_vs.glsl", "anim_model_fs.glsl");
+	Shader animShader("48_SkeletalAnimation");
 
 
 	// load models
@@ -44,11 +44,17 @@ int _48_SkeletalAnimation::DoMain()
 		CommonBaseScript::ProcessKeyClick();
 		camera.DoKeyboardMove(window);
 
+		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		animShader.Use();
+
+		animShader.SetMat4("_ViewProjection", camera.GetViewProjection());
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
 
 
 	glfwTerminate();
