@@ -66,7 +66,7 @@
 int main(int argc, char* argv[])
 {
 	//_CrtSetBreakAlloc(164);
-	int ret = _48_SkeletalAnimation::DoMain();
+	int ret = _31_ModelNormal::DoMain();
 	_CrtDumpMemoryLeaks();
 	return 0;
 }

@@ -3,7 +3,6 @@
 
 Model::~Model()
 {
-
 }
 
 Model::Model(std::string path)
@@ -149,12 +148,12 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 		aiString str;
 		mat->GetTexture(type, i, &str);
 		bool skip = false;
-		for (unsigned int j = 0; j < textures_loaded.size(); j++)
+		for (auto* img : textures_loaded)
 		{
 			//用于比较两个字符串并根据比较结果返回整数。
 			//基本形式为strcmp(str1,str2)，若str1=str2，则返回零；
 			//若str1<str2，则返回负数；若str1>str2，则返回正数
-			auto img = textures_loaded[j];
+
 			if (std::strcmp(img->path.data, str.C_Str()) == 0)
 			{
 				textures.push_back(*img);
