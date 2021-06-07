@@ -222,6 +222,9 @@
     <ClCompile Include="SkinModel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="AssimpGLMHelpers.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -426,7 +429,10 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="SkinModel.h">
-      <Filter>源文件</Filter>
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpGLMHelpers.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

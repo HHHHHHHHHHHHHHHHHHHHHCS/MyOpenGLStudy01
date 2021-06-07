@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AssimpGLMHelpers.cpp" />
     <ClCompile Include="SkinMesh.cpp" />
     <ClCompile Include="SkinModel.cpp" />
     <ClCompile Include="_17_Blending_Sort.cpp" />
@@ -217,6 +218,7 @@
     <ClCompile Include="_48_SkeletalAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssimpGLMHelpers.h" />
     <ClInclude Include="SkinMesh.h" />
     <ClInclude Include="SkinModel.h" />
     <ClInclude Include="_17_Blending_Sort.h" />

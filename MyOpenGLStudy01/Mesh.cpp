@@ -74,7 +74,7 @@ void Mesh::Draw(Shader shader)
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
 	unsigned int normalNr = 1;
-
+	unsigned int emissionNr = 1;
 
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
@@ -93,6 +93,10 @@ void Mesh::Draw(Shader shader)
 		else if (name == "texture_normal")
 		{
 			number = std::to_string(normalNr++);
+		}
+		else if (name == "texture_emission")
+		{
+			number = std::to_string(emissionNr++);
 		}
 		shader.SetInt("material." + name.append(number), i);
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
