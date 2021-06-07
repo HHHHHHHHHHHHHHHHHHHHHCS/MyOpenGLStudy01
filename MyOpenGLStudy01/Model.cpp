@@ -76,6 +76,17 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
 
+	
+
+	LoadVertices(&vertices, mesh, scene);
+	LoadIndices(&indices, mesh, scene);
+	LoadTextures(&textures, mesh, scene);
+
+	return Mesh(vertices, indices, textures);
+}
+
+void Model::LoadVertices(std::vector<Vertex>* vertices, aiMesh* mesh, const aiScene* scene)
+{
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex;
@@ -110,25 +121,25 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 			vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 		}
 
-		vertices.push_back(vertex);
+		vertices->push_back(vertex);
 	}
+}
 
+void Model::LoadIndices(std::vector<unsigned int>* indices, aiMesh* mesh, const aiScene* scene)
+{
 	//处理索引
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i];
 		for (unsigned int j = 0; j < face.mNumIndices; j++)
 		{
-			indices.push_back(face.mIndices[j]);
+			indices->push_back(face.mIndices[j]);
 		}
 	}
-
-	LoadTextures(textures, mesh, scene);
-
-	return Mesh(vertices, indices, textures);
 }
 
-void Model::LoadTextures(std::vector<Texture> textures, aiMesh* mesh, const aiScene* scene)
+
+void Model::LoadTextures(std::vector<Texture>* textures, aiMesh* mesh, const aiScene* scene)
 {
 	//处理材质
 	if (mesh->mMaterialIndex >= 0)
@@ -138,13 +149,13 @@ void Model::LoadTextures(std::vector<Texture> textures, aiMesh* mesh, const aiSc
 		// 很奇怪 height 是 normal    ambient  是height
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+		textures->insert(textures->end(), diffuseMaps.begin(), diffuseMaps.end());
 		std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+		textures->insert(textures->end(), specularMaps.begin(), specularMaps.end());
 		std::vector<Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-		std::vector<Texture> emissionMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_emission");
-		textures.insert(textures.end(), emissionMaps.begin(), emissionMaps.end());
+		textures->insert(textures->end(), normalMaps.begin(), normalMaps.end());
+		// std::vector<Texture> emissionMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_emission");
+		// textures.insert(textures.end(), emissionMaps.begin(), emissionMaps.end());
 	}
 }
 
