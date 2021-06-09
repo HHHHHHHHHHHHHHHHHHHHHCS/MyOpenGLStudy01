@@ -1,13 +1,13 @@
 ﻿#include "Model.h"
 #include "ImageHelper.h"
 
-Model::~Model()
-{
-}
-
 Model::Model(const std::string& path)
 {
 	LoadModel(path);
+}
+
+Model::~Model()
+{
 }
 
 std::vector<Mesh> Model::GetMeshes() const
@@ -59,7 +59,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 		meshes.emplace_back(ProcessMesh(mesh, scene));
 		for (Texture& texture : meshes.back().textures)
 		{
-			textures_loaded.push_back(&texture);
+			textures_loaded.emplace_back(&texture);
 		}
 	}
 

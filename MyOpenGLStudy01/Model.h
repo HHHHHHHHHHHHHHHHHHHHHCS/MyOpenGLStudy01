@@ -16,7 +16,6 @@ public:
 
 	void Draw(Shader shader);
 
-
 private:
 	std::vector<Mesh> meshes;
 	std::string directory;
