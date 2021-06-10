@@ -225,6 +225,9 @@
     <ClCompile Include="AssimpGLMHelpers.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_01_HelloWindow.h">
@@ -432,6 +435,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="AssimpGLMHelpers.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

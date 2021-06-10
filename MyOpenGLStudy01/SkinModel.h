@@ -24,6 +24,10 @@ public:
 	std::vector<SkinMesh> GetMeshes() const;
 	std::vector<Texture*> GetTextures() const;
 
+	std::map<std::string, BoneInfo> GetOffsetMatMap() const;
+	int GetBoneCount() const;
+
+	
 	void Draw(Shader shader);
 
 private:

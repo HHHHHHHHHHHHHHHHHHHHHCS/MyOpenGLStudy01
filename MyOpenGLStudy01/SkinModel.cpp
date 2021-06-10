@@ -27,6 +27,16 @@ std::vector<Texture*> SkinModel::GetTextures() const
 	return textures_loaded;
 }
 
+std::map<std::string, BoneInfo> SkinModel::GetOffsetMatMap() const
+{
+	return offsetMatMap;
+}
+
+int SkinModel::GetBoneCount() const
+{
+	return boneCount;
+}
+
 
 void SkinModel::Draw(Shader shader)
 {
