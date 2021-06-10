@@ -76,8 +76,6 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
 
-	
-
 	LoadVertices(&vertices, mesh, scene);
 	LoadIndices(&indices, mesh, scene);
 	LoadTextures(&textures, mesh, scene);

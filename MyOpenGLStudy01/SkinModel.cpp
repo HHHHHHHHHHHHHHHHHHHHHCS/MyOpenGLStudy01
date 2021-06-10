@@ -88,6 +88,8 @@ SkinMesh SkinModel::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	LoadIndices(&indices, mesh, scene);
 	LoadTextures(&textures, mesh, scene);
 
+	ExtractBoneWeightForVertices(vertices, mesh, scene);
+	
 	return SkinMesh(vertices, indices, textures);
 }
 
@@ -191,5 +193,58 @@ void SkinModel::SetVertexBoneDataToDefault(SkinVertex& vertex)
 	{
 		vertex.m_BoneIDs[i] = -1;
 		vertex.m_Weights[i] = 0.0f;
+	}
+}
+
+void SkinModel::SertVertexBoneData(SkinVertex& vertex, int boneID, float weight)
+{
+	for (int i = 0; i < AI_MAX_BONE_WEIGHTS; ++i)
+	{
+		if (vertex.m_BoneIDs[i] < 0)
+		{
+			vertex.m_Weights[i] = weight;
+			vertex.m_BoneIDs[i] = boneID;
+			break;
+		}
+	}
+}
+
+void SkinModel::ExtractBoneWeightForVertices(std::vector<SkinVertex>& vertices, aiMesh* mesh, const aiScene* scene)
+{
+	auto& boneInfoMap = offsetMatMap;
+	int& boneCount = boneCount;
+
+	for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+	{
+		int boneID = -1;
+		aiBone* bone = mesh->mBones[boneIndex];
+		std::string boneName = bone->mName.C_Str();
+		auto it = boneInfoMap.find(boneName);
+		if (it == boneInfoMap.end())
+		{
+			BoneInfo newBoneInfo;
+			newBoneInfo.id = boneCount;
+			newBoneInfo.offset = AssimpGLMHelpers::CovertMatrixToGLMFormat(bone->mOffsetMatrix);
+			boneInfoMap[boneName] = newBoneInfo;
+			boneID = boneCount;
+			boneCount++;
+		}
+		else
+		{
+			boneID = it->second.id;
+		}
+
+		assert(boneID != -1);
+
+		auto weights = bone->mWeights;
+		int numWeight = bone->mNumWeights;
+
+		for (int weightIndex = 0; weightIndex < numWeight; ++weightIndex)
+		{
+			int vertexID = weights[weightIndex].mVertexId;
+			float weight = weights[weightIndex].mWeight;
+			assert(vertexID <= vertices.size());
+			SertVertexBoneData(vertices[vertexID], boneID, weight);
+		}
 	}
 }
