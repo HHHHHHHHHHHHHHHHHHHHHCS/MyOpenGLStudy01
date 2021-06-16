@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AssimpGLMHelpers.cpp" />
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="SkinMesh.cpp" />
@@ -219,6 +220,7 @@
     <ClCompile Include="_48_SkeletalAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="AssimpGLMHelpers.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="SkinMesh.h" />

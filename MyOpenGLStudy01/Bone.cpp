@@ -99,3 +99,63 @@ int Bone::GetScaleIndex(float animationTime) const
 	}
 	assert(0);
 }
+
+float Bone::GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
+{
+	float scaleFactor = 0.0f;
+	float midWayLength = animationTime - lastTimeStamp;
+	float framesDiff = nextTimeStamp - lastTimeStamp;
+	scaleFactor = midWayLength / framesDiff;
+	return scaleFactor;
+}
+
+glm::mat4 Bone::InterpolatePosition(float animationTime)
+{
+	if (1 == numPositions)
+	{
+		return glm::translate(glm::mat4(1.0f), positions[0].position);
+	}
+
+	int p0Index = GetPositionIndex(animationTime);
+	int p1Index = p0Index + 1;
+	float scaleFactor = GetScaleFactor(positions[p0Index].timeStamp
+	                                   , positions[p1Index].timeStamp, animationTime);
+	glm::vec3 finalPosition = glm::mix(positions[p0Index].position
+	                                   , positions[p1Index].position, scaleFactor);
+	return glm::translate(glm::mat4(1.0f), finalPosition);
+}
+
+glm::mat4 Bone::InterpolateRotation(float animationTime)
+{
+	if (1 == numRotations)
+	{
+		glm::quat rotation = glm::normalize(rotations[0].orientation);
+		return glm::toMat4(rotation);
+	}
+
+	int p0Index = GetPositionIndex(animationTime);
+	int p1Index = p0Index + 1;
+	float scaleFactor = GetScaleFactor(positions[p0Index].timeStamp
+	                                   , positions[p1Index].timeStamp, animationTime);
+	glm::quat finalRotation = glm::slerp(rotations[p0Index].orientation
+	                                     , rotations[p1Index].orientation, scaleFactor);
+	finalRotation = glm::normalize(finalRotation);
+	return glm::toMat4(finalRotation);
+}
+
+
+glm::mat4 Bone::InterpolateScale(float animationTime)
+{
+	if (1 == numScalings)
+	{
+		return glm::scale(glm::mat4(1.0f), scales[0].scale);
+	}
+
+	int p0Index = GetScaleIndex(animationTime);
+	int p1Index = p0Index + 1;
+	float scaleFactor = GetScaleFactor(positions[p0Index].timeStamp
+	                                   , positions[p1Index].timeStamp, animationTime);
+	glm::vec3 finalScale = glm::mix(scales[p0Index].scale
+	                                , scales[p1Index].scale, scaleFactor);
+	return glm::scale(glm::mat4(1.0f), finalScale);
+}
