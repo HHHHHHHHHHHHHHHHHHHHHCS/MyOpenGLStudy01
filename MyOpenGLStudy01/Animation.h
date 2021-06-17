@@ -23,26 +23,10 @@ public:
 	Animation() = default;
 
 	Animation(const std::string& animationPath, SkinModel* model);
+	
+	~Animation();
 
-	Bone* FindBone(const std::string& name)
-	{
-		//&。函数体内可以使用 Lambda 所在范围内所有可见的局部变量（包括 Lambda 所在类的 this），并且是引用传递方式
-		//（相当于是编译器自动为我们按引用传递了所有局部变量）。
-		//vector<Bone>::iterator 这里是指针
-		const auto iter = std::find_if(bones.begin(), bones.end(),
-		                               [&](const Bone& bone)
-		                               {
-			                               return bone.GetBoneName() == name;
-		                               });
-		if (iter == bones.end())
-		{
-			return nullptr;
-		}
-		else
-		{
-			return &*iter;
-		}
-	}
+	Bone* FindBone(const std::string& name);
 
 	inline float GetTicksPerSecond() const
 	{

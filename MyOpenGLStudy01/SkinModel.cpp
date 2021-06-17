@@ -27,12 +27,12 @@ std::vector<Texture*> SkinModel::GetTextures() const
 	return textures_loaded;
 }
 
-std::map<std::string, BoneInfo> SkinModel::GetOffsetMatMap() const
+std::map<std::string, BoneInfo>& SkinModel::GetOffsetMatMap()
 {
 	return offsetMatMap;
 }
 
-int SkinModel::GetBoneCount() const
+int& SkinModel::GetBoneCount()
 {
 	return boneCount;
 }
@@ -99,7 +99,7 @@ SkinMesh SkinModel::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	LoadTextures(&textures, mesh, scene);
 
 	ExtractBoneWeightForVertices(vertices, mesh, scene);
-	
+
 	return SkinMesh(vertices, indices, textures);
 }
 
