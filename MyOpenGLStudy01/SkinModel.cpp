@@ -221,8 +221,8 @@ void SkinModel::SertVertexBoneData(SkinVertex& vertex, int boneID, float weight)
 
 void SkinModel::ExtractBoneWeightForVertices(std::vector<SkinVertex>& vertices, aiMesh* mesh, const aiScene* scene)
 {
-	auto& boneInfoMap = offsetMatMap;
-	int& boneCount = boneCount;
+	auto& boneInfoMap = this->offsetMatMap;
+	int& boneCount = this->boneCount;
 
 	for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
 	{

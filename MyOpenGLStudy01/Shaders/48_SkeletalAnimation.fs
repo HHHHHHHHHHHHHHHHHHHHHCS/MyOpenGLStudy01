@@ -10,7 +10,9 @@ struct Material
 	sampler2D texture_diffuse1;
 };
 
+uniform Material material;
+
 void main()
 {
-	FragColor=texture(texture_diffuse1,TexCoords);
+	FragColor=texture(material.texture_diffuse1,TexCoords);
 }

@@ -56,5 +56,5 @@ private:
 	std::map<std::string, BoneInfo> boneInfoMap;
 
 	void SetupBones(const aiAnimation* animation, SkinModel& model);
-	void ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src);
+	void ReadHierarchyData(AssimpNodeData& dest, const aiNode* src);
 };
