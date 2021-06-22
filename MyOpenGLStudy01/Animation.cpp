@@ -44,7 +44,7 @@ Bone* Animation::FindBone(const std::string& name)
 
 void Animation::SetupBones(const aiAnimation* animation, SkinModel& model)
 {
-	//channels  所有动的骨骼的通道的总数量
+	//channels  所有动的骨骼的总数量,既通道数量
 	int size = animation->mNumChannels;
 
 	auto& _boneInfoMap = model.GetOffsetMatMap();
@@ -60,8 +60,8 @@ void Animation::SetupBones(const aiAnimation* animation, SkinModel& model)
 			_boneInfoMap[boneName].id = boneCount;
 			boneCount++;
 		}
-		bones.emplace_back(channel->mNodeName.data,
-		                   _boneInfoMap[channel->mNodeName.data].id, channel);
+		bones.emplace_back(Bone(channel->mNodeName.data,
+		                   _boneInfoMap[channel->mNodeName.data].id, channel));
 	}
 
 	boneInfoMap = _boneInfoMap;
@@ -72,9 +72,8 @@ void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src)
 {
 	assert(src);
 
-	//TODO:
 	dest.name = src->mName.data;
-	dest.transformation = AssimpGLMHelpers::CovertMatrixToGLMFormat(src->mTransformation);
+	dest.transformation = AssimpGLMHelpers::ConvertMatrixToGLMFormat(src->mTransformation);
 	dest.childrenCount = src->mNumChildren;
 
 	for (int i = 0; i < src->mNumChildren; i++)

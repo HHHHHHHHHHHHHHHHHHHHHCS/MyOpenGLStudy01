@@ -46,8 +46,8 @@ Bone::Bone(const std::string& _name, int _id, const aiNodeAnim* _channel)
 void Bone::Update(float animationTime)
 {
 	glm::mat4 translation = InterpolatePosition(animationTime);
-	glm::mat4 rotation = InterpolatePosition(animationTime);
-	glm::mat4 scale = InterpolatePosition(animationTime);
+	glm::mat4 rotation = InterpolateRotation(animationTime);
+	glm::mat4 scale = InterpolateScale(animationTime);
 	localTransform = translation * rotation * scale;
 }
 

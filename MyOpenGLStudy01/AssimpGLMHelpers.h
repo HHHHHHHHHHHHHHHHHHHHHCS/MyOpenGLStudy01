@@ -13,7 +13,7 @@ class AssimpGLMHelpers
 {
 public:
 	//inline 最好写在头文件中 否则会报错(未定义)
-	static inline glm::mat4 CovertMatrixToGLMFormat(const aiMatrix4x4& from)
+	static inline glm::mat4 ConvertMatrixToGLMFormat(const aiMatrix4x4& from)
 	{
 		glm::mat4 to;
 		//the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column

@@ -66,6 +66,15 @@ int _48_SkeletalAnimation::DoMain()
 		for (int i = 0; i < transforms.size(); i++)
 		{
 			animShader.SetMat4("_FinalBonesTransformations[" + std::to_string(i) + "]", transforms[i]);
+			// if (i == 0)
+			// {
+			// 	auto mm = transforms[i];
+			// 	printf("%f,%f,%f,%f|%f,%f,%f,%f|%f,%f,%f,%f|%f,%f,%f,%f\n"
+			// 	       , mm[0].x, mm[1].x, mm[2].x, mm[3].x
+			// 	       , mm[0].y, mm[1].y, mm[2].y, mm[3].y
+			// 	       , mm[0].z, mm[1].z, mm[2].z, mm[3].z
+			// 	       , mm[0].w, mm[1].w, mm[2].w, mm[3].w);
+			// }
 		}
 
 		glm::mat4 model = glm::mat4(1.0f);

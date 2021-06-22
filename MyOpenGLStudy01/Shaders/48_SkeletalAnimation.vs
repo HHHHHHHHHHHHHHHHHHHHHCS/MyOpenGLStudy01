@@ -18,7 +18,6 @@ out vec2 TexCoords;
 void main()
 {
 	vec4 totalPosition=vec4(0.f);
-
 	for(int i=0;i<MAX_BONE_INFLUENCE;i++)
 	{
 		int boneID=int(boneIDs[i]);
@@ -39,8 +38,7 @@ void main()
 		// 这里没有算normal
 		// vec3 localNormal=mat3(mat)*norm;
 	}
-	
+
 	gl_Position=_ViewProjection*_Model*totalPosition;
 	TexCoords=tex;
-	
 }

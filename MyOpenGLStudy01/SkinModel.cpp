@@ -206,9 +206,9 @@ void SkinModel::SetVertexBoneDataToDefault(SkinVertex& vertex)
 	}
 }
 
-void SkinModel::SertVertexBoneData(SkinVertex& vertex, int boneID, float weight)
+void SkinModel::SetVertexBoneData(SkinVertex& vertex, int boneID, float weight)
 {
-	for (int i = 0; i < AI_MAX_BONE_WEIGHTS; ++i)
+	for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
 	{
 		if (vertex.BoneIDs[i] < 0)
 		{
@@ -234,7 +234,7 @@ void SkinModel::ExtractBoneWeightForVertices(std::vector<SkinVertex>* vertices, 
 		{
 			BoneInfo newBoneInfo;
 			newBoneInfo.id = boneCount;
-			newBoneInfo.offset = AssimpGLMHelpers::CovertMatrixToGLMFormat(bone->mOffsetMatrix);
+			newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(bone->mOffsetMatrix);
 			boneInfoMap[boneName] = newBoneInfo;
 			boneID = boneCount;
 			boneCount++;
@@ -254,7 +254,7 @@ void SkinModel::ExtractBoneWeightForVertices(std::vector<SkinVertex>* vertices, 
 			int vertexID = weights[weightIndex].mVertexId;
 			float weight = weights[weightIndex].mWeight;
 			assert(vertexID <= vertices->size());
-			SertVertexBoneData((*vertices)[vertexID], boneID, weight);
+			SetVertexBoneData((*vertices)[vertexID], boneID, weight);
 		}
 	}
 }
