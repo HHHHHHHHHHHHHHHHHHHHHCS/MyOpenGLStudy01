@@ -63,3 +63,8 @@ std::vector<glm::mat4> Animator::GetPoseTransform()
 {
 	return transforms;
 }
+
+int Animator::GetMaxJoints()
+{
+	return transforms.size();
+}

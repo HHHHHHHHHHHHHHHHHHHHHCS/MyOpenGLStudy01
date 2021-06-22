@@ -47,5 +47,5 @@ private:
 	std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 	void SetVertexBoneDataToDefault(SkinVertex& vertex);
 	void SertVertexBoneData(SkinVertex& vertex, int boneID, float weight);
-	void ExtractBoneWeightForVertices(std::vector<SkinVertex>& vertices, aiMesh* mesh, const aiScene* scene);
+	void ExtractBoneWeightForVertices(std::vector<SkinVertex>* vertices, aiMesh* mesh, const aiScene* scene);
 };

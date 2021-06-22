@@ -16,6 +16,7 @@ public:
 	void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
 
 	std::vector<glm::mat4> GetPoseTransform();
+	int GetMaxJoints();
 
 private:
 	std::vector<glm::mat4> transforms;

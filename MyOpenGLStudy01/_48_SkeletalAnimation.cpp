@@ -70,7 +70,7 @@ int _48_SkeletalAnimation::DoMain()
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		animShader.SetMat4("_Model", model);
 		animModel.Draw(animShader);
 

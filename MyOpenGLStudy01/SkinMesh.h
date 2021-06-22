@@ -19,10 +19,10 @@ struct SkinVertex {
     glm::vec2 TexCoords;
 
     //bone indexes which will influence this vertex
-    int m_BoneIDs[MAX_BONE_INFLUENCE];
+    int BoneIDs[MAX_BONE_INFLUENCE];
 
     //weights from each bone
-    float m_Weights[MAX_BONE_INFLUENCE];
+    float Weights[MAX_BONE_INFLUENCE];
 };
 
 class SkinMesh 

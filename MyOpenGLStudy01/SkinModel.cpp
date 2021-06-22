@@ -98,7 +98,7 @@ SkinMesh SkinModel::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	LoadIndices(&indices, mesh, scene);
 	LoadTextures(&textures, mesh, scene);
 
-	ExtractBoneWeightForVertices(vertices, mesh, scene);
+	ExtractBoneWeightForVertices(&vertices, mesh, scene);
 
 	return SkinMesh(vertices, indices, textures);
 }
@@ -201,8 +201,8 @@ void SkinModel::SetVertexBoneDataToDefault(SkinVertex& vertex)
 {
 	for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
 	{
-		vertex.m_BoneIDs[i] = -1;
-		vertex.m_Weights[i] = 0.0f;
+		vertex.BoneIDs[i] = -1;
+		vertex.Weights[i] = 0.0f;
 	}
 }
 
@@ -210,16 +210,16 @@ void SkinModel::SertVertexBoneData(SkinVertex& vertex, int boneID, float weight)
 {
 	for (int i = 0; i < AI_MAX_BONE_WEIGHTS; ++i)
 	{
-		if (vertex.m_BoneIDs[i] < 0)
+		if (vertex.BoneIDs[i] < 0)
 		{
-			vertex.m_Weights[i] = weight;
-			vertex.m_BoneIDs[i] = boneID;
+			vertex.Weights[i] = weight;
+			vertex.BoneIDs[i] = boneID;
 			break;
 		}
 	}
 }
 
-void SkinModel::ExtractBoneWeightForVertices(std::vector<SkinVertex>& vertices, aiMesh* mesh, const aiScene* scene)
+void SkinModel::ExtractBoneWeightForVertices(std::vector<SkinVertex>* vertices, aiMesh* mesh, const aiScene* scene)
 {
 	auto& boneInfoMap = this->offsetMatMap;
 	int& boneCount = this->boneCount;
@@ -253,8 +253,8 @@ void SkinModel::ExtractBoneWeightForVertices(std::vector<SkinVertex>& vertices, 
 		{
 			int vertexID = weights[weightIndex].mVertexId;
 			float weight = weights[weightIndex].mWeight;
-			assert(vertexID <= vertices.size());
-			SertVertexBoneData(vertices[vertexID], boneID, weight);
+			assert(vertexID <= vertices->size());
+			SertVertexBoneData((*vertices)[vertexID], boneID, weight);
 		}
 	}
 }

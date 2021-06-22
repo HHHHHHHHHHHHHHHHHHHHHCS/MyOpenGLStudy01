@@ -3,7 +3,7 @@
 layout(location=0)in vec3 pos;
 layout(location=1)in vec3 norm;
 layout(location=2)in vec2 tex;
-layout(location=3)in ivec4 boneIds;
+layout(location=3)in vec4 boneIDs;//传入了int vbo会转换成float  这时候再用int会出现浮点转换错误
 layout(location=4)in vec4 weights;
 
 uniform mat4 _ViewProjection;
@@ -18,22 +18,22 @@ out vec2 TexCoords;
 void main()
 {
 	vec4 totalPosition=vec4(0.f);
+
 	for(int i=0;i<MAX_BONE_INFLUENCE;i++)
 	{
-		int boneId=boneIds[i];
-		if(boneId==-1)
+		int boneID=int(boneIDs[i]);
+		if(boneID==-1)
 		{
 			continue;
 		}
 		
-		//TODO:这里理论上应该是jot max
-		if(boneId>=MAX_BONES)
+		if(boneID>=MAX_BONES)
 		{
 			totalPosition=vec4(pos,1.f);
 			break;
 		}
 		
-		mat4 mat=_FinalBonesTransformations[boneId];
+		mat4 mat=_FinalBonesTransformations[boneID];
 		vec4 localPosition=mat*vec4(pos,1.f);
 		totalPosition+=localPosition*weights[i];
 		// 这里没有算normal

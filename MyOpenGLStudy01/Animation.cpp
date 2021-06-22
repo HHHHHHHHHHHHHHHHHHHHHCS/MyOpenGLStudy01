@@ -72,6 +72,7 @@ void Animation::ReadHierarchyData(AssimpNodeData& dest, const aiNode* src)
 {
 	assert(src);
 
+	//TODO:
 	dest.name = src->mName.data;
 	dest.transformation = AssimpGLMHelpers::CovertMatrixToGLMFormat(src->mTransformation);
 	dest.childrenCount = src->mNumChildren;
