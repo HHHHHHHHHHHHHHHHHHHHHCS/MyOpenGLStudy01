@@ -201,8 +201,8 @@ int _21_AdvancedGLSL::DoMain()
 
 
 		glBindBuffer(GL_UNIFORM_BUFFER, uboVPBlock);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &camera.GetViewMat4());
-		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &camera.GetProjectionMat4());
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), &camera.GetViewMat4()[0][0]);
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), &camera.GetProjectionMat4()[0][0]);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindVertexArray(cubeVAO);
